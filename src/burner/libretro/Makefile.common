@@ -187,6 +187,43 @@ FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR) \
 
 FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
+##############################################
+# Neo Geo Only
+##############################################
+
+FBNEO_DEFINES  += -DNEOGEO_ONLY
+
+FBNEO_BURN_DRIVERS_DIRS := $(NEOGEO_DIR) \
+	$(FBNEO_BURN_DRIVERS_DIR)
+
+BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
+    $(FBNEO_BURN_DIR)/burn_led.cpp \
+    $(FBNEO_BURN_DIR)/burn_pal.cpp \
+    $(FBNEO_BURN_DIR)/burn_shift.cpp \
+    $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
+    $(FBNEO_BURN_DIR)/tiles_generic.cpp \
+    $(FBNEO_BURN_DIR)/vector.cpp
+    
+FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+	$(FBNEO_BURN_DRIVERS_DIRS)
+
+FBNEO_CPU_DIRS := $(M68K_DIR) \
+	$(FBNEO_CPU_DIR)/z80
+
+FBNEO_INTERFACE_DIRS := 
+
+SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+    $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
+    $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
+    $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+    $(FBNEO_CPU_DIR)/z80_intf.cpp
+
+SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
+    $(FBNEO_BURN_DIR)/snd/fm.c \
+    $(FBNEO_BURN_DIR)/snd/ymdeltat.c
+##############################################    
+
+
 FBNEO_SRC_DIRS := $(FBNEO_BURNER_DIR) $(FBNEO_BURN_DIRS) $(FBNEO_CPU_DIRS) $(FBNEO_BURNER_DIRS) $(FBNEO_INTERFACE_DIRS)
 
 ifneq ($(STATIC_LINKING), 1)

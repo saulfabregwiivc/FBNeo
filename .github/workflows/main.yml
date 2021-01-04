@@ -1,0 +1,101 @@
+﻿name: Build fbneo_neogeo_libretro_wii
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths-ignore:
+      - '**.md'
+        
+jobs:
+  skipci:
+    runs-on: ubuntu-18.04
+    steps:
+      - run: echo "[Skip CI] ${{ contains(github.event.head_commit.message, '[skip ci]') }}"
+
+  build:
+    runs-on: ubuntu-18.04
+    if: contains(github.event.head_commit.message, '[skip ci]') == false
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache DevkitPro
+        id: cache-devkitpro
+        uses: actions/cache@v2
+        with:
+          path: ~/cache-devkitpro
+          key: ${{ runner.os }}-cache-devkitpro
+
+      - name: Download devkitPPC r30, libogc 1.8.19, bin2s and elf2dol
+        if: steps.cache-devkitpro.outputs.cache-hit != 'true'
+        # general-tools is needed for bin2s and gamecube-tools is needed for elf2dol
+        run: | 
+          mkdir ~/cache-devkitpro && cd ~/cache-devkitpro
+          wget "https://wii.leseratte10.de/devkitPro/file.php/devkitPPC-r30-1-linux.pkg.tar.xz"
+          wget "https://wii.leseratte10.de/devkitPro/file.php/libogc-1.8.19-1-any.pkg.tar.xz"
+          wget "https://wii.leseratte10.de/devkitPro/file.php/general-tools-1.2.0-1-linux.pkg.tar.xz"
+          wget "https://wii.leseratte10.de/devkitPro/file.php/gamecube-tools-1.0.2-1-linux.pkg.tar.xz"
+
+      - name: Extract devkitPPC r30, libogc 1.8.19, bin2s and elf2dol
+        # general-tools is needed for bin2s and gamecube-tools is needed for elf2dol
+        run: | 
+          cd ~/
+          tar -xf cache-devkitpro/devkitPPC-r30-1-linux.pkg.tar.xz opt/devkitpro/devkitPPC --strip-components=1
+          tar -xf cache-devkitpro/libogc-1.8.19-1-any.pkg.tar.xz opt/devkitpro/libogc --strip-components=1
+          tar -xf cache-devkitpro/general-tools-1.2.0-1-linux.pkg.tar.xz opt/devkitpro/tools/bin/bin2s --strip-components=1
+          cp devkitpro/tools/bin/bin2s devkitpro/devkitPPC/bin/bin2s
+          tar -xf cache-devkitpro/gamecube-tools-1.0.2-1-linux.pkg.tar.xz opt/devkitpro/tools/bin/elf2dol --strip-components=1
+          cp devkitpro/tools/bin/elf2dol devkitpro/devkitPPC/bin/elf2dol
+
+      - name: Patch libogc
+        run: |
+          if [[ "$(xxd -s 608918 -g4 -l4 ~/devkitpro/libogc/lib/wii/libogc.a | cut -d\  -f2)" == "38800001" ]]; then
+            echo "Found correct value at offset 608918 (0x94a96) -> patching libogc ..."
+            printf '\x38\x80\x00\x03' | dd of=~/devkitpro/libogc/lib/wii/libogc.a bs=1 seek=608918 count=4 conv=notrunc
+            if [[ "$(xxd -s 608918 -g4 -l4 ~/devkitpro/libogc/lib/wii/libogc.a | cut -d\  -f2)" == "38800003" ]]; then
+              echo "Patch successful"
+            else
+              echo "Patch failed!!"
+              /bin/false
+            fi
+          else
+            echo "Fail: $(xxd -s 608918 -g4 -l4 ~/devkitpro/libogc/lib/wii/libogc.a | cut -d\  -f2)"
+          fi
+          
+      - name: environment
+        run: |
+          echo "DEVKITPPC=${HOME}/devkitpro/devkitPPC" >> $GITHUB_ENV
+          echo "DEVKITPRO=${HOME}/devkitpro" >> $GITHUB_ENV
+          echo "${HOME}/devkitpro/devkitPPC/bin" >> $GITHUB_PATH
+      - name: Compile core
+        run: |
+          cd ${GITHUB_WORKSPACE}/src/burner/libretro
+          make platform="wii" -j7 generate-files
+          make platform="wii" -j7
+      - name: Compile binaries
+        run: |
+          cd ~/
+          git clone --depth 1 https://github.com/libretro/RetroArch.git retroarch
+          cd retroarch/dist-scripts
+          cp ${GITHUB_WORKSPACE}/src/burner/libretro/fbneo_neogeo_libretro_wii.a .
+          ./dist-cores.sh wii
+        continue-on-error: true
+      - name: Build app
+        run: |
+          ls ~/retroarch/pkg/wii
+          mkdir -p ~/retroarch/pkg/wii/retroarch
+          cp -r ~/retroarch/pkg/wii/*.dol ~/retroarch/pkg/wii/retroarch
+          cp ~/retroarch/pkg/wii/icon.png ~/retroarch/pkg/wii/meta.xml ~/retroarch/pkg/wii/retroarch
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2
+        with: 
+          name: retroarch
+          path: |
+            ~/retroarch/pkg/wii/retroarch/

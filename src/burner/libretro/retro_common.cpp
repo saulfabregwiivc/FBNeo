@@ -1,6 +1,18 @@
 #include "retro_common.h"
 #include "retro_input.h"
 
+#if defined(CPS1_ONLY)
+#define CORE_OPTION_NAME "fbneo_cps1"
+#elif defined(CPS2_ONLY)
+#define CORE_OPTION_NAME "fbneo_cps2"
+#elif defined(CPS3_ONLY)
+#define CORE_OPTION_NAME "fbneo_cps3"
+#elif defined(NEOGEO_ONLY)
+#define CORE_OPTION_NAME "fbneo_neogeo"
+#else
+#define CORE_OPTION_NAME "fbneo"
+#endif
+
 struct RomBiosInfo mvs_bioses[] = {
 	{"sp-s3.sp1",         0x91b64be3, 0x00, "MVS Asia/Europe ver. 6 (1 slot)",  1 },
 	{"sp-s2.sp1",         0x9036d879, 0x01, "MVS Asia/Europe ver. 5 (1 slot)",  2 },
@@ -84,7 +96,7 @@ static UINT8 diag_input_select_l_r[] =  {RETRO_DEVICE_ID_JOYPAD_SELECT, RETRO_DE
 // Global core options
 static const struct retro_core_option_definition var_empty = { NULL, NULL, NULL, {{0}}, NULL };
 static const struct retro_core_option_definition var_fbneo_allow_depth_32 = {
-	"fbneo-allow-depth-32",
+	CORE_OPTION_NAME "-allow-depth-32",
 	"Use 32-bits color depth when available",
 	"Change pixel format, some games require this to render properly, it could impact performances on some platforms",
 	{
@@ -95,7 +107,7 @@ static const struct retro_core_option_definition var_fbneo_allow_depth_32 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_vertical_mode = {
-	"fbneo-vertical-mode",
+	CORE_OPTION_NAME "-vertical-mode",
 	"Vertical mode",
 	"Rotate display for vertical screens",
 	{
@@ -107,7 +119,7 @@ static const struct retro_core_option_definition var_fbneo_vertical_mode = {
 	"disabled"
 };
 static const struct retro_core_option_definition var_fbneo_frameskip = {
-	"fbneo-frameskip",
+	CORE_OPTION_NAME "-frameskip",
 	"Frameskip",
 	"Skip rendering of X frames out of X+1",
 	{
@@ -122,7 +134,7 @@ static const struct retro_core_option_definition var_fbneo_frameskip = {
 	"0"
 };
 static const struct retro_core_option_definition var_fbneo_frameskip_v2 = {
-	"fbneo-frameskip-v2",
+	CORE_OPTION_NAME "-frameskip-v2",
 	"Frameskip",
 	"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' utilises the 'Frameskip Threshold (%)' setting.",
 	{
@@ -134,7 +146,7 @@ static const struct retro_core_option_definition var_fbneo_frameskip_v2 = {
 	"disabled"
 };
 static const struct retro_core_option_definition var_fbneo_frameskip_v2_threshold = {
-	"fbneo-frameskip-v2-threshold",
+	CORE_OPTION_NAME "-frameskip-v2-threshold",
 	"Frameskip Threshold (%)",
 	"When 'Frameskip' is set to 'Manual', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
 	{
@@ -159,7 +171,7 @@ static const struct retro_core_option_definition var_fbneo_frameskip_v2_threshol
 	"33"
 };
 static const struct retro_core_option_definition var_fbneo_cpu_speed_adjust = {
-	"fbneo-cpu-speed-adjust",
+	CORE_OPTION_NAME "-cpu-speed-adjust",
 	"CPU clock",
 	"Change emulated cpu frequency for various systems, by increasing you can fix native slowdowns in some games, by decreasing you can help performance on low-end devices",
 	{
@@ -168,7 +180,7 @@ static const struct retro_core_option_definition var_fbneo_cpu_speed_adjust = {
 	"100%"
 };
 static const struct retro_core_option_definition var_fbneo_diagnostic_input = {
-	"fbneo-diagnostic-input",
+	CORE_OPTION_NAME "-diagnostic-input",
 	"Diagnostic Input",
 	"Configure button combination to enter cabinet service menu",
 	{
@@ -188,7 +200,7 @@ static const struct retro_core_option_definition var_fbneo_diagnostic_input = {
 	"Hold Start"
 };
 static const struct retro_core_option_definition var_fbneo_hiscores = {
-	"fbneo-hiscores",
+	CORE_OPTION_NAME "-hiscores",
 	"Hiscores",
 	"Enable high scores support, you also need the file hiscore.dat in your system/fbneo/ folder",
 	{
@@ -199,7 +211,7 @@ static const struct retro_core_option_definition var_fbneo_hiscores = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_allow_patched_romsets = {
-	"fbneo-allow-patched-romsets",
+	CORE_OPTION_NAME "-allow-patched-romsets",
 	"Allow patched romsets",
 	"Allow romsets from your system/fbneo/patched/ folder to override your romsets, crcs will be ignored but sizes and names must still match, you need to close content for this setting to take effect",
 	{
@@ -210,7 +222,7 @@ static const struct retro_core_option_definition var_fbneo_allow_patched_romsets
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_samplerate = {
-	"fbneo-samplerate",
+	CORE_OPTION_NAME "-samplerate",
 	"Samplerate",
 	"Configure samplerate, it could impact performances, closing & starting game again is required",
 	{
@@ -223,7 +235,7 @@ static const struct retro_core_option_definition var_fbneo_samplerate = {
 	"48000"
 };
 static const struct retro_core_option_definition var_fbneo_sample_interpolation = {
-	"fbneo-sample-interpolation",
+	CORE_OPTION_NAME "-sample-interpolation",
 	"Sample Interpolation",
 	"Configure sample interpolation, it could impact performances",
 	{
@@ -235,7 +247,7 @@ static const struct retro_core_option_definition var_fbneo_sample_interpolation 
 	"4-point 3rd order"
 };
 static const struct retro_core_option_definition var_fbneo_fm_interpolation = {
-	"fbneo-fm-interpolation",
+	CORE_OPTION_NAME "-fm-interpolation",
 	"FM Interpolation",
 	"Configure FM interpolation, it could impact performances",
 	{
@@ -246,7 +258,7 @@ static const struct retro_core_option_definition var_fbneo_fm_interpolation = {
 	"4-point 3rd order"
 };
 static const struct retro_core_option_definition var_fbneo_analog_speed = {
-	"fbneo-analog-speed",
+	CORE_OPTION_NAME "-analog-speed",
 	"Analog Speed",
 	"Mitigate analog controls speed, some games might require low values to be playable",
 	{
@@ -255,7 +267,7 @@ static const struct retro_core_option_definition var_fbneo_analog_speed = {
 	"100%"
 };
 static const struct retro_core_option_definition var_fbneo_lightgun_hide_crosshair = {
-	"fbneo-lightgun-hide-crosshair",
+	CORE_OPTION_NAME "-lightgun-hide-crosshair",
 	"No crosshair with lightgun device",
 	"Hide crosshair if you play with a lightgun device",
 	{
@@ -267,7 +279,7 @@ static const struct retro_core_option_definition var_fbneo_lightgun_hide_crossha
 };
 #ifdef USE_CYCLONE
 static const struct retro_core_option_definition var_fbneo_cyclone = {
-	"fbneo-cyclone",
+	CORE_OPTION_NAME "-cyclone",
 	"Enable cyclone",
 	"Use at your own risk, it could improve performance on some emulated systems for low-end devices, but there are known side effects : savestates won't be compatible with normal interpreter, and some systems won't work",
 	{
@@ -281,7 +293,7 @@ static const struct retro_core_option_definition var_fbneo_cyclone = {
 
 // Neo Geo core options
 static const struct retro_core_option_definition var_fbneo_neogeo_mode = {
-	"fbneo-neogeo-mode",
+	CORE_OPTION_NAME "-neogeo-mode",
 	"Neo-Geo mode",
 	"Load appropriate bios depending on your choice, under the condition such a bios is compatible with the running game, changing this will restart your game",
 	{
@@ -294,7 +306,7 @@ static const struct retro_core_option_definition var_fbneo_neogeo_mode = {
 	"DIPSWITCH"
 };
 static const struct retro_core_option_definition var_fbneo_memcard_mode = {
-	"fbneo-memcard-mode",
+	CORE_OPTION_NAME "-memcard-mode",
 	"Memory card mode",
 	"Change the behavior for the memory card",
 	{
@@ -308,7 +320,7 @@ static const struct retro_core_option_definition var_fbneo_memcard_mode = {
 
 #ifdef FBNEO_DEBUG
 static const struct retro_core_option_definition var_fbneo_debug_layer_1 = {
-	"fbneo-debug-layer-1",
+	CORE_OPTION_NAME "-debug-layer-1",
 	"Layer 1",
 	"For debugging",
 	{
@@ -319,7 +331,7 @@ static const struct retro_core_option_definition var_fbneo_debug_layer_1 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_layer_2 = {
-	"fbneo-debug-layer-2",
+	CORE_OPTION_NAME "-debug-layer-2",
 	"Layer 2",
 	"For debugging",
 	{
@@ -330,7 +342,7 @@ static const struct retro_core_option_definition var_fbneo_debug_layer_2 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_layer_3 = {
-	"fbneo-debug-layer-3",
+	CORE_OPTION_NAME "-debug-layer-3",
 	"Layer 3",
 	"For debugging",
 	{
@@ -341,7 +353,7 @@ static const struct retro_core_option_definition var_fbneo_debug_layer_3 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_layer_4 = {
-	"fbneo-debug-layer-4",
+	CORE_OPTION_NAME "-debug-layer-4",
 	"Layer 4",
 	"For debugging",
 	{
@@ -352,7 +364,7 @@ static const struct retro_core_option_definition var_fbneo_debug_layer_4 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_1 = {
-	"fbneo-debug-sprite-1",
+	CORE_OPTION_NAME "-debug-sprite-1",
 	"Sprite 1",
 	"For debugging",
 	{
@@ -363,7 +375,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_1 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_2 = {
-	"fbneo-debug-sprite-2",
+	CORE_OPTION_NAME "-debug-sprite-2",
 	"Sprite 2",
 	"For debugging",
 	{
@@ -374,7 +386,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_2 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_3 = {
-	"fbneo-debug-sprite-3",
+	CORE_OPTION_NAME "-debug-sprite-3",
 	"Sprite 3",
 	"For debugging",
 	{
@@ -385,7 +397,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_3 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_4 = {
-	"fbneo-debug-sprite-4",
+	CORE_OPTION_NAME "-debug-sprite-4",
 	"Sprite 4",
 	"For debugging",
 	{
@@ -396,7 +408,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_4 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_5 = {
-	"fbneo-debug-sprite-5",
+	CORE_OPTION_NAME "-debug-sprite-5",
 	"Sprite 5",
 	"For debugging",
 	{
@@ -407,7 +419,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_5 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_6 = {
-	"fbneo-debug-sprite-6",
+	CORE_OPTION_NAME "-debug-sprite-6",
 	"Sprite 6",
 	"For debugging",
 	{
@@ -418,7 +430,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_6 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_7 = {
-	"fbneo-debug-sprite-7",
+	CORE_OPTION_NAME "-debug-sprite-7",
 	"Sprite 7",
 	"For debugging",
 	{
@@ -429,7 +441,7 @@ static const struct retro_core_option_definition var_fbneo_debug_sprite_7 = {
 	"enabled"
 };
 static const struct retro_core_option_definition var_fbneo_debug_sprite_8 = {
-	"fbneo-debug-sprite-8",
+	CORE_OPTION_NAME "-debug-sprite-8",
 	"Sprite 8",
 	"For debugging",
 	{
