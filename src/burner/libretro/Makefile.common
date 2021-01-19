@@ -221,6 +221,12 @@ SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
 SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
     $(FBNEO_BURN_DIR)/snd/fm.c \
     $(FBNEO_BURN_DIR)/snd/ymdeltat.c
+
+ifeq ($(platform), wii)
+    SOURCES_C += $(LIBRETRO_DIR)/wii_vm.c \
+		$(LIBRETRO_DIR)/wii_progressbar.c
+    SOURCES_S += $(FBNEO_BURN_DIR)/dsihandler.S
+endif
 ##############################################    
 
 

@@ -140,6 +140,9 @@ extern UINT8 *diag_input;
 extern neo_geo_modes g_opt_neo_geo_mode;
 extern unsigned nGameType;
 extern char g_rom_dir[MAX_PATH];
+#ifdef WII_VM
+extern bool is_large_game;
+#endif
 
 char* str_char_replace(char* destination, char c_find, char c_replace);
 void set_neo_system_bios();

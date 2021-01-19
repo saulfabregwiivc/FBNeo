@@ -1491,6 +1491,10 @@ static void PCM2DecryptP()
 
 static void PCM2DecryptV(INT32 size, INT32 bit)
 {
+#ifdef WII_VM
+	// the vrom file should already be decrypted.
+	return;
+#endif
 	for (INT32 i = 0; i < (size / 2) - (2 << bit); i += (2 << bit)) {
 		UINT16 buffer[8];
 		memmove(buffer, ((UINT16*)(YM2610ADPCMAROM[nNeoActiveSlot])) + i, (2 << bit) * 2);
@@ -1499,10 +1503,27 @@ static void PCM2DecryptV(INT32 size, INT32 bit)
 		}
 	}
 }
+#ifdef WII_VM
+// PNYAA set is under the size for being cached but has encryption
+static void PCM2DecryptVpnyaa(INT32 size, INT32 bit)
+{
+	for (INT32 i = 0; i < (size / 2) - (2 << bit); i += (2 << bit)) {
+		UINT16 buffer[8];
+		memmove(buffer, ((UINT16*)(YM2610ADPCMAROM[nNeoActiveSlot])) + i, (2 << bit) * 2);
+		for (INT32 j = (2 << bit) - 1; j >= 0; j--) {
+			((UINT16*)(YM2610ADPCMAROM[nNeoActiveSlot]))[i + j] = buffer[j ^ (1 << bit)];
+		}
+	}
+}
+#endif
 
 static void PCM2DecryptV2(const PCM2DecryptV2Info* const pInfo)
 {
 	// Decrypt V-ROMs
+#ifdef WII_VM
+	// the vrom file should already be decrypted.
+	return;
+#endif
 
 	UINT8* pTemp = (UINT8*)BurnMalloc(0x01000000);
 
@@ -1654,6 +1675,7 @@ static INT32 NeoPVCExit()
 
 static void lans2004_sx_decode()
 {
+#ifndef WII_VM
 	INT32 i, j, n;
 	for (i = 0; i < 0x20000; i+= 0x10) {
 		for (j = 0; j < 0x08; j++) {
@@ -1662,10 +1684,12 @@ static void lans2004_sx_decode()
 			NeoTextROM[nNeoActiveSlot][i + j + 0] = n;
 		}
 	}
+#endif
 }
 
 static void lans2004_cx_decode(INT32 nLen)
 {
+#ifndef WII_VM
 	INT32 i, j, n;
 	for (i = 0; i < nLen; i+= 0x80) {
 		for (j = 0; j < 0x40; j++) {
@@ -1674,10 +1698,12 @@ static void lans2004_cx_decode(INT32 nLen)
 			NeoSpriteROM[nNeoActiveSlot][i + j] = n;
 		}
 	}
+#endif
 }
 
 static void DoPerm(INT32 g) // 0 - cthd2003, 1 - svcboot
 {
+#ifndef WII_VM
 	static INT32 idx[ 2 ][ 16 ] = {
 		{ 0, 1, 2, 3, 3, 4, 4, 5, 0, 1, 2, 3, 3, 4, 4, 5 }, // 0
 		{ 0, 1, 0, 1, 2, 3, 2, 3, 3, 4, 3, 4, 4, 5, 4, 5 }, // 1
@@ -1707,6 +1733,7 @@ static void DoPerm(INT32 g) // 0 - cthd2003, 1 - svcboot
 
 		memmove (NeoSpriteROM[nNeoActiveSlot] + (i << 11), dst, 0x800);
 	}
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -6936,9 +6963,11 @@ STD_ROM_FN(garoubl)
 
 static void garoubl_sx_decode()
 {
+#ifndef WII_VM
 	INT32 i;
 	for (i = 0; i < 0x020000; i++)
 		NeoTextROM[nNeoActiveSlot][i] = BITSWAP08(NeoTextROM[nNeoActiveSlot][i], 7, 6, 0, 4, 3, 2, 1, 5);
+#endif
 }
 
 static void garoublCallback()
@@ -7704,6 +7733,7 @@ static void cthd2003_decode()
 
 static void cthd2003Callback()
 {
+#ifndef WII_VM	
 	INT32 i, n;
 	for (i = 0; i < 0x8000; i++)
 	{
@@ -7711,6 +7741,7 @@ static void cthd2003Callback()
 		NeoTextROM[nNeoActiveSlot][0x08000 + i] = NeoTextROM[nNeoActiveSlot][0x10000 + i];
 		NeoTextROM[nNeoActiveSlot][0x10000 + i] = n;
 	}
+#endif
 
 	cthd2003_decode();
 }
@@ -7775,6 +7806,7 @@ STD_ROM_FN(ct2k3sp)
 
 static void ct2k3spCallback()
 {
+#ifndef WII_VM	
 	INT32 i, j;
 	UINT8 *dst = (UINT8 *)BurnMalloc( 0x040000 );
 	if (dst)
@@ -7789,6 +7821,7 @@ static void ct2k3spCallback()
 
 		BurnFree (dst);
 	}
+#endif
 
 	cthd2003_decode();
 }
@@ -7984,8 +8017,10 @@ void kof2002b_gfx_decrypt(UINT8 *src, INT32 nLen)
 static void kof2002bCallback()
 {
 	PCM2DecryptP();
+#ifndef WII_VM
 	kof2002b_gfx_decrypt(NeoSpriteROM[nNeoActiveSlot], 0x4000000);
 	kof2002b_gfx_decrypt(NeoTextROM[nNeoActiveSlot], 0x020000);
+#endif
 }
 
 static INT32 kof2002bInit()
@@ -8543,8 +8578,10 @@ static void kf2k5uniCallback()
 	for (i = 0; i < 0x30000; i++)
 		NeoZ80ROMActive[i] = BITSWAP08(NeoZ80ROMActive[i], 4, 5, 6, 7, 0, 1, 2, 3);
 
+#ifndef WII_VM	
 	for (i = 0; i < 0x20000; i++)
 		NeoTextROM[nNeoActiveSlot][i] = BITSWAP08(NeoTextROM[nNeoActiveSlot][i], 4, 5, 6, 7, 0, 1, 2, 3);
+#endif    
 }
 
 static INT32 kf2k5uniInit()
@@ -9047,11 +9084,13 @@ STD_ROM_FN(svcboot)
 
 static void svcboot_sx_decode()
 {
+#ifndef WII_VM
 	for (INT32 i = 0; i < 0x20000 / 2; i++) {
 		INT32 n = NeoTextROM[nNeoActiveSlot][i];
 		NeoTextROM[nNeoActiveSlot][i] = NeoTextROM[nNeoActiveSlot][0x10000 + i];
 		NeoTextROM[nNeoActiveSlot][0x10000 + i] = n;
 	}
+#endif
 }
 
 static void svcboot_decode()
@@ -9094,10 +9133,11 @@ static INT32 svcbootInit()
 
 	nRet = NeoPVCInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot], 0x1000000);
 	}
-
+#endif
 	return nRet;
 }
 
@@ -9180,10 +9220,11 @@ static INT32 svcplusInit()
 
 	nRet = NeoInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot], 0x1000000);
 	}
-
+#endif
 	return nRet;
 }
 
@@ -9251,10 +9292,11 @@ static INT32 svcplusaInit()
 
 	nRet = NeoInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot], 0x1000000);
 	}
-
+#endif
 	return nRet;
 }
 
@@ -9298,8 +9340,10 @@ STD_ROM_FN(svcsplus)
 
 static void svcsplus_sx_decode()
 {
+#ifndef WII_VM
 	for (INT32 i = 0; i < 0x20000; i++)
 		NeoTextROM[nNeoActiveSlot][i] = BITSWAP08(NeoTextROM[nNeoActiveSlot][i], 7, 6, 0, 4, 3, 2, 1, 5);
+#endif
 }
 
 static void svcsplusCallback()
@@ -9336,10 +9380,11 @@ static INT32 svcsplusInit()
 
 	nRet = NeoPVCInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot], 0x1000000);
 	}
-
+#endif
 	return nRet;
 }
 
@@ -9524,6 +9569,7 @@ STD_ROM_FN(samsho5b)
 
 static void samsho5b_sx_decode()
 {
+#ifndef WII_VM
 	UINT8 *Buf = (UINT8*)BurnMalloc(0x20000);
 	if (Buf) {
 		memmove(Buf, NeoTextROM[nNeoActiveSlot], 0x20000);
@@ -9535,12 +9581,15 @@ static void samsho5b_sx_decode()
 
 		BurnFree(Buf);
 	}
+#endif
 }
 
 static void samsho5b_vx_decode()
 {
+#ifndef WII_VM
 	for (INT32 i = 0; i < 0x400000 * 4; i++)
 		YM2610ADPCMAROM[nNeoActiveSlot][i] = BITSWAP08(YM2610ADPCMAROM[nNeoActiveSlot][i], 0, 1, 5, 4, 3, 2, 6, 7);
+#endif
 }
 
 static void samsho5bCallback()
@@ -12463,10 +12512,12 @@ static INT32 lans2004Init()
 
  	nRet = NeoInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		for (INT32 i = 0; i < 0xa00000; i++)
 			YM2610ADPCMAROM[nNeoActiveSlot][i] = BITSWAP08(YM2610ADPCMAROM[nNeoActiveSlot][i], 0, 1, 5, 4, 3, 2, 6, 7);
 	}
+#endif
 
 	return nRet;
 }
@@ -12679,7 +12730,11 @@ INT32 pnyaaInit()
 	nRet = NeoInit();
 
 	if (nRet == 0) {
+#ifdef WII_VM
+		PCM2DecryptVpnyaa(0x400000, 0);
+#else
 		PCM2DecryptV(0x400000, 0);
+#endif
 	}
 
 	return nRet;
@@ -13902,7 +13957,9 @@ static void matrimblCallback()
 
 	PCM2DecryptP();
 	DoPerm(0);
+#ifndef WII_VM
 	NeoCMCExtractSData(NeoSpriteROM[nNeoActiveSlot], NeoTextROM[nNeoActiveSlot], 0x4000000, 0x080000);
+#endif
 }
 
 static INT32 matrimblInit()
@@ -13914,10 +13971,12 @@ static INT32 matrimblInit()
 
 	nRet = NeoInit();
 
+#ifndef WII_VM
 	if (nRet == 0) {
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot] + 0x400000, 0x400000);
 		BurnByteswap(YM2610ADPCMAROM[nNeoActiveSlot] + 0xc00000, 0x400000);
 	}
+#endif
 
 	return nRet;
 }
@@ -14641,12 +14700,14 @@ static void cthd2k3aCallback()
 	Rom[0xed394 / 2] = BURN_ENDIAN_SWAP_INT16(0x4e71);
 	Rom[0xa2b7e / 2] = BURN_ENDIAN_SWAP_INT16(0x4e71);
 
+#ifndef WII_VM	
 	// Text ROM
 	for (i = 0; i < 0x8000; i++) {
 		n = NeoTextROM[nNeoActiveSlot][0x08000 + i];
 		NeoTextROM[nNeoActiveSlot][0x08000 + i] = NeoTextROM[nNeoActiveSlot][0x10000 + i];
 		NeoTextROM[nNeoActiveSlot][0x10000 + i] = n;
 	}
+#endif
 
 	// Swap bits 15 & 16 in the address of the Z80 ROM
 	for (i = 0; i < 0x10000 / 2; i++) {
@@ -15136,8 +15197,10 @@ static void mslug5b_cx_decode()
 
 static void mslug5b_vx_decrypt()
 {
+#ifndef WII_VM
 	for (INT32 i = 0; i < 0x1000000; i += 2)
 		YM2610ADPCMAROM[nNeoActiveSlot][i + 1] = BITSWAP08(YM2610ADPCMAROM[nNeoActiveSlot][i + 1], 3, 2, 4, 1, 5, 0, 6, 7);
+#endif
 }
 
 static void mslug5bCallback()
@@ -17506,9 +17569,11 @@ STD_ROM_FN(kf2k1pa)
 
 static void kf2k1paCallback()
 {
+#ifndef WII_VM
 	for (INT32 i = 0; i < 0x20000; i++) {
 		NeoTextROM[nNeoActiveSlot][i] = BITSWAP08(NeoTextROM[nNeoActiveSlot][i], 3, 2, 4, 5, 1, 6, 0, 7);
 	}
+#endif
 }
 
 static INT32 kf2k1paInit()

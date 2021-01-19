@@ -8,7 +8,7 @@ FASTCALL = 0
 FASTMATH = 1
 USE_SPEEDHACKS = 1
 EXTERNAL_ZLIB = 0
-INCLUDE_7Z_SUPPORT = 0
+INCLUDE_7Z_SUPPORT = 1
 # enable x86_64 dynarec used in killer instinct
 USE_X64_DRC = 0
 AUTOGEN_DATS = 0
@@ -355,11 +355,13 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 
 	# Nintendo Wii
 	else ifneq (,$(findstring wii,$(platform)))
-		PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
+		PLATFORM_DEFINES += -DWII_VM -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
+        CFLAGS += -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc/machine
 		NO_MD = 1
 		NO_CAPCOM = 1
 		NO_NEOGEO = 0
 		NO_PCE = 1
+        INCLUDE_7Z_SUPPORT = 0
 
 	# Nintendo Game Cube
 	else ifneq (,$(findstring ngc,$(platform)))

@@ -41,7 +41,7 @@ struct RomBiosInfo aes_bioses[] = {
 };
 
 struct RomBiosInfo uni_bioses[] = {
-	{"uni-bios_4_0.rom",  0xa7aab458, 0x13, "Universe BIOS ver. 3.3 (free)"  ,  1 },
+	{"uni-bios_4_0.rom",  0xa7aab458, 0x13, "Universe BIOS ver. 4.0 (free)"  ,  1 },
 	{"uni-bios_3_3.rom",  0x24858466, 0x14, "Universe BIOS ver. 3.3 (free)"  ,  2 },
 	{"uni-bios_3_2.rom",  0xa4e8b9b3, 0x15, "Universe BIOS ver. 3.2 (free)"  ,  3 },
 	{"uni-bios_3_1.rom",  0x0c58093f, 0x16, "Universe BIOS ver. 3.1 (free)"  ,  4 },
@@ -66,6 +66,9 @@ std::vector<dipswitch_core_option> dipswitch_core_options;
 struct GameInp *pgi_reset;
 struct GameInp *pgi_diag;
 bool is_neogeo_game = false;
+#ifdef WII_VM
+bool is_large_game = false;
+#endif
 bool allow_neogeo_mode = true;
 bool neogeo_use_specific_default_bios = false;
 bool bAllowDepth32 = false;
@@ -471,7 +474,7 @@ void set_neo_system_bios()
 	{
 		// Nothing to do in DIPSWITCH mode because the NeoSystem variable is changed by the DIP Switch core option
 		log_cb(RETRO_LOG_INFO, "DIPSWITCH Neo Geo Mode selected => NeoSystem: 0x%02x.\n", NeoSystem);
-	}
+    }
 	else if (g_opt_neo_geo_mode == NEO_GEO_MODE_MVS)
 	{
 		NeoSystem &= ~(UINT8)0x1f;

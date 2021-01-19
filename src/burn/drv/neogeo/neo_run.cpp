@@ -74,6 +74,14 @@
 #include "burn_ym2610.h"
 #include "bitswap.h"
 #include "neocdlist.h"
+#ifdef WII_VM
+#include <unistd.h> // sleep
+#include "libretro.h"
+#include "wii_vm.h"
+#include "wii_progressbar.h"
+
+extern void get_cache_path(char *path);
+#endif
 
 // #undef USE_SPEEDHACKS
 static INT32 NEO_RASTER_IRQ_TWEAK = 0; // spinmast prefers offset of 3 here.
@@ -241,6 +249,13 @@ INT32 nNeoScreenWidth;
 UINT8 nLEDLatch, nLED[3];
 
 // ----------------------------------------------------------------------------
+#ifdef WII_VM
+char CacheDir[1024];
+char CacheName[1024];
+FILE *BurnCacheFile;
+UINT32 CacheSize;
+UINT32 CacheRead;
+#endif
 
 static bool bMemoryCardInserted, bMemoryCardWritable;
 
@@ -530,6 +545,140 @@ static INT32 FindROMs(UINT32 nType, INT32* pOffset, INT32* pNum)
 	return 0;
 }
 
+#ifdef WII_VM
+// Initialize Virtual Memory and cache system
+// The sprite cache file ('crom)' is read partly in RAM with a 32MB fixed size,
+// the remaining part is read in VM.
+static INT32 InitCache(void)
+{
+	// Use cache only when gfx roms are larger than 40 MB
+	if (nSpriteSize[nNeoActiveSlot] >= 40*MB)
+		BurnUseCache = true;
+	else
+		BurnUseCache = false;
+
+	if(BurnUseCache)
+	{
+		char txt[128];
+		int SpriteRamSize = 32*MB;
+		int SpriteVmSize = nSpriteSize[nNeoActiveSlot] - 32*MB;
+		int RomCache = 1*MB;
+
+		CacheSize = ( (SpriteRamSize + SpriteVmSize + nYM2610ADPCMASize[nNeoActiveSlot]) / (1*MB) );
+
+		// Reduce to minimum for these very large games
+		if (!strcmp(BurnDrvGetTextA(DRV_NAME), "garou") || !strcmp(BurnDrvGetTextA(DRV_NAME), "mslug3") || !strcmp(BurnDrvGetTextA(DRV_NAME), "kof2000") || !strcmp(BurnDrvGetTextA(DRV_NAME), "kof2003"))
+		{
+			RomCache = 512*KB;
+		}
+
+		NeoSpriteROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(32*MB);
+		NeoSpriteROM_WIIVM = (UINT8*)VM_Init(SpriteVmSize, RomCache);
+
+		get_cache_path(CacheDir);
+
+		 if (NeoSpriteROM[nNeoActiveSlot] == NULL) {
+		    return 1;
+		 }
+
+		// Read Sprite data cache
+		sprintf(CacheName ,"%scrom", CacheDir);
+		BurnCacheFile = fopen(CacheName, "rb");
+		if (!BurnCacheFile)
+		{
+			printf("Error opening %s! Convert the game with romcnv.", CacheName);
+			sleep(5);
+			exit(0);
+		}
+
+		size_t bytesRead = 0;
+		UINT8 step = 32;
+		float Progress;
+		float BarOffset = 1.0;
+		CacheRead = 0;
+
+		// Read crom file in 1MB chunks in order to show progress.
+		for(int i = 0; i < step; i++)
+		{
+			bytesRead = fread(NeoSpriteROM[nNeoActiveSlot] + (i*MB), 1*MB, 1, BurnCacheFile);
+			Progress = (float)i / CacheSize  * 5.0;
+			snprintf(txt, sizeof(txt), "Loading crom in RAM : %d/%d MB", i, step);
+			ProgressBar(Progress - BarOffset, txt);
+		}
+		snprintf(txt, sizeof(txt), "Loading crom in RAM : %d/%d MB", step, step);
+		ProgressBar(Progress - BarOffset, txt);
+
+		CacheRead += step;
+		step = (SpriteVmSize)/(1*MB);
+
+		for(int i = 0; i < step; i++)
+		{
+			bytesRead = fread(NeoSpriteROM_WIIVM + (i*MB), 1*MB, 1, BurnCacheFile);
+			Progress = ((float)i + CacheRead) / CacheSize  * 5.0;
+			snprintf(txt, sizeof(txt), "Loading crom in VM : %d/%d MB", i, step);
+			ProgressBar(Progress - BarOffset, txt);
+		}
+		snprintf(txt, sizeof(txt), "Loading crom in VM : %d/%d MB", step, step);
+		ProgressBar(Progress - BarOffset, txt);
+		fclose(BurnCacheFile);
+
+		CacheRead += step;
+
+		// Read Text layer tiles cache
+		sprintf(CacheName, "%ssrom", CacheDir);
+		BurnCacheFile = fopen(CacheName, "rb");
+		if (!BurnCacheFile)
+		{
+			printf("Error opening %s! Convert the game with romcnv.", CacheName);
+			sleep(5);
+			exit(0);
+		}
+
+		fread(&nNeoTextROMSize[nNeoActiveSlot], sizeof(int), 1, BurnCacheFile);
+		printf("\33[2K\r");
+		printf("%9s %s\r",  "", "Loading srom file");
+
+		NeoTextROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(nNeoTextROMSize[nNeoActiveSlot]);
+		if (NeoTextROM[nNeoActiveSlot] == NULL) {
+			return 1;
+		}
+
+		fread( NeoTextROM[nNeoActiveSlot], nNeoTextROMSize[nNeoActiveSlot], 1, BurnCacheFile);
+		fclose(BurnCacheFile);
+	}
+
+	return 0;
+}
+
+// Read Sound data cache
+static INT32 ReadSoundCache(UINT8* Audio)
+{
+	char txt[128];
+	sprintf(CacheName ,"%svrom", CacheDir);
+	BurnCacheFile = fopen(CacheName, "rb");
+	if (!BurnCacheFile) printf("Error opening %s!\r", CacheName);
+
+	size_t bytesRead = 0;
+	UINT32 step = nYM2610ADPCMASize[nNeoActiveSlot]/(1*MB);
+	float Progress = 0.1;
+	float BarOffset = 1.0;
+
+	for(int i = 0; i < step; i++)
+	{
+		bytesRead = fread(Audio + (i*MB), 1*MB, 1, BurnCacheFile);
+		Progress = ((float)i + CacheRead) / CacheSize  * 5.0;
+		snprintf(txt, sizeof(txt), "Loading vrom : %d/%d MB", i, step);
+		ProgressBar(Progress - BarOffset, txt);
+	}
+
+	snprintf(txt, sizeof(txt), "Loading vrom : %d/%d MB", step, step);
+	ProgressBar(Progress - BarOffset, txt);
+	fclose(BurnCacheFile);
+	ProgressBar(4.0, txt);
+	return 0;
+}
+#endif
+
 static INT32 LoadRoms()
 {
 	NeoGameInfo info;
@@ -694,7 +843,11 @@ static INT32 LoadRoms()
 //	if (nSpriteSize[nNeoActiveSlot] > 0x4000000) {
 //		nSpriteSize[nNeoActiveSlot] = 0x5000000;
 //	}
-
+#ifdef WII_VM
+	InitCache();
+	if(!BurnUseCache)
+#endif
+    {
 	NeoSpriteROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(nSpriteSize[nNeoActiveSlot] < (nNeoTileMask[nNeoActiveSlot] << 7) ? ((nNeoTileMask[nNeoActiveSlot] + 1) << 7) : nSpriteSize[nNeoActiveSlot]);
 	if (NeoSpriteROM[nNeoActiveSlot] == NULL) {
 		return 1;
@@ -743,9 +896,15 @@ static INT32 LoadRoms()
 			}
 		}
 	}
+}
 
 	Neo68KROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(nCodeSize[nNeoActiveSlot]);	// 68K cartridge ROM
 	if (Neo68KROM[nNeoActiveSlot] == NULL) {
+#ifdef WII_VM
+			printf("Loading Neo68KROM failed. Not enough memory! exiting...\r");
+			sleep(5);
+			exit(0);
+#endif
 		return 1;
 	}
 	Neo68KROMActive = Neo68KROM[nNeoActiveSlot];
@@ -761,6 +920,11 @@ static INT32 LoadRoms()
 
 	NeoZ80ROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(0x080000);	// Z80 cartridge ROM
 	if (NeoZ80ROM[nNeoActiveSlot] == NULL) {
+#ifdef WII_VM
+			printf("Loading NeoZ80ROM failed. Not enough memory! exiting...\r");
+      sleep(5);
+      exit(0);
+#endif
 		return 1;
 	}
 	NeoZ80ROMActive = NeoZ80ROM[nNeoActiveSlot];
@@ -774,13 +938,17 @@ static INT32 LoadRoms()
 		NeoCallbackActive->pInitialise();
 	}
 
+#ifdef WII_VM
+   if(!BurnUseCache)
+#endif
+   {
 	// Decode text data
 	BurnUpdateProgress(0.0, _T("Preprocessing text layer graphics...")/*, BST_PROCESS_TXT*/, 0);
 	NeoDecodeText(0, nNeoTextROMSize[nNeoActiveSlot], NeoTextROM[nNeoActiveSlot], NeoTextROM[nNeoActiveSlot]);
 
 	// Decode sprite data
 	NeoDecodeSprites(NeoSpriteROM[nNeoActiveSlot], nSpriteSize[nNeoActiveSlot]);
-
+   }
 	if (pInfo->nADPCMANum) {
 		char* pName;
 		struct BurnRomInfo ri;
@@ -788,6 +956,11 @@ static INT32 LoadRoms()
 
 		YM2610ADPCMAROM[nNeoActiveSlot]	= (UINT8*)BurnMalloc(nYM2610ADPCMASize[nNeoActiveSlot]);
 		if (YM2610ADPCMAROM[nNeoActiveSlot] == NULL) {
+#ifdef WII_VM
+         printf("Loading YM2610ADPCMAROM failed. Not enough memory! exiting...\r");
+         sleep(5);
+         exit(0);
+#endif
 			return 1;
 		}
 
@@ -808,6 +981,9 @@ static INT32 LoadRoms()
 			pADPCMData = YM2610ADPCMAROM[nNeoActiveSlot] + 0x200000;
  		}
 
+#ifdef WII_VM
+        if(!BurnUseCache)
+#endif
 		NeoLoadADPCM(pInfo->nADPCMOffset, pInfo->nADPCMANum, pADPCMData);
 
 		if (BurnDrvGetHardwareCode() & HARDWARE_SNK_SWAPV) {
@@ -822,11 +998,25 @@ static INT32 LoadRoms()
 	if (pInfo->nADPCMBNum) {
 		YM2610ADPCMBROM[nNeoActiveSlot]	= (UINT8*)BurnMalloc(nYM2610ADPCMBSize[nNeoActiveSlot]);
 		if (YM2610ADPCMBROM[nNeoActiveSlot] == NULL) {
+#ifdef WII_VM
+         printf("Loading YM2610ADPCMBROM failed. Not enough memory! exiting...\r");
+         sleep(5);
+         exit(0);
+#endif
 			return 1;
 		}
 
-		NeoLoadADPCM(pInfo->nADPCMOffset + pInfo->nADPCMANum, pInfo->nADPCMBNum, YM2610ADPCMBROM[nNeoActiveSlot]);
+#ifdef WII_VM
+        if(BurnUseCache)
+            ReadSoundCache(YM2610ADPCMBROM[nNeoActiveSlot]);
+        else
+#endif
+        NeoLoadADPCM(pInfo->nADPCMOffset + pInfo->nADPCMANum, pInfo->nADPCMBNum, YM2610ADPCMBROM[nNeoActiveSlot]);
 	} else {
+#ifdef WII_VM
+        if(BurnUseCache)
+            ReadSoundCache(YM2610ADPCMAROM[nNeoActiveSlot]);
+#endif
 		YM2610ADPCMBROM[nNeoActiveSlot] = YM2610ADPCMAROM[nNeoActiveSlot];
 		nYM2610ADPCMBSize[nNeoActiveSlot] = nYM2610ADPCMASize[nNeoActiveSlot];
 	}
@@ -4421,6 +4611,14 @@ INT32 NeoExit()
 	if (nNeoSystemType & NEO_SYS_CART) {
 
 		// Deallocate all used memory
+#ifdef WII_VM
+        if(BurnUseCache)
+        {
+            NeoSpriteROM_WIIVM = NULL;
+            VM_Deinit();
+            VM_InvalidateAll();
+        }
+#endif
 
 		for (nNeoActiveSlot = 0; nNeoActiveSlot < MAX_SLOT; nNeoActiveSlot++) {
 
