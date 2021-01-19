@@ -31,9 +31,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/cache-devkitpro
-          key: ${{ runner.os }}-cache-devkitpro
+          key: ${{ runner.os }}-cache-devkitpro-2
 
-      - name: Download devkitPPC r30, libogc 1.8.19, bin2s and elf2dol
+      - name: Download devkitPPC r29, libogc 1.8.19, bin2s and elf2dol
         if: steps.cache-devkitpro.outputs.cache-hit != 'true'
         # general-tools is needed for bin2s and gamecube-tools is needed for elf2dol
         run: | 
