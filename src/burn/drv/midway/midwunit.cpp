@@ -1,20 +1,10 @@
 // midway wolf unit
 
-// bugs due to tms34010:
-//  1: wwfmania crashes shortly after booting.  missing raster ops in tms34010?
-//  2: openice goes bonkers on game start, cpu players wont move
-//     plus writes garbage to cmos
-//  3: nbahangt, missing video objects
-//
-// easy:
-//  4: figure out why last line doesn't always render in rampgwt
-//    3: answer, screen is offset by -1 line
-
 #include "tiles_generic.h"
 #include "midwunit.h"
 #include "midwayic.h"
 #include "dcs2k.h"
-#include "tms34010_intf.h"
+#include "tms34_intf.h"
 #include <stddef.h>
 
 static UINT8 *AllMem;
@@ -305,12 +295,12 @@ void WolfSoundWrite(UINT32 address, UINT16 value)
 	Dcs2kRun(20);
 }
 
-static void WolfUnitToShift(UINT32 address, void *dst)
+static void WolfUnitToShift(UINT32 address, UINT16 *dst)
 {
 	memcpy(dst, &DrvVRAM16[(address >> 3)], 4096/2);
 }
 
-static void WolfUnitFromShift(UINT32 address, void *src)
+static void WolfUnitFromShift(UINT32 address, UINT16 *src)
 {
 	memcpy(&DrvVRAM16[(address >> 3)], src, 4096/2);
 }
@@ -321,6 +311,17 @@ static INT32 ScanlineRender(INT32 line, TMS34010Display *info)
 	if (!pBurnDraw)
 		return 0;
 
+#if 0
+	if (line == 0x15) {
+		bprintf(0, _T("ENAB %d\n"), info->enabled);
+		bprintf(0, _T("he %d\n"), info->heblnk);
+		bprintf(0, _T("hs %d\n"), info->hsblnk);
+		bprintf(0, _T("ve %d\n"), info->veblnk);
+		bprintf(0, _T("vs %d\n"), info->vsblnk);
+		bprintf(0, _T("vt %d\n"), info->vtotal);
+		bprintf(0, _T("ht %d\n"), info->htotal);
+	}
+#endif
 	line -= 0x14; // offset
 
 	INT32 nHeight = nScreenHeight;
@@ -438,8 +439,8 @@ INT32 WolfUnitInit()
     MidwaySerialPicInit(528);
 	MidwaySerialPicReset();
 
-    TMS34010MapReset();
     TMS34010Init();
+	TMS34010SetPixClock(8000000, 1);
 	TMS34010TimerSetCB(TUnitDmaCallback);
 
     TMS34010SetScanlineRender(ScanlineRender);
@@ -526,6 +527,7 @@ INT32 WolfUnitFrame()
 
 	for (INT32 i = 0; i < nInterleave; i++) {
 		CPU_RUN(0, TMS34010);
+		CPU_RUN(0, TMS34010); // finish line incase dma op ended line early
 
 		TMS34010GenerateScanline(i);
 
@@ -557,7 +559,9 @@ INT32 WolfUnitExit()
 {
 	Dcs2kExit();
 	BurnFree(AllMem);
-	
+
+	TMS34010Exit();
+
 	GenericTilesExit();
 
 	wwfmania = 0;
@@ -569,6 +573,8 @@ INT32 WolfUnitDraw()
 {
 	if (nWolfUnitRecalc) {
 		WolfUnitPalRecalc();
+		memcpy(DrvPaletteB2, DrvPaletteB, 0x8000 * sizeof(UINT32)); // update palette buffer
+
 		nWolfUnitRecalc = 0;
 	}
 
