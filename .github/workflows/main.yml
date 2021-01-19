@@ -38,8 +38,9 @@ jobs:
         # general-tools is needed for bin2s and gamecube-tools is needed for elf2dol
         run: | 
           mkdir ~/cache-devkitpro && cd ~/cache-devkitpro
-          wget "https://wii.leseratte10.de/devkitPro/file.php/devkitPPC-r30-1-linux.pkg.tar.xz"
+          wget "https://wii.leseratte10.de/devkitPro/file.php/devkitPPC_r29-1-x86-64-linux.tar.bz2"
           wget "https://wii.leseratte10.de/devkitPro/file.php/libogc-1.8.19-1-any.pkg.tar.xz"
+          wget "https://wii.leseratte10.de/devkitPro/file.php/libfat-ogc-1.1.3-2-any.pkg.tar.xz"
           wget "https://wii.leseratte10.de/devkitPro/file.php/general-tools-1.2.0-1-linux.pkg.tar.xz"
           wget "https://wii.leseratte10.de/devkitPro/file.php/gamecube-tools-1.0.2-1-linux.pkg.tar.xz"
 
@@ -47,8 +48,10 @@ jobs:
         # general-tools is needed for bin2s and gamecube-tools is needed for elf2dol
         run: | 
           cd ~/
-          tar -xf cache-devkitpro/devkitPPC-r30-1-linux.pkg.tar.xz opt/devkitpro/devkitPPC --strip-components=1
+          mkdir devkitpro
+          tar -xf cache-devkitpro/devkitPPC_r29-1-x86-64-linux.tar.bz2 -C devkitpro
           tar -xf cache-devkitpro/libogc-1.8.19-1-any.pkg.tar.xz opt/devkitpro/libogc --strip-components=1
+          tar -xf cache-devkitpro/libfat-ogc-1.1.3-2-any.pkg.tar.xz opt/devkitpro/libogc --strip-components=1
           tar -xf cache-devkitpro/general-tools-1.2.0-1-linux.pkg.tar.xz opt/devkitpro/tools/bin/bin2s --strip-components=1
           cp devkitpro/tools/bin/bin2s devkitpro/devkitPPC/bin/bin2s
           tar -xf cache-devkitpro/gamecube-tools-1.0.2-1-linux.pkg.tar.xz opt/devkitpro/tools/bin/elf2dol --strip-components=1
@@ -77,8 +80,8 @@ jobs:
       - name: Compile core
         run: |
           cd ${GITHUB_WORKSPACE}/src/burner/libretro
-          make platform="wii" -j7 generate-files
-          make platform="wii" -j7
+          make platform="wii" -j3 generate-files
+          make platform="wii" -j3
       - name: Compile binaries
         run: |
           cd ~/
