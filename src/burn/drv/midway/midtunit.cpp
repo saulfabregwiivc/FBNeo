@@ -1,10 +1,8 @@
-// todo:
-//   NBAJAM & NBA JAM TE: resets in intro - CPU core?
-//   JDREDDP - sound
+// midway t unit
 
 #include "tiles_generic.h"
 #include "midtunit.h"
-#include "tms34010_intf.h"
+#include "tms34_intf.h"
 #include "m6809_intf.h"
 #include "burn_ym2151.h"
 #include "dcs2k.h"
@@ -36,9 +34,14 @@ UINT8 nTUnitRecalc;
 UINT8 nTUnitJoy1[32];
 UINT8 nTUnitJoy2[32];
 UINT8 nTUnitJoy3[32];
+UINT8 nTServMode[1];
 UINT8 nTUnitDSW[2];
 UINT8 nTUnitReset = 0;
 static UINT32 DrvInputs[4];
+static INT32 ServMode;
+static INT32 lastServMode;
+
+static INT32 nExtraCycles = 0;
 
 static bool bGfxRomLarge = false;
 static UINT32 nGfxBankOffset[2] = { 0x000000, 0x400000 };
@@ -110,7 +113,7 @@ static INT32 MemIndex()
 	DrvSoundProgRAMProt = Next;		Next += 0x000100 * sizeof(UINT8);
 	DrvPalette	= Next;				Next += 0x20000 * sizeof(UINT8);
 	DrvPaletteB	= (UINT32*)Next;	Next += 0x8000 * sizeof(UINT32);
-	DrvPaletteB2	= (UINT32*)Next;	Next += 0x8000 * sizeof(UINT32);
+	DrvPaletteB2= (UINT32*)Next;	Next += 0x8000 * sizeof(UINT32);
 	DrvVRAM		= Next;				Next += TOBYTE(0x400000) * sizeof(UINT16);
 	DrvVRAM16	= (UINT16*)DrvVRAM;
 
@@ -401,12 +404,12 @@ static INT32 LoadSoundBanksNbajam()
 	return 0;
 }
 
-static void TUnitToShift(UINT32 address, void *dst)
+static void TUnitToShift(UINT32 address, UINT16 *dst)
 {
 	memcpy(dst, &DrvVRAM16[(address >> 3)], 4096/2);
 }
 
-static void TUnitFromShift(UINT32 address, void *src)
+static void TUnitFromShift(UINT32 address, UINT16 *src)
 {
 	memcpy(&DrvVRAM16[(address >> 3)], src, 4096/2);
 }
@@ -444,6 +447,8 @@ static void TUnitDoReset()
 	JdreddpProtTable = NULL;
 
 	DrvFakeSound = 0;
+
+	nExtraCycles = 0;
 }
 
 static UINT16 TUnitVramRead(UINT32 address)
@@ -499,6 +504,17 @@ static INT32 ScanlineRender(INT32 line, TMS34010Display *info)
 {
 	if (!pBurnDraw)
 		return 0;
+#if 0
+	if (line == 0x15) {
+		bprintf(0, _T("ENAB %d\n"), info->enabled);
+		bprintf(0, _T("he %d\n"), info->heblnk);
+		bprintf(0, _T("hs %d\n"), info->hsblnk);
+		bprintf(0, _T("ve %d\n"), info->veblnk);
+		bprintf(0, _T("vs %d\n"), info->vsblnk);
+		bprintf(0, _T("vt %d\n"), info->vtotal);
+		bprintf(0, _T("ht %d\n"), info->htotal);
+	}
+#endif
 
 	line -= 0x14; // offset
 
@@ -512,8 +528,17 @@ static INT32 ScanlineRender(INT32 line, TMS34010Display *info)
 	INT32 col = info->coladdr << 1;
 	UINT16 *dest = (UINT16*) pTransDraw + (line * nScreenWidth);
 
-	const INT32 heblnk = info->heblnk;
-	const INT32 hsblnk = info->hsblnk * 2; // T-Unit is 2 pixels per clock
+	INT32 heblnk = info->heblnk; // 100
+	INT32 hsblnk = info->hsblnk; // 500
+
+	if (!info->enabled) heblnk = hsblnk; // blank line!
+
+	if ((hsblnk - heblnk) < nScreenWidth) {
+		for (INT32 x = 0; x < nScreenWidth; x++) {
+			dest[x] = 0;
+		}
+	}
+
 	for (INT32 x = heblnk; x < hsblnk; x++) {
 		if ((x - heblnk) >= nScreenWidth) break;
 		dest[x - heblnk] = BURN_ENDIAN_SWAP_INT16(src[col++ & 0x1FF] & BURN_ENDIAN_SWAP_INT16(0x7FFF));
@@ -993,8 +1018,8 @@ INT32 TUnitInit()
 	nRet = LoadGfxBanks();
 	if (nRet != 0) return 1;
 
-	TMS34010MapReset();
 	TMS34010Init();
+	TMS34010SetPixClock(4000000, 2);
 	TMS34010TimerSetCB(TUnitDmaCallback);
 
 	TMS34010SetScanlineRender(ScanlineRender);
@@ -1134,6 +1159,9 @@ INT32 TUnitInit()
 
 	GenericTilesInit();
 
+	ServMode = 0;
+	lastServMode = 0;
+
 	TUnitDoReset();
 
 	return 0;
@@ -1141,6 +1169,14 @@ INT32 TUnitInit()
 
 static void MakeInputs()
 {
+	// Service mode toggle
+	if (nTServMode[0] && lastServMode == 0) {
+		ServMode ^= 1;
+	}
+	lastServMode = nTServMode[0];
+	nTUnitJoy2[4] = ServMode;
+	// end service mode toggle
+
 	DrvInputs[0] = 0;
 	DrvInputs[1] = 0;
 	DrvInputs[2] = 0;
@@ -1168,6 +1204,8 @@ INT32 TUnitExit()
 		Dcs2kExit();
 	}
 
+	TMS34010Exit();
+
 	GenericTilesExit();
 
 	TUnitIsMK = 0;
@@ -1187,6 +1225,8 @@ INT32 TUnitDraw()
 {
 	if (nTUnitRecalc) {
 		TUnitPalRecalc();
+		memcpy(DrvPaletteB2, DrvPaletteB, 0x8000 * sizeof(UINT32)); // update palette buffer
+
 		nTUnitRecalc = 0;
 	}
 
@@ -1213,9 +1253,9 @@ INT32 TUnitFrame()
 
 	INT32 nInterleave = 288;
 	INT32 nCyclesTotal[2] = { (INT32)(50000000/8/54.71), (INT32)(2000000 / 54.71) };
-	INT32 nCyclesDone[2] = { 0, 0 };
+	INT32 nCyclesDone[2] = { nExtraCycles, 0 };
 	INT32 nSoundBufferPos = 0;
-	
+
 	if (nSoundType == SOUND_DCS) {
 		nCyclesTotal[1] = (INT32)(10000000 / 54.71);
 		Dcs2kNewFrame();
@@ -1225,6 +1265,7 @@ INT32 TUnitFrame()
 
 	for (INT32 i = 0; i < nInterleave; i++) {
 		CPU_RUN(0, TMS34010);
+		CPU_RUN(0, TMS34010); // finish line incase dma op ended line early
 
 		TMS34010GenerateScanline(i);
 
@@ -1267,7 +1308,9 @@ INT32 TUnitFrame()
 			Dcs2kRender(pBurnSoundOut, nBurnSoundLen);
 		}
 	}
-	
+
+	nExtraCycles = TMS34010TotalCycles() - nCyclesTotal[0];
+
 	if (nSoundType == SOUND_ADPCM) M6809Close();
 
 	if (pBurnDraw) {
@@ -1307,6 +1350,8 @@ INT32 TUnitScan(INT32 nAction, INT32 *pnMin)
 			Dcs2kScan(nAction, pnMin);
 		}
 
+		BurnRandomScan(nAction);
+
 		SCAN_VAR(nVideoBank);
 		SCAN_VAR(nTUnitCtrl);
 		SCAN_VAR(nGfxBankOffset);
@@ -1319,6 +1364,10 @@ INT32 TUnitScan(INT32 nAction, INT32 *pnMin)
 		SCAN_VAR(JdreddpProtIndex);
 		SCAN_VAR(JdreddpProtMax);
 		SCAN_VAR(JdreddpProtTable);
+
+		SCAN_VAR(nExtraCycles);
+		SCAN_VAR(ServMode);
+		SCAN_VAR(lastServMode);
 	}
 
 	if (nAction & ACB_NVRAM) {
