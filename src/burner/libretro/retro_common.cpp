@@ -78,6 +78,9 @@ INT32 g_audio_samplerate = 48000;
 UINT32 nMemcardMode = 0;
 UINT8 *diag_input;
 neo_geo_modes g_opt_neo_geo_mode = NEO_GEO_MODE_MVS;
+#ifdef WII_VM
+bool is_large_game = false;
+#endif
 
 #ifdef USE_CYCLONE
 // 0 - c68k, 1 - m68k
