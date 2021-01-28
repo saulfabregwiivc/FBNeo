@@ -625,12 +625,12 @@ static void FUNCTIONNAME(BPP,XZOOM,CLIP,OPACITY)()
 #ifdef WII_VM
                         if(BurnUseCache)
                         {
-                            // NeoSpriteROM fixed size is 2000000 (32MB) and contains 0x40000 tiles.
-                            // When tile is beyond 0x40000 use NeoSpriteROM_WIIVM instead.
-                            if(nTileNumber < 0x40000)
+                            // NeoSpriteROM fixed size is 25MB and contains 0x32000 tiles of 128 bytes.
+                            // When tile is beyond 0x32000 use NeoSpriteROM_WIIVM instead.
+                            if(nTileNumber < 0x32000)
                                 pTileData = (UINT32*)(NeoSpriteROMActive + (nTileNumber << 7));
                             else
-                                pTileData = (UINT32*)&NeoSpriteROM_WIIVM[(nTileNumber - 0x40000)<< 7];
+                                pTileData = (UINT32*)&NeoSpriteROM_WIIVM[(nTileNumber - 0x32000)<< 7];
                         }
                         else
 #endif

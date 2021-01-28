@@ -560,19 +560,13 @@ static INT32 InitCache(void)
 	if(BurnUseCache)
 	{
 		char txt[128];
-		int SpriteRamSize = 32*MB;
-		int SpriteVmSize = nSpriteSize[nNeoActiveSlot] - 32*MB;
+		int SpriteRamSize = 25*MB;
+		int SpriteVmSize = nSpriteSize[nNeoActiveSlot] - 25*MB;
 		int RomCache = 1*MB;
 
 		CacheSize = ( (SpriteRamSize + SpriteVmSize + nYM2610ADPCMASize[nNeoActiveSlot]) / (1*MB) );
 
-		// Reduce to minimum for these very large games
-		if (!strcmp(BurnDrvGetTextA(DRV_NAME), "garou") || !strcmp(BurnDrvGetTextA(DRV_NAME), "mslug3") || !strcmp(BurnDrvGetTextA(DRV_NAME), "kof2000") || !strcmp(BurnDrvGetTextA(DRV_NAME), "kof2003"))
-		{
-			RomCache = 512*KB;
-		}
-
-		NeoSpriteROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(32*MB);
+		NeoSpriteROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(25*MB);
 		NeoSpriteROM_WIIVM = (UINT8*)VM_Init(SpriteVmSize, RomCache);
 
 		get_cache_path(CacheDir);
@@ -592,7 +586,7 @@ static INT32 InitCache(void)
 		}
 
 		size_t bytesRead = 0;
-		UINT8 step = 32;
+		UINT8 step = 25;
 		float Progress;
 		float BarOffset = 1.0;
 		CacheRead = 0;
