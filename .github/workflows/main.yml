@@ -80,14 +80,22 @@ jobs:
       - name: Compile core
         run: |
           cd ${GITHUB_WORKSPACE}/src/burner/libretro
-          make target=neogeo generate-files
-          make platform=wii target=neogeo -j3
-          make target=cps1 generate-files
-          make platform=wii target=cps1 -j3
-          make target=cps2 generate-files
-          make platform=wii target=cps2 -j3
-          make target=cps3 generate-files
-          make platform=wii target=cps3 -j3
+          make target=neogeo platform=wii generate-files-clean
+          make target=neogeo platform=wii clean
+          make target=neogeo platform=wii generate-files
+          make target=neogeo platform=wii -j3
+          make target=cps1 platform=wii generate-files-clean
+          make target=cps1 platform=wii clean
+          make target=cps1 platform=wii generate-files
+          make target=cps1 platform=wii -j3
+          make target=cps2 platform=wii generate-files-clean
+          make target=cps2 platform=wii clean
+          make target=cps2 platform=wii generate-files
+          make target=cps2 platform=wii -j3
+          make target=cps3 platform=wii generate-files-clean
+          make target=cps3 platform=wii clean
+          make target=cps3 platform=wii generate-files
+          make target=cps3 platform=wii -j3
       - name: Compile binaries
         run: |
           cd ~/
