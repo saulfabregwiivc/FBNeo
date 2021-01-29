@@ -468,6 +468,7 @@ char* str_char_replace(char* destination, char c_find, char c_replace)
 	return destination;
 }
 
+#if !(defined(CPS1_ONLY) || defined(CPS2_ONLY) || defined(CPS3_ONLY))
 void set_neo_system_bios()
 {
 	if (g_opt_neo_geo_mode == NEO_GEO_MODE_DIPSWITCH)
@@ -533,6 +534,7 @@ void set_neo_system_bios()
 		}
 	}
 }
+#endif
 
 void evaluate_neogeo_bios_mode(const char* drvname)
 {

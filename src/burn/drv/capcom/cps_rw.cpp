@@ -119,6 +119,7 @@ static UINT8 CpsReadPort(const UINT32 ia)
 	}
 
 	if (Cps == 2) {
+#if !(defined(CPS1_ONLY) || defined(CPS3_ONLY))
 		// Used on CPS2 only I think
 		if (ia == 0x020) {
 			d = (UINT8)~Inp020;
@@ -170,6 +171,7 @@ static UINT8 CpsReadPort(const UINT32 ia)
 			}
 
 		}
+#endif        
 	} else {
 		// Board ID
 		if (ia == 0x100 + CpsBID[0]) {

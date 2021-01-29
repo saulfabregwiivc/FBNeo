@@ -190,48 +190,165 @@ FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR) \
 
 FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
-##############################################
-# Neo Geo Only
-##############################################
+ifeq ($(target),cps1)
 
-FBNEO_DEFINES  += -DNEOGEO_ONLY
-
-FBNEO_BURN_DRIVERS_DIRS := $(NEOGEO_DIR) \
-	$(FBNEO_BURN_DRIVERS_DIR)
-
-BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
-    $(FBNEO_BURN_DIR)/burn_led.cpp \
-    $(FBNEO_BURN_DIR)/burn_pal.cpp \
-    $(FBNEO_BURN_DIR)/burn_shift.cpp \
-    $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
-    $(FBNEO_BURN_DIR)/tiles_generic.cpp \
-    $(FBNEO_BURN_DIR)/vector.cpp
+    ##############################################
+    # CPS1 Only
+    ##############################################
     
-FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
-	$(FBNEO_BURN_DRIVERS_DIRS)
+    FBNEO_DEFINES += -DCPS1_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIR)
 
-FBNEO_CPU_DIRS := $(M68K_DIR) \
-	$(FBNEO_CPU_DIR)/z80
+    BURN_BLACKLIST += $(CAPCOM_DIR)/d_cps2.cpp \
+        $(CAPCOM_DIR)/cps2_crpt.cpp \
+        $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
+        $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
+        $(FBNEO_BURN_DIR)/tiles_generic.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+        
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
 
-FBNEO_INTERFACE_DIRS := 
+    FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR)/a68k \
+        $(M68K_DIR) \
+        $(FBNEO_CPU_DIR)/z80
 
-SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
-    $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
-    $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
-    $(FBNEO_CPU_DIR)/m68000_intf.cpp \
-    $(FBNEO_CPU_DIR)/z80_intf.cpp
+    FBNEO_INTERFACE_DIRS := 
 
-SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
-    $(FBNEO_BURN_DIR)/snd/fm.c \
-    $(FBNEO_BURN_DIR)/snd/ymdeltat.c
+    SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
+        $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+        $(FBNEO_BURN_DIR)/devices/timekpr.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2151.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2203.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm5205.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm6295.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp
 
-ifeq ($(platform), wii)
-    SOURCES_C += $(LIBRETRO_DIR)/wii_vm.c \
-		$(LIBRETRO_DIR)/wii_progressbar.c
-    SOURCES_S += $(FBNEO_BURN_DIR)/dsihandler.S
+    SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
+        $(FBNEO_BURN_DIR)/snd/fm.c \
+        $(FBNEO_BURN_DIR)/snd/ym2151.c \
+        $(FBNEO_BURN_DIR)/snd/ymdeltat.c
+
+else ifeq ($(target),cps2)
+
+    ##############################################
+    # CPS2 Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DCPS2_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIR)
+
+    BURN_BLACKLIST += $(CAPCOM_DIR)/d_cps1.cpp \
+        $(CAPCOM_DIR)/fcrash_snd.cpp \
+        $(CAPCOM_DIR)/kabuki.cpp \
+        $(CAPCOM_DIR)/sf2mdt_snd.cpp \
+        $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
+        $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
+        $(FBNEO_BURN_DIR)/tiles_generic.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+        
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR)/a68k \
+        $(M68K_DIR) \
+        $(FBNEO_CPU_DIR)/z80
+
+    FBNEO_INTERFACE_DIRS := 
+
+    SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
+        $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2151.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm6295.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp
+        
+    SOURCES_C := $(FBNEO_BURN_DIR)/snd/ym2151.c
+
+else ifeq ($(target),cps3)
+
+    ##############################################
+    # CPS3 Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DCPS3_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(CPS3_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
+        $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
+        $(FBNEO_BURN_DIR)/tiles_generic.cpp \
+        $(FBNEO_BURN_DIR)/timer.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+        
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR)/sh2
+
+    FBNEO_INTERFACE_DIRS := 
+
+    SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp
+
+else ifeq ($(target),neogeo)
+
+    ##############################################
+    # Neo Geo Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DNEOGEO_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(NEOGEO_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
+        $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/tilemap_generic.cpp \
+        $(FBNEO_BURN_DIR)/tiles_generic.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+        
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := $(M68K_DIR) \
+        $(FBNEO_CPU_DIR)/z80
+
+    FBNEO_INTERFACE_DIRS := 
+
+    SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+        $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp
+
+    SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
+        $(FBNEO_BURN_DIR)/snd/fm.c \
+        $(FBNEO_BURN_DIR)/snd/ymdeltat.c
+
+    ifeq ($(platform), wii)
+        SOURCES_C += $(LIBRETRO_DIR)/wii_vm.c \
+            $(LIBRETRO_DIR)/wii_progressbar.c
+        SOURCES_S += $(FBNEO_BURN_DIR)/dsihandler.S
+    endif
+
 endif
-##############################################    
-
 
 FBNEO_SRC_DIRS := $(FBNEO_BURNER_DIR) $(FBNEO_BURN_DIRS) $(FBNEO_CPU_DIRS) $(FBNEO_BURNER_DIRS) $(FBNEO_INTERFACE_DIRS)
 

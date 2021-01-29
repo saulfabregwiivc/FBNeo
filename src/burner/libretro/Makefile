@@ -66,7 +66,17 @@ ifneq (, $(findstring clang,$(CXX)))
 endif
 
 # TARGET
-TARGET_NAME := fbneo_neogeo
+ifeq ($(target),cps1)
+   TARGET_NAME := fbneo_cps1
+else ifeq ($(target),cps2)
+   TARGET_NAME := fbneo_cps2
+else ifeq ($(target),cps3)
+   TARGET_NAME := fbneo_cps3
+else ifeq ($(target),neogeo)
+   TARGET_NAME := fbneo_neogeo
+else
+   TARGET_NAME := fbneo
+endif
 
 # Unix
 ifneq (,$(findstring unix,$(platform)))
@@ -355,11 +365,26 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 
 	# Nintendo Wii
 	else ifneq (,$(findstring wii,$(platform)))
-		PLATFORM_DEFINES += -DWII_VM -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
+		PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
+		PLATFORM_DEFINES += -DWII_VM
         CFLAGS += -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc/machine
 		NO_MD = 1
-		NO_CAPCOM = 1
-		NO_NEOGEO = 0
+        ifeq ($(target),cps1)
+            NO_CAPCOM = 0
+            NO_NEOGEO = 1
+        else ifeq ($(target),cps2)
+            NO_CAPCOM = 0
+            NO_NEOGEO = 1
+        else ifeq ($(target),cps3)
+            NO_CAPCOM = 0
+            NO_NEOGEO = 1
+        else ifeq ($(target),neogeo)
+            NO_CAPCOM = 1
+            NO_NEOGEO = 0
+        else
+            NO_CAPCOM = 1
+            NO_NEOGEO = 1
+        endif
 		NO_PCE = 1
         INCLUDE_7Z_SUPPORT = 0
 
@@ -368,7 +393,7 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 		PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
 		NO_MD = 1
 		NO_CAPCOM = 1
-		NO_NEOGEO = 0
+		NO_NEOGEO = 1
 		NO_PCE = 1
 	endif
 
@@ -606,7 +631,13 @@ generate-files:
 	@mkdir -p $(FBNEO_GENERATED_DIR) 2>/dev/null || /bin/true
 	@echo "Generating $(FBNEO_GENERATED_DIR)/driverlist.h..."
 	@echo ""
-	$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(FBNEO_BURN_DRIVERS_DIRS)
+    ifeq ($(target),cps1)
+		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(CAPCOM_DIR)/d_cps1.cpp
+    else ifeq ($(target),cps2)
+		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(CAPCOM_DIR)/d_cps2.cpp
+    else
+		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(FBNEO_BURN_DRIVERS_DIRS)
+    endif
 	@echo ""
 	@echo "Generating $(FBNEO_GENERATED_DIR)/neo_sprite_func.h..."
 	@echo ""
