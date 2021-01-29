@@ -304,6 +304,12 @@ else ifeq ($(target),cps3)
     FBNEO_INTERFACE_DIRS := 
 
     SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp
+    
+    ifeq ($(platform), wii)
+        SOURCES_C += $(LIBRETRO_DIR)/wii_vm.c \
+            $(LIBRETRO_DIR)/wii_progressbar.c
+        SOURCES_S += $(FBNEO_BURN_DIR)/dsihandler.S
+    endif
 
 else ifeq ($(target),neogeo)
 

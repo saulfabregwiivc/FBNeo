@@ -2,6 +2,10 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef WII_VM
+#include <unistd.h> // sleep
+#include <dirent.h>
+#endif
 
 #include "libretro.h"
 #include "burner.h"
@@ -788,13 +792,34 @@ static void locate_archive(std::vector<located_archive>& pathList, const char* c
 }
 
 #ifdef WII_VM
-/* Gets cache directory when using VM for large games. */
-void get_cache_path(char *path)
+/* Gets cache directory when using VM for large NeoGeo games. */
+void get_neogeo_cache_path(char *path)
 {
    const char *system_directory_c = NULL;
    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_directory_c);
 
    sprintf(path, "%s/cache/%s_cache/", system_directory_c, BurnDrvGetTextA(DRV_NAME));
+}
+
+/* Gets the cache directory containing all RomUser_[parent name], RomGame_[parent name] and RomGame_D_[parent name] files. */
+void get_cps3_cache_path(char *path)
+{
+   const char *system_directory_c = NULL;
+   environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_directory_c);
+
+   sprintf(path, "%s/cache/", system_directory_c);
+
+   DIR *dir = opendir(path);
+   if (dir)
+   {
+      closedir(dir);
+   }
+   else
+   {
+      printf("\nNo cache directory found!\nPlease create a 'cache' folder in %s", system_directory_c);
+      sleep(8);
+      exit(0);
+   }
 }
 #endif
 

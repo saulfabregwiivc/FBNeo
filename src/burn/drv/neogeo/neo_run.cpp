@@ -80,7 +80,7 @@
 #include "wii_vm.h"
 #include "wii_progressbar.h"
 
-extern void get_cache_path(char *path);
+extern void get_neogeo_cache_path(char *path);
 #endif
 
 // #undef USE_SPEEDHACKS
@@ -569,7 +569,7 @@ static INT32 InitCache(void)
 		NeoSpriteROM[nNeoActiveSlot] = (UINT8*)BurnMalloc(25*MB);
 		NeoSpriteROM_WIIVM = (UINT8*)VM_Init(SpriteVmSize, RomCache);
 
-		get_cache_path(CacheDir);
+		get_neogeo_cache_path(CacheDir);
 
 		 if (NeoSpriteROM[nNeoActiveSlot] == NULL) {
 		    return 1;

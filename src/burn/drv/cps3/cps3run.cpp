@@ -21,6 +21,28 @@ Port to FBA by OopsWare
 
 #include "cps3.h"
 #include "sh2_intf.h"
+#ifdef WII_VM
+#include "wii_vm.h"
+#include "wii_progressbar.h"
+bool BurnCreateCache = false;
+extern void get_cps3_cache_path(char *path);
+struct CacheInfo
+{
+   char* filename;
+   unsigned char* buffer;
+   UINT32 filesize;
+};
+enum
+{
+   WRITE,
+   READ,
+   SHOW
+};
+char CacheDir[1024];
+char ParentName[1024];
+FILE *BurnCacheFile;
+UINT32 CacheSize;
+#endif
 
 #define	BE_GFX		1
 #define BE_GFX_CRAM 0   // do not touch!
@@ -494,7 +516,9 @@ static INT32 MemIndex()
 	UINT8 *Next; Next = Mem;
 	RomBios 	= Next; Next += 0x0080000;
 
+#ifndef WII_VM
 	RomUser		= Next; Next += cps3_data_rom_size;	// 0x5000000;
+#endif
 	
 	RamStart	= Next;
 	
@@ -910,15 +934,20 @@ void __fastcall cps3RomWriteWord(UINT32 addr, UINT16 data)
 
 void __fastcall cps3RomWriteLong(UINT32 addr, UINT32 data)
 {
-//	bprintf(1, _T("Rom Attempt to write long value %8x to location %8x\n"), data, addr);
-	addr &= 0x00ffffff;
-	cps3_flash_write(&main_flash, addr, data);
-	
-	if ( main_flash.flash_mode == FM_NORMAL ) {
-		bprintf(1, _T("Rom Attempt to write long value %8x to location %8x\n"), data, addr);
-		*(UINT32 *)(RomGame + addr) = data;
-		*(UINT32 *)(RomGame_D + addr) = data ^ cps3_mask(addr + 0x06000000, cps3_key1, cps3_key2);
-	}
+#ifdef WII_VM
+	if(BurnCreateCache)
+#endif
+    {
+//      bprintf(1, _T("Rom Attempt to write long value %8x to location %8x\n"), data, addr);
+        addr &= 0x00ffffff;
+        cps3_flash_write(&main_flash, addr, data);
+        
+        if ( main_flash.flash_mode == FM_NORMAL ) {
+            bprintf(1, _T("Rom Attempt to write long value %8x to location %8x\n"), data, addr);
+            *(UINT32 *)(RomGame + addr) = data;
+            *(UINT32 *)(RomGame_D + addr) = data ^ cps3_mask(addr + 0x06000000, cps3_key1, cps3_key2);
+        }
+    }
 }
 
 UINT8 __fastcall cps3RomReadByteSpe(UINT32 addr)
@@ -1136,6 +1165,136 @@ static void be_to_le(UINT8 * p, INT32 size)
 		c = *(p+1);	*(p+1) = *(p+2);	*(p+2) = c;
 	}
 }
+#ifdef WII_VM
+bool CacheInit(UINT32 RomUser_size)
+{
+   UINT32 RomCache = 1*MB;
+   UINT32 PRG_size = 0;
+   char CacheName[1024];
+   const char *parentrom = BurnDrvGetTextA(DRV_PARENT);
+   const char *drvname   = BurnDrvGetTextA(DRV_NAME);
+
+   // Allocate virtual memory
+   RomUser = (UINT8 *)VM_Init(RomUser_size, RomCache);
+
+   // Retrieve the cache directory path
+   get_cps3_cache_path(CacheDir);
+
+   // Always use parent name for the cache file suffix
+   if (!parentrom)
+   {
+      if (strcmp(drvname, "jojo") == 0 || strcmp(drvname, "jojoba") == 0 || strcmp(drvname, "redearth") == 0 || strcmp(drvname, "sfiii") == 0 ||  strcmp(drvname, "sfiii2") == 0 || strcmp(drvname, "sfiii3") == 0)
+         sprintf(ParentName ,"%s", drvname);
+   }
+   else
+   {
+      sprintf(ParentName ,"%s", parentrom);
+   }
+
+   sprintf(CacheName ,"%sRomUser_%s", CacheDir, ParentName);
+   BurnCacheFile = fopen(CacheName, "rb");
+
+   // Check if we need to create the cache files
+   bool CreateCache = false;
+   if(!BurnCacheFile)
+   {
+      CreateCache = true;
+      size_t RomGame_size = (16*MB) + (16*MB); // sh-2 program roms RomGame + RomGame_D
+
+      if (!strcmp(ParentName, "redearth") || !strcmp(ParentName, "sfiii"))
+      {
+         PRG_size = 8*MB;
+      }
+      else
+      {
+         PRG_size = 16*MB;
+      }
+
+      CacheSize = ( (RomUser_size*2 + PRG_size + RomGame_size) / (1*MB) );
+      ProgressBar(-1.0, "Please wait, cache files will be written...");
+   }
+   else
+   {
+      CacheSize = ( (RomUser_size + (16*MB) + (16*MB)) / (1*MB) );
+      CreateCache = false;
+   }
+   fclose(BurnCacheFile);
+
+   return CreateCache;
+}
+
+int CacheHandle(struct CacheInfo* Cache, unsigned int CacheRead, const char* msg, int mode)
+{
+   UINT8 step = 0;
+   char CacheName[1024];
+   char txt[1024];
+   float Progress = 0.0;
+   float BarOffset = 1.0;
+
+   if(mode == SHOW)
+   {
+      if(msg)
+      {
+         snprintf(txt, sizeof(txt), msg);
+      }
+      Progress = ((float)CacheRead) / CacheSize  * 5.0;
+      ProgressBar(Progress - BarOffset, txt);
+      return 0;
+   }
+
+   int fileidx = 0;
+   UINT8* Rom;
+
+   // Read/Write the 3 cache files and show the progress bar
+   while(fileidx != 3)
+   {
+      if(fileidx)
+         CacheRead += step;
+
+      sprintf(CacheName ,"%s%s_%s", CacheDir, Cache[fileidx].filename, ParentName);
+
+      if(mode == WRITE)
+      {
+         BurnCacheFile = fopen(CacheName, "wb");
+      }
+      else if(mode == READ)
+      {
+         BurnCacheFile = fopen(CacheName, "rb");
+      }
+
+      step = Cache[fileidx].filesize;
+      Rom = Cache[fileidx].buffer;
+
+      // Read Rom... file in 1MB chunks in order to show progress.
+      for(int i = 0; i < step; i++)
+      {
+         if(mode == WRITE)
+         {
+            fwrite(Rom + (i*MB), 1*MB, 1, BurnCacheFile);
+            snprintf(txt, sizeof(txt), "Writing %s : %d/%d MB", CacheName, i, step);
+         }
+         else if(mode == READ)
+         {
+            fread(Rom + (i*MB), 1*MB, 1, BurnCacheFile);
+            snprintf(txt, sizeof(txt), "Reading %s : %d/%d MB", CacheName, i, step);
+         }
+         Progress = ((float)i + CacheRead) / CacheSize  * 5.0;
+         ProgressBar(Progress - BarOffset, txt);
+      }
+
+      snprintf(txt, sizeof(txt), "%s : %d/%d MB. Done.", CacheName, step, step);
+      ProgressBar(Progress - BarOffset, txt);
+      fclose(BurnCacheFile);
+
+      fileidx++;
+   }
+
+   if(Rom)
+      Rom = NULL;
+
+   return 0;
+}
+#endif
 
 INT32 cps3Init()
 {
@@ -1181,6 +1340,19 @@ INT32 cps3Init()
 #endif
 	cps3_decrypt_bios();
 
+#ifdef WII_VM
+	UINT32 CacheRead = 0;
+	BurnCreateCache = CacheInit(cps3_data_rom_size);
+
+struct CacheInfo Cache[] = {
+		{"RomUser", RomUser, (cps3_data_rom_size) / (1*MB) },
+		{"RomGame", RomGame, (16*MB) / (1*MB) },
+		{"RomGame_D", RomGame_D, (16*MB) / (1*MB) }
+};
+
+if(BurnCreateCache)
+#endif
+{
 	// load and decode sh-2 program roms
 	ii = 0;	offset = 0;
 	while (BurnDrvGetRomInfo(&pri, ii) == 0) {
@@ -1208,6 +1380,13 @@ INT32 cps3Init()
 	be_to_le( RomGame, 0x1000000 );
 #endif
 	cps3_decrypt_game();
+
+#ifdef WII_VM
+	INT32 PRG_size = offset;
+	UINT8 step = (cps3_data_rom_size)/(1*MB);
+	CacheRead += (offset)/(1*MB);
+	CacheHandle(Cache, CacheRead, "Loading sh-2 roms done.", SHOW);
+#endif
 	
 	// load graphic and sound roms
 	ii = 0;	offset = 0;
@@ -1226,10 +1405,23 @@ INT32 cps3Init()
 				offset += pri.nLen * 2;
 				ii += 2;
 			}
+#ifdef WII_VM
+			CacheRead = (offset + PRG_size)/(1*MB);
+			char txt[128];
+			snprintf(txt, sizeof(txt), "Loading Graphic and Sound in VM: %d/%d MB", CacheRead - (PRG_size/(1*MB)), step);
+			CacheHandle(Cache, CacheRead, txt, SHOW);
+#endif
 		} else {
 			ii++;
 		}
 	}
+}
+#ifdef WII_VM
+else // Load the cache files
+{
+	CacheHandle(Cache, CacheRead, "", READ);
+}
+#endif
 
 	{
 		Sh2Init(1);
@@ -1328,6 +1520,12 @@ INT32 cps3Init()
 	
 	pBurnDrvPalette = (UINT32*)Cps3CurPal;
 		
+#ifdef WII_VM
+	if(BurnCreateCache)
+	{
+		CacheHandle(Cache, CacheRead, "", WRITE);
+	}
+#endif
 	Cps3Reset();
 	return 0;
 }
@@ -1336,6 +1534,11 @@ INT32 cps3Exit()
 {
 	Sh2Exit();
 	
+#ifdef WII_VM
+	RomUser = NULL;
+	VM_Deinit();
+	VM_InvalidateAll();
+#endif
 	BurnFree(Mem);
 
 	cps3SndExit();	

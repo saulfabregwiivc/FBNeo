@@ -134,7 +134,11 @@ static const struct retro_core_option_definition var_fbneo_frameskip = {
 		{ "5", "Skip rendering of 5 frames out of 6" },
 		{ NULL, NULL },
 	},
+#if defined(CPS3_ONLY) && defined(WII_VM)
+	"1"
+#else
 	"0"
+#endif
 };
 static const struct retro_core_option_definition var_fbneo_frameskip_v2 = {
 	CORE_OPTION_NAME "-frameskip-v2",
