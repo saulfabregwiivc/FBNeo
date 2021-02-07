@@ -80,22 +80,13 @@ jobs:
       - name: Compile core
         run: |
           cd ${GITHUB_WORKSPACE}/src/burner/libretro
-          make target=neogeo platform=wii generate-files-clean
-          make target=neogeo platform=wii clean
-          make target=neogeo platform=wii generate-files
-          make target=neogeo platform=wii -j3
-          make target=cps1 platform=wii generate-files-clean
-          make target=cps1 platform=wii clean
-          make target=cps1 platform=wii generate-files
-          make target=cps1 platform=wii -j3
-          make target=cps2 platform=wii generate-files-clean
-          make target=cps2 platform=wii clean
-          make target=cps2 platform=wii generate-files
-          make target=cps2 platform=wii -j3
-          make target=cps3 platform=wii generate-files-clean
-          make target=cps3 platform=wii clean
-          make target=cps3 platform=wii generate-files
-          make target=cps3 platform=wii -j3
+          target=neogeo;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=cps1;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=cps2;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=cps3;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=cave;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=coleco;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          target=dataeast;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
       - name: Compile binaries
         run: |
           cd ~/
