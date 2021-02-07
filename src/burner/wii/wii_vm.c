@@ -16,7 +16,7 @@
 // maximum virtual memory size
 #define MAX_VM_SIZE      (256*1024*1024)
 // maximum physical memory size
-#define MAX_MEM_SIZE     (  64*1024*1024)
+#define MAX_MEM_SIZE     (64*1024*1024)
 // minimum physical memory size
 #define MIN_MEM_SIZE     (256*1024)
 // page size as defined by hardware
@@ -233,7 +233,7 @@ void* VM_Init(size_t VMSize, size_t MEMSize)
 	}
 
 	// initialize video to display the progressbar and messages
-	init_video();
+	vm_init_video();
 
 	// parameter checking
 	if (VMSize>MAX_VM_SIZE || MEMSize<MIN_MEM_SIZE || MEMSize>MAX_MEM_SIZE)

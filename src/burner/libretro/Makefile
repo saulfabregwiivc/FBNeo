@@ -74,6 +74,14 @@ else ifeq ($(target),cps3)
    TARGET_NAME := fbneo_cps3
 else ifeq ($(target),neogeo)
    TARGET_NAME := fbneo_neogeo
+else ifeq ($(target),cave)
+   TARGET_NAME := fbneo_cave
+else ifeq ($(target),atari)
+   TARGET_NAME := fbneo_atari
+else ifeq ($(target),coleco)
+   TARGET_NAME := fbneo_coleco
+else ifeq ($(target),dataeast)
+   TARGET_NAME := fbneo_dataeast
 else
    TARGET_NAME := fbneo
 endif

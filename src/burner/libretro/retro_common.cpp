@@ -9,6 +9,14 @@
 #define CORE_OPTION_NAME "fbneo_cps3"
 #elif defined(NEOGEO_ONLY)
 #define CORE_OPTION_NAME "fbneo_neogeo"
+#elif defined(CAVE_ONLY)
+#define CORE_OPTION_NAME "fbneo_cave"
+#elif defined(COLECO_ONLY)
+#define CORE_OPTION_NAME "fbneo_coleco"
+#elif defined(DATAEAST_ONLY)
+#define CORE_OPTION_NAME "fbneo_dataeast"
+#elif defined(ATARI_ONLY)
+#define CORE_OPTION_NAME "fbneo_atari"
 #else
 #define CORE_OPTION_NAME "fbneo"
 #endif
@@ -134,7 +142,7 @@ static const struct retro_core_option_definition var_fbneo_frameskip = {
 		{ "5", "Skip rendering of 5 frames out of 6" },
 		{ NULL, NULL },
 	},
-#if defined(CPS3_ONLY) && defined(WII_VM)
+#if defined(CPS3_ONLY) && defined(GEKKO)
 	"1"
 #else
 	"0"
@@ -472,7 +480,7 @@ char* str_char_replace(char* destination, char c_find, char c_replace)
 	return destination;
 }
 
-#if !(defined(CPS1_ONLY) || defined(CPS2_ONLY) || defined(CPS3_ONLY))
+#ifdef NEOGEO_ONLY
 void set_neo_system_bios()
 {
 	if (g_opt_neo_geo_mode == NEO_GEO_MODE_DIPSWITCH)

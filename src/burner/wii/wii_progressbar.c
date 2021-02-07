@@ -7,7 +7,8 @@
 static void *xfb = NULL;
 static GXRModeObj *rmode = NULL;
 
-void init_video()
+
+void vm_init_video()
 {
 	Mtx view;
 	Mtx model, modelview;
@@ -107,6 +108,7 @@ void init_video()
 
 	// Position cursor at row 13 and column 9
 	printf("\033[13;9H%");
+	printf("%9s \r");
 }
 
 void ProgressBar(float dec, const char *msg)
@@ -123,7 +125,7 @@ void ProgressBar(float dec, const char *msg)
 		GX_Color3f32(0.2f,0.2f,0.2f);			// Set The Color To Blue
 	GX_End();	
 
-// Progress rectangle, light green
+	// Progress rectangle, light green
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
 		GX_Position3f32(-1.0f, 0.1f, 0.0f);	// Top Left
 		GX_Color3f32(0.4f,1.0f,0.4f);			// Set The Color To Blue

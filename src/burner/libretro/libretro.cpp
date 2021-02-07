@@ -510,7 +510,7 @@ static bool apply_dipswitches_from_variables()
 		}
 	}
 
-#if !(defined(CPS1_ONLY) || defined(CPS2_ONLY) || defined(CPS3_ONLY))
+#ifdef NEOGEO_ONLY
 	// Override the NeoGeo bios DIP Switch by the main one (for the moment)
 	if (is_neogeo_game)
 		set_neo_system_bios();
@@ -978,7 +978,7 @@ static bool open_archive()
 		if (!available_mvs_bios && !available_aes_bios && !available_uni_bios)
 			HandleMessage(RETRO_LOG_WARN, "[FBNeo] NeoGeo BIOS missing ...\n");
 
-#if !(defined(CPS1_ONLY) || defined(CPS2_ONLY) || defined(CPS3_ONLY))
+#ifdef NEOGEO_ONLY
 		set_neo_system_bios();
 #endif
 		// if we have a least one type of bios, we will be able to skip the asia-s3.rom non optional bios
@@ -1115,7 +1115,11 @@ void retro_init()
 	retro_audio_buff_underrun  = false;
 
 	// Check RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK support
+#if defined(CPS3_ONLY) && defined(GEKKO)
+	bLibretroSupportsAudioBuffStatus = false;
+#else    
 	bLibretroSupportsAudioBuffStatus = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
+#endif
 }
 
 void retro_deinit()
@@ -1126,7 +1130,7 @@ void retro_deinit()
 
 void retro_reset()
 {
-#if !(defined(CPS1_ONLY) || defined(CPS2_ONLY) || defined(CPS3_ONLY))
+#ifdef NEOGEO_ONLY
 	// restore the NeoSystem because it was changed during the gameplay
 	if (is_neogeo_game)
 		set_neo_system_bios();

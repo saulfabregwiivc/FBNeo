@@ -515,11 +515,9 @@ static INT32 MemIndex()
 {
 	UINT8 *Next; Next = Mem;
 	RomBios 	= Next; Next += 0x0080000;
-
 #ifndef WII_VM
 	RomUser		= Next; Next += cps3_data_rom_size;	// 0x5000000;
 #endif
-	
 	RamStart	= Next;
 	
 	RomGame 	= Next; Next += 0x1000000;
@@ -1217,8 +1215,8 @@ bool CacheInit(UINT32 RomUser_size)
    {
       CacheSize = ( (RomUser_size + (16*MB) + (16*MB)) / (1*MB) );
       CreateCache = false;
+      fclose(BurnCacheFile);
    }
-   fclose(BurnCacheFile);
 
    return CreateCache;
 }
