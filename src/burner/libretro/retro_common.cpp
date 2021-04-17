@@ -17,6 +17,20 @@
 #define CORE_OPTION_NAME "fbneo_dataeast"
 #elif defined(ATARI_ONLY)
 #define CORE_OPTION_NAME "fbneo_atari"
+#elif defined(GALAXIAN_ONLY)
+#define CORE_OPTION_NAME "fbneo_galaxian"
+#elif defined(IREM_ONLY)
+#define CORE_OPTION_NAME "fbneo_irem"
+#elif defined(KONAMI_ONLY)
+#define CORE_OPTION_NAME "fbneo_konami"
+#elif defined(MEGADRIVE_ONLY)
+#define CORE_OPTION_NAME "fbneo_megadrive"
+#elif defined(MIDWAY_ONLY)
+#define CORE_OPTION_NAME "fbneo_midway"
+#elif defined(MSX_ONLY)
+#define CORE_OPTION_NAME "fbneo_msx"
+#elif defined(NES_ONLY)
+#define CORE_OPTION_NAME "fbneo_nes"
 #else
 #define CORE_OPTION_NAME "fbneo"
 #endif
@@ -142,11 +156,7 @@ static const struct retro_core_option_definition var_fbneo_frameskip = {
 		{ "5", "Skip rendering of 5 frames out of 6" },
 		{ NULL, NULL },
 	},
-#if defined(CPS3_ONLY) && defined(GEKKO)
-	"1"
-#else
 	"0"
-#endif
 };
 static const struct retro_core_option_definition var_fbneo_frameskip_v2 = {
 	CORE_OPTION_NAME "-frameskip-v2",

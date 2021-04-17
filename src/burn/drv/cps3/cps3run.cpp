@@ -25,7 +25,7 @@ Port to FBA by OopsWare
 #include "wii_vm.h"
 #include "wii_progressbar.h"
 bool BurnCreateCache = false;
-extern void get_cps3_cache_path(char *path);
+extern void get_cache_path(char *path);
 struct CacheInfo
 {
    char* filename;
@@ -1176,7 +1176,7 @@ bool CacheInit(UINT32 RomUser_size)
    RomUser = (UINT8 *)VM_Init(RomUser_size, RomCache);
 
    // Retrieve the cache directory path
-   get_cps3_cache_path(CacheDir);
+   get_cache_path(CacheDir);
 
    // Always use parent name for the cache file suffix
    if (!parentrom)

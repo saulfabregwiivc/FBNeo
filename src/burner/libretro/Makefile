@@ -82,6 +82,20 @@ else ifeq ($(target),coleco)
    TARGET_NAME := fbneo_coleco
 else ifeq ($(target),dataeast)
    TARGET_NAME := fbneo_dataeast
+else ifeq ($(target),galaxian)
+   TARGET_NAME := fbneo_galaxian
+else ifeq ($(target),irem)
+   TARGET_NAME := fbneo_irem
+else ifeq ($(target),konami)
+   TARGET_NAME := fbneo_konami
+else ifeq ($(target),megadrive)
+   TARGET_NAME := fbneo_megadrive
+else ifeq ($(target),midway)
+   TARGET_NAME := fbneo_midway
+else ifeq ($(target),msx)
+   TARGET_NAME := fbneo_msx
+else ifeq ($(target),nes)
+   TARGET_NAME := fbneo_nes
 else
    TARGET_NAME := fbneo
 endif
@@ -376,24 +390,21 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 		PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
 		PLATFORM_DEFINES += -DWII_VM
         CFLAGS += -I$(DEVKITPRO)/libogc/include -I$(DEVKITPRO)/libogc/include/ogc/machine
-		NO_MD = 1
+		NO_PCE = 1
+        NO_MD = 1
+        NO_NEOGEO = 1
+        NO_CAPCOM = 1
         ifeq ($(target),cps1)
             NO_CAPCOM = 0
-            NO_NEOGEO = 1
         else ifeq ($(target),cps2)
             NO_CAPCOM = 0
-            NO_NEOGEO = 1
         else ifeq ($(target),cps3)
             NO_CAPCOM = 0
-            NO_NEOGEO = 1
         else ifeq ($(target),neogeo)
-            NO_CAPCOM = 1
             NO_NEOGEO = 0
-        else
-            NO_CAPCOM = 1
-            NO_NEOGEO = 1
+        else ifeq ($(target),megadrive)
+            NO_MD = 0
         endif
-		NO_PCE = 1
         INCLUDE_7Z_SUPPORT = 0
 
 	# Nintendo Game Cube

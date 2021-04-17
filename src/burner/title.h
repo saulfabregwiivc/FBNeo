@@ -16,6 +16,20 @@
   #define APP_TITLE "FinalBurn Neo Coleco [DEBUG]"
  #elif defined(DATAEAST_ONLY)
   #define APP_TITLE "FinalBurn Neo DataEast [DEBUG]"
+ #elif defined(GALAXIAN_ONLY)
+  #define APP_TITLE "FinalBurn Neo Galaxian [DEBUG]"
+ #elif defined(IREM_ONLY)
+  #define APP_TITLE "FinalBurn Neo Irem [DEBUG]"
+ #elif defined(KONAMI_ONLY)
+  #define APP_TITLE "FinalBurn Neo Konami [DEBUG]"
+ #elif defined(MEGADRIVE_ONLY)
+  #define APP_TITLE "FinalBurn Neo Megadrive [DEBUG]"
+ #elif defined(MIDWAY_ONLY)
+  #define APP_TITLE "FinalBurn Neo Midway [DEBUG]"
+ #elif defined(MSX_ONLY)
+  #define APP_TITLE "FinalBurn Neo MSX [DEBUG]"
+ #elif defined(NES_ONLY)
+  #define APP_TITLE "FinalBurn Neo NES [DEBUG]"
  #else
   #define APP_TITLE "FinalBurn Neo [DEBUG]"
  #endif
@@ -36,6 +50,20 @@
   #define APP_TITLE "FinalBurn Neo Coleco"
  #elif defined(DATAEAST_ONLY)
   #define APP_TITLE "FinalBurn Neo DataEast"
+ #elif defined(GALAXIAN_ONLY)
+  #define APP_TITLE "FinalBurn Neo Galaxian"
+ #elif defined(IREM_ONLY)
+  #define APP_TITLE "FinalBurn Neo Irem"
+ #elif defined(KONAMI_ONLY)
+  #define APP_TITLE "FinalBurn Neo Konami"
+ #elif defined(MEGADRIVE_ONLY)
+  #define APP_TITLE "FinalBurn Neo Megadrive"
+ #elif defined(MIDWAY_ONLY)
+  #define APP_TITLE "FinalBurn Neo Midway"
+ #elif defined(MSX_ONLY)
+  #define APP_TITLE "FinalBurn Neo MSX"
+ #elif defined(NES_ONLY)
+  #define APP_TITLE "FinalBurn Neo NES"
  #else
   #define APP_TITLE "FinalBurn Neo"
  #endif

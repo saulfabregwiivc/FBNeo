@@ -802,7 +802,7 @@ void get_neogeo_cache_path(char *path)
 }
 
 /* Gets the cache directory containing all RomUser_[parent name], RomGame_[parent name] and RomGame_D_[parent name] files. */
-void get_cps3_cache_path(char *path)
+void get_cache_path(char *path)
 {
    const char *system_directory_c = NULL;
    environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_directory_c);
@@ -1115,11 +1115,7 @@ void retro_init()
 	retro_audio_buff_underrun  = false;
 
 	// Check RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK support
-#if defined(CPS3_ONLY) && defined(GEKKO)
-	bLibretroSupportsAudioBuffStatus = false;
-#else    
 	bLibretroSupportsAudioBuffStatus = environ_cb(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK, NULL);
-#endif
 }
 
 void retro_deinit()

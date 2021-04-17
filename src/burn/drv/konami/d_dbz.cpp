@@ -7,6 +7,28 @@
 #include "konamiic.h"
 #include "burn_ym2151.h"
 #include "msm6295.h"
+#ifdef WII_VM
+#include "wii_vm.h"
+#include "wii_progressbar.h"
+bool BurnCreateCache = false;
+extern void get_cache_path(char *path);
+struct CacheInfo
+{
+   char* filename;
+   UINT8** buffer;
+   UINT32 filesize;
+};
+enum
+{
+   WRITE,
+   READ,
+   SHOW
+};
+char CacheDir[1024];
+char ParentName[1024];
+FILE *BurnCacheFile;
+UINT32 CacheSize;
+#endif
 
 static UINT8 *AllMem;
 static UINT8 *MemEnd;
@@ -551,13 +573,16 @@ static INT32 MemIndex()
 	Drv68KROM		= Next; Next += 0x100000;
 	DrvZ80ROM		= Next; Next += 0x010000;
 
+#ifndef WII_VM
 	DrvGfxROM0		= Next; Next += 0x400000;
-	DrvGfxROMExp0	= Next; Next += 0x800000;
 	DrvGfxROM1		= Next; Next += 0x800000;
-	DrvGfxROMExp1	= Next; Next += 0x1000000;
 	DrvGfxROM2		= Next; Next += 0x400000;
-	DrvGfxROMExp2	= Next; Next += 0x800000;
 	DrvGfxROM3		= Next; Next += 0x400000;
+#endif
+
+	DrvGfxROMExp0	= Next; Next += 0x800000;
+	DrvGfxROMExp1	= Next; Next += 0x1000000;
+	DrvGfxROMExp2	= Next; Next += 0x800000;
 	DrvGfxROMExp3	= Next; Next += 0x800000;
 
 	MSM6295ROM		= Next;
@@ -686,6 +711,139 @@ static void dbz2_patch()
 	ROM[0xae8/2] = 0x4e71;    /* 0x005e */
 }
 
+#ifdef WII_VM
+bool CacheInit(struct CacheInfo* Cache, int nb_cached_ROM)
+{
+   UINT32 RomCache = 1*MB;
+   char CacheName[1024];
+   const char *parentrom = BurnDrvGetTextA(DRV_PARENT);
+   const char *drvname   = BurnDrvGetTextA(DRV_NAME);
+
+   UINT32 Cache_size = 0;
+   for (int i = 0; i < nb_cached_ROM; i++)
+      Cache_size += Cache[i].filesize * (1*MB);
+   
+   // Allocate virtual memory
+   UINT8 *cache = (UINT8 *)VM_Init(Cache_size, RomCache);
+   UINT32 offset = 0;
+   for (int i = 0; i < nb_cached_ROM; i++)
+   {
+      *Cache[i].buffer = cache + offset * (1*MB);
+      offset += Cache[i].filesize;
+   }
+
+   // Retrieve the cache directory path
+   get_cache_path(CacheDir);
+
+   // Always use parent name for the cache file suffix
+   if (!parentrom)
+   {
+      if (strcmp(drvname, "dbz") == 0 || strcmp(drvname, "dbz2") == 0) sprintf(ParentName ,"%s", drvname);
+   }
+   else
+   {
+      sprintf(ParentName ,"%s", parentrom);
+   }
+
+   sprintf(CacheName ,"%sGfxROM_%s", CacheDir, ParentName);
+   BurnCacheFile = fopen(CacheName, "rb");
+
+   // Check if we need to create the cache files
+   bool CreateCache = false;
+   if(!BurnCacheFile)
+   {
+      CreateCache = true;
+      CacheSize = ( Cache_size*2 / (1*MB) );
+      ProgressBar(-1.0, "Please wait, cache files will be written...");
+   }
+   else
+   {
+      CacheSize = ( Cache_size / (1*MB) );
+      CreateCache = false;
+      fclose(BurnCacheFile);
+   }
+
+   return CreateCache;
+}
+
+int CacheHandle(struct CacheInfo* Cache, int nb_cached_ROM, unsigned int CacheRead, const char* msg, int mode)
+{
+   UINT8 step = 0;
+   char CacheName[1024];
+   char txt[1024];
+   float Progress = 0.0;
+   float BarOffset = 1.0;
+
+   if(mode == SHOW)
+   {
+      if(msg)
+      {
+         snprintf(txt, sizeof(txt), msg);
+      }
+      Progress = ((float)CacheRead) / CacheSize  * 5.0;
+      ProgressBar(Progress - BarOffset, txt);
+      return 0;
+   }
+
+   sprintf(CacheName ,"%s%s_%s", CacheDir, Cache[0].filename, ParentName);
+
+   if(mode == WRITE)
+   {
+      BurnCacheFile = fopen(CacheName, "wb");
+   }
+   else if(mode == READ)
+   {
+      BurnCacheFile = fopen(CacheName, "rb");
+   }
+   
+   UINT32 Cache_size = 0;
+   for (int i = 0; i < nb_cached_ROM; i++)
+      Cache_size += Cache[i].filesize;
+
+   int fileidx = 0;
+   UINT8* Rom;
+   UINT32 offset = 0;
+
+   // Read/Write the cache file and show the progress bar
+   while(fileidx != nb_cached_ROM)
+   {
+      CacheRead += step;
+
+      step = Cache[fileidx].filesize;
+      Rom = *Cache[fileidx].buffer;
+
+      // Read Rom... file in 1MB chunks in order to show progress.
+      for(int i = 0; i < step; i++)
+      {
+         if(mode == WRITE)
+         {
+            fwrite(Rom + (i*MB), 1*MB, 1, BurnCacheFile);
+            snprintf(txt, sizeof(txt), "Writing %s : %d/%d MB", CacheName, offset + i, Cache_size);
+         }
+         else if(mode == READ)
+         {
+            fread(Rom + (i*MB), 1*MB, 1, BurnCacheFile);
+            snprintf(txt, sizeof(txt), "Reading %s : %d/%d MB", CacheName, offset + i, Cache_size);
+         }
+         Progress = ((float)i + CacheRead) / CacheSize  * 5.0;
+         ProgressBar(Progress - BarOffset, txt);
+      }
+
+      offset += step;
+      fileidx++;
+   }
+
+   snprintf(txt, sizeof(txt), "%s : %d/%d MB. Done.", CacheName, Cache_size, Cache_size);
+   ProgressBar(Progress - BarOffset, txt);
+   fclose(BurnCacheFile);
+
+   if(Rom)
+      Rom = NULL;
+
+   return 0;
+}
+#endif
+
 static INT32 DrvInit(INT32 nGame)
 {
 	GenericTilesInit();
@@ -697,38 +855,130 @@ static INT32 DrvInit(INT32 nGame)
 	memset(AllMem, 0, nLen);
 	MemIndex();
 
+#ifdef WII_VM
+	UINT32 CacheRead = 0;
+struct CacheInfo Cache[] = {
+		{"GfxROM", &DrvGfxROM0, (0x400000) / (1*MB)},
+		{"GfxROM", &DrvGfxROM1, (0x800000) / (1*MB)},
+		{"GfxROM", &DrvGfxROM2, (0x400000) / (1*MB)},
+		{"GfxROM", &DrvGfxROM3, (0x400000) / (1*MB)},
+};
+    int nb_cached_ROM = sizeof(Cache)/sizeof(*Cache);
+    UINT32 Cache_size = 0;
+    for (int i = 0; i < nb_cached_ROM; i++)
+        Cache_size += Cache[i].filesize;
+	BurnCreateCache = CacheInit(Cache, nb_cached_ROM);
+#endif
+
 	{
 		if (BurnLoadRom(Drv68KROM  + 0x000001,  0, 2)) return 1;
 		if (BurnLoadRom(Drv68KROM  + 0x000000,  1, 2)) return 1;
 
 		if (BurnLoadRom(DrvZ80ROM  + 0x000000,  2, 1)) return 1;
 
+#ifdef WII_VM
+        char txt[128];
+        if(BurnCreateCache)
+#endif
+        {
 		if (BurnLoadRomExt(DrvGfxROM0 + 0x000000,  3, 4, 2)) return 1;
+#ifdef WII_VM
+        CacheRead += Cache[0].filesize/2;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRomExt(DrvGfxROM0 + 0x000002,  4, 4, 2)) return 1;
-
+#ifdef WII_VM
+        CacheRead += Cache[0].filesize/2;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRomExt(DrvGfxROM1 + 0x000000,  5, 8, 2)) return 1;
+#ifdef WII_VM
+        CacheRead += Cache[1].filesize/4;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRomExt(DrvGfxROM1 + 0x000002,  6, 8, 2)) return 1;
+#ifdef WII_VM
+        CacheRead += Cache[1].filesize/4;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRomExt(DrvGfxROM1 + 0x000004,  7, 8, 2)) return 1;
+#ifdef WII_VM
+        CacheRead += Cache[1].filesize/4;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRomExt(DrvGfxROM1 + 0x000006,  8, 8, 2)) return 1;
-
+#ifdef WII_VM
+        CacheRead += Cache[1].filesize/4;
+        snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+        CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 		if (BurnLoadRom(DrvGfxROM2 + 0x000000,  9, 1)) return 1;
+        }
 
 		if (nGame != 2) // dbz, dbza
 		{
+#ifdef WII_VM
+            if(BurnCreateCache)
+#endif
+            {
+#ifdef WII_VM
+            CacheRead += Cache[2].filesize;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 			if (BurnLoadRom(DrvGfxROM3 + 0x000000, 10, 1)) return 1;
-
+#ifdef WII_VM
+            CacheRead += Cache[3].filesize;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
+            }
 			if (BurnLoadRom(DrvSndROM  + 0x000000, 11, 1)) return 1;
 		}
 		else // dbz2
 		{
+#ifdef WII_VM
+            if(BurnCreateCache)
+#endif
+            {
+#ifdef WII_VM
+            CacheRead += Cache[2].filesize/2;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 			if (BurnLoadRom(DrvGfxROM2 + 0x200000, 10, 1)) return 1;
-
+#ifdef WII_VM
+            CacheRead += Cache[2].filesize/2;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 			if (BurnLoadRom(DrvGfxROM3 + 0x000000, 11, 1)) return 1;
+#ifdef WII_VM
+            CacheRead += Cache[3].filesize/2;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
 			if (BurnLoadRom(DrvGfxROM3 + 0x200000, 12, 1)) return 1;
-
+#ifdef WII_VM
+            CacheRead += Cache[3].filesize/2;
+            snprintf(txt, sizeof(txt), "Loading Graphic in VM: %d/%d MB", CacheRead, Cache_size);
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, txt, SHOW);
+#endif
+            }
 			if (BurnLoadRom(DrvSndROM  + 0x000000, 13, 1)) return 1;
 		}
 
+#ifdef WII_VM
+        if(!BurnCreateCache) // Load the cache files
+        {
+            CacheHandle(Cache, nb_cached_ROM, CacheRead, "", READ);
+        }
+#endif
 		DrvExpandGfx(DrvGfxROMExp0, DrvGfxROM0, 0x400000, 1);
 		DrvExpandGfx(DrvGfxROMExp1, DrvGfxROM1, 0x800000, 1);
 		DrvExpandGfx(DrvGfxROMExp2, DrvGfxROM2, 0x400000, 0);
@@ -790,6 +1040,12 @@ static INT32 DrvInit(INT32 nGame)
 	MSM6295Init(0, 1056000 / 132, 1);
 	MSM6295SetRoute(0, 1.00, BURN_SND_ROUTE_BOTH);
 
+#ifdef WII_VM
+	if(BurnCreateCache)
+	{
+		CacheHandle(Cache, nb_cached_ROM, CacheRead, "", WRITE);
+	}
+#endif
 	DrvDoReset();
 
 	return 0;
@@ -822,6 +1078,14 @@ static INT32 DrvExit()
 	SekExit();
 	ZetExit();
 
+#ifdef WII_VM
+    DrvGfxROM0 = NULL;
+	DrvGfxROM1 = NULL;
+	DrvGfxROM2 = NULL;
+    DrvGfxROM3 = NULL;
+	VM_Deinit();
+	VM_InvalidateAll();
+#endif
 	BurnFree (AllMem);
 
 	MSM6295ROM = NULL;
