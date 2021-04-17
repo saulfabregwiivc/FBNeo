@@ -708,7 +708,7 @@ static void execute_blit()
 				}
 				else    /* following lines */
 				{
-					INT32 val = blitter_base[offset & blitter_mask];
+					INT32 val = BURN_ENDIAN_SWAP_INT16(blitter_base[offset & blitter_mask]);
 
 					/* ultennis, stonebal */
 					last ^= 4;
@@ -723,7 +723,7 @@ static void execute_blit()
 
 				for (j = 0; j < w; j += 4)
 				{
-					UINT16 val = blitter_base[(offset + j/4) & blitter_mask];
+					UINT16 val = BURN_ENDIAN_SWAP_INT16(blitter_base[(offset + j/4) & blitter_mask]);
 					if (sx < 508)
 					{
 						if (h == 1 && is_stonebal)
@@ -1016,7 +1016,7 @@ static INT32 DrvInit(INT32 game_select)
 	SekSetReadByteHandler(0,				artmagic_main_read_byte);
 	SekClose();
 
-	TMS34010Init();
+	TMS34010Init(0);
 	TMS34010Open(0);
 	TMS34010MapMemory(DrvVidRAM[0],	0x00000000, 0x001fffff, MAP_READ | MAP_WRITE);
 	TMS34010MapMemory(DrvVidRAM[1],	0x00400000, 0x005fffff, MAP_READ | MAP_WRITE);
@@ -1031,6 +1031,7 @@ static INT32 DrvInit(INT32 game_select)
 	TMS34010MapHandler(2, 			0x00c00000, 0x00c000ff, MAP_READ | MAP_WRITE);
 
 	TMS34010SetPixClock(40000000 / 6, 1);
+	TMS34010SetCpuCyclesPerFrame((INT32)(40000000 / 8 / 49.76));
 	TMS34010SetToShift(artmagic_to_shiftreg);
 	TMS34010SetFromShift(artmagic_from_shiftreg);
 	TMS34010SetOutputINT(m68k_gen_int);

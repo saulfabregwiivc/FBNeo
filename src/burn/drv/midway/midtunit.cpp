@@ -10,8 +10,6 @@
 #include "dac.h"
 #include <stddef.h>
 
-#define LOG_UNMAPPED    0
-
 static UINT8 *AllMem;
 static UINT8 *RamEnd;
 static UINT8 *AllRam;
@@ -23,7 +21,6 @@ static UINT8 *DrvRAM;
 static UINT8 *DrvNVRAM;
 static UINT8 *DrvPalette;
 static UINT32 *DrvPaletteB;
-static UINT32 *DrvPaletteB2;
 static UINT8 *DrvVRAM;
 static UINT16 *DrvVRAM16;
 static UINT8 *DrvSoundProgROM;
@@ -34,12 +31,11 @@ UINT8 nTUnitRecalc;
 UINT8 nTUnitJoy1[32];
 UINT8 nTUnitJoy2[32];
 UINT8 nTUnitJoy3[32];
-UINT8 nTServMode[1];
 UINT8 nTUnitDSW[2];
 UINT8 nTUnitReset = 0;
 static UINT32 DrvInputs[4];
-static INT32 ServMode;
-static INT32 lastServMode;
+
+static ButtonToggle service;
 
 static INT32 nExtraCycles = 0;
 
@@ -71,6 +67,8 @@ UINT8 TUnitIsMK2 = 0;
 UINT8 TUnitIsNbajam = 0;
 UINT8 TUnitIsNbajamTe = 0;
 UINT8 TUnitIsJdreddp = 0;
+
+static INT32 vb_start = 0;
 
 static INT32 nSoundType = 0;
 
@@ -113,7 +111,6 @@ static INT32 MemIndex()
 	DrvSoundProgRAMProt = Next;		Next += 0x000100 * sizeof(UINT8);
 	DrvPalette	= Next;				Next += 0x20000 * sizeof(UINT8);
 	DrvPaletteB	= (UINT32*)Next;	Next += 0x8000 * sizeof(UINT32);
-	DrvPaletteB2= (UINT32*)Next;	Next += 0x8000 * sizeof(UINT32);
 	DrvVRAM		= Next;				Next += TOBYTE(0x400000) * sizeof(UINT16);
 	DrvVRAM16	= (UINT16*)DrvVRAM;
 
@@ -198,11 +195,12 @@ static void MKsound_reset(INT32 local)
 static void MKsound_reset_write(INT32 val)
 {
 	if (val) {
+		//bprintf(0, _T("reset sound cpu @ frame %d\n"), nCurrentFrame);
 		MKsound_reset(1);
-		sound_inreset = 1;
-	} else {
-		sound_inreset = 0;
+	} else if (sound_inreset) {
+		//bprintf(0, _T("CLEAR reset sound cpu @ frame %d\n"), nCurrentFrame);
 	}
+	sound_inreset = val;
 }
 
 static void MKsound_main2soundwrite(INT32 data)
@@ -416,7 +414,9 @@ static void TUnitFromShift(UINT32 address, UINT16 *src)
 
 static void TUnitDoReset()
 {
+	TMS34010Open(0);
 	TMS34010Reset();
+	TMS34010Close();
 
 	switch (nSoundType)	{
 		case SOUND_ADPCM: {
@@ -504,6 +504,9 @@ static INT32 ScanlineRender(INT32 line, TMS34010Display *info)
 {
 	if (!pBurnDraw)
 		return 0;
+
+	vb_start = info->vsblnk;
+
 #if 0
 	if (line == 0x15) {
 		bprintf(0, _T("ENAB %d\n"), info->enabled);
@@ -547,19 +550,19 @@ static INT32 ScanlineRender(INT32 line, TMS34010Display *info)
 	return 0;
 }
 
-#if LOG_UNMAPPED
 static UINT16 TUnitRead(UINT32 address)
 {
-	if (address == 0x01600040) return 0xff; // ???
-	if (address == 0x01d81070) return 0xff; // watchdog
+	if (address == 0x01600040) return 0xffff; // ???
+	if (address == 0x01d81070) return 0xffff; // watchdog
+	if (address == 0x01d81030) return 0xffff; // watchdog
 
-	if (address == 0x01b00000) return 0xff; // ?
-	if (address == 0x01c00060) return 0xff; // ?
-	if (address == 0x01f00000) return 0xff; // ?
+	if (address == 0x01b00000) return 0xffff; // ?
+	if (address == 0x01c00060) return 0xffff; // ?
+	if (address == 0x01f00000) return 0xffff; // ?
 
-	bprintf(PRINT_NORMAL, _T("Read %x\n"), address);
+	bprintf(PRINT_NORMAL, _T("Unmapped Read %x\n"), address);
 
-	return ~0;
+	return 0xffff;
 }
 
 static void TUnitWrite(UINT32 address, UINT16 value)
@@ -567,9 +570,8 @@ static void TUnitWrite(UINT32 address, UINT16 value)
 	if (address == 0x01d81070) return; // watchdog
 	if (address == 0x01c00060) return; // ?
 
-	bprintf(PRINT_NORMAL, _T("Write %x, %x\n"), address, value);
+	bprintf(PRINT_NORMAL, _T("Unmapped Write %x, %x\n"), address, value);
 }
-#endif
 
 static UINT16 TUnitInputRead(UINT32 address)
 {
@@ -856,12 +858,12 @@ static UINT16 NbajamteProtRead(UINT32 address)
 
 static void NbajamteProtWrite(UINT32 address, UINT16 value)
 {
-	UINT32 offset = 0;
+	UINT32 offset = ~0;
 
 	if (address >= 0x1b15f40 && address <= 0x1b37f5f) offset = address - 0x1b15f40;
 	if (address >= 0x1b95f40 && address <= 0x1bb7f5f) offset = address - 0x1b95f40;
 
-	if (offset > 0) {
+	if (offset != ~0) {
 		offset = offset >> 4;
 		INT32 table_index = (offset >> 6) & 0x7f;
 		UINT32 protval = nbajamte_prot_values[table_index];
@@ -872,6 +874,8 @@ static void NbajamteProtWrite(UINT32 address, UINT16 value)
 		NbajamProtQueue[3] = ((protval >> 8) & 0xff) << 9;
 		NbajamProtQueue[4] = ((protval >> 0) & 0xff) << 9;
 		NbajamProtIndex = 0;
+	} else {
+		bprintf(0, _T("BAD PROT WRITE %x  %x\n"), address, value);
 	}
 }
 
@@ -1018,19 +1022,20 @@ INT32 TUnitInit()
 	nRet = LoadGfxBanks();
 	if (nRet != 0) return 1;
 
-	TMS34010Init();
+	midtunit_cpurate = 50000000/8; // midtunit_dma.h
+
+	TMS34010Init(0);
+	TMS34010Open(0);
 	TMS34010SetPixClock(4000000, 2);
+	TMS34010SetCpuCyclesPerFrame((INT32)(midtunit_cpurate/54.71));
 	TMS34010TimerSetCB(TUnitDmaCallback);
 
 	TMS34010SetScanlineRender(ScanlineRender);
 	TMS34010SetToShift(TUnitToShift);
 	TMS34010SetFromShift(TUnitFromShift);
 
-#if LOG_UNMAPPED
-	// this will be removed - but putting all unmapped memory through generic handlers to enable logging unmapped reads/writes
-	TMS34010SetHandlers(1, TUnitRead, TUnitWrite);
-	TMS34010MapHandler(1, 0x00000000, 0x1FFFFFFF, MAP_READ | MAP_WRITE);
-#endif
+	TMS34010SetHandlers(1, TUnitRead, TUnitWrite); // unmapped read/write handler
+	TMS34010MapHandler(1, 0x00000000, 0xBFFFFFFF, MAP_READ | MAP_WRITE);
 
 	TMS34010MapMemory(DrvBootROM, 0xFF800000, 0xFFFFFFFF, MAP_READ);
 	TMS34010MapMemory(DrvBootROM, 0x1F800000, 0x1FFFFFFF, MAP_READ); // mirror
@@ -1105,6 +1110,8 @@ INT32 TUnitInit()
 		TMS34010MapHandler(13, 0x1b00000, 0x1bfffff, MAP_READ | MAP_WRITE);
 	}
 
+	TMS34010Close();
+
 	if (TUnitIsMK || TUnitIsNbajam || TUnitIsNbajamTe || TUnitIsJdreddp) {
 		M6809Init(0);
 		M6809Open(0);
@@ -1149,18 +1156,10 @@ INT32 TUnitInit()
 
 		Dcs2kInit(DCS_2K, MHz(10));
 		Dcs2kMapSoundROM(DrvSoundROM, 0x1000000);
-		Dcs2kSetVolume(10.00);
-
-		Dcs2kBoot();
-
-		Dcs2kResetWrite(1);
-		Dcs2kResetWrite(0);
+		Dcs2kSetVolume(8.00);
 	}
 
 	GenericTilesInit();
-
-	ServMode = 0;
-	lastServMode = 0;
 
 	TUnitDoReset();
 
@@ -1169,13 +1168,7 @@ INT32 TUnitInit()
 
 static void MakeInputs()
 {
-	// Service mode toggle
-	if (nTServMode[0] && lastServMode == 0) {
-		ServMode ^= 1;
-	}
-	lastServMode = nTServMode[0];
-	nTUnitJoy2[4] = ServMode;
-	// end service mode toggle
+	service.Toggle(nTUnitJoy2[4]);
 
 	DrvInputs[0] = 0;
 	DrvInputs[1] = 0;
@@ -1225,13 +1218,11 @@ INT32 TUnitDraw()
 {
 	if (nTUnitRecalc) {
 		TUnitPalRecalc();
-		memcpy(DrvPaletteB2, DrvPaletteB, 0x8000 * sizeof(UINT32)); // update palette buffer
-
 		nTUnitRecalc = 0;
 	}
 
 	// TMS34010 renders scanlines direct to pTransDraw
-	BurnTransferCopy(DrvPaletteB2);
+	BurnTransferCopy(DrvPaletteB);
 
 	return 0;
 }
@@ -1255,6 +1246,7 @@ INT32 TUnitFrame()
 	INT32 nCyclesTotal[2] = { (INT32)(50000000/8/54.71), (INT32)(2000000 / 54.71) };
 	INT32 nCyclesDone[2] = { nExtraCycles, 0 };
 	INT32 nSoundBufferPos = 0;
+	INT32 bDrawn = 0;
 
 	if (nSoundType == SOUND_DCS) {
 		nCyclesTotal[1] = (INT32)(10000000 / 54.71);
@@ -1262,12 +1254,17 @@ INT32 TUnitFrame()
 	}
 	
 	if (nSoundType == SOUND_ADPCM) M6809Open(0);
+	TMS34010Open(0);
 
 	for (INT32 i = 0; i < nInterleave; i++) {
 		CPU_RUN(0, TMS34010);
-		CPU_RUN(0, TMS34010); // finish line incase dma op ended line early
 
 		TMS34010GenerateScanline(i);
+
+		if (i == vb_start && pBurnDraw) {
+			BurnDrvRedraw();
+			bDrawn = 1;
+		}
 
 		if (nSoundType == SOUND_DCS) {
 			HandleDCSIRQ(i);
@@ -1312,13 +1309,11 @@ INT32 TUnitFrame()
 	nExtraCycles = TMS34010TotalCycles() - nCyclesTotal[0];
 
 	if (nSoundType == SOUND_ADPCM) M6809Close();
+	TMS34010Close();
 
-	if (pBurnDraw) {
+	if (pBurnDraw && bDrawn == 0) {
 		TUnitDraw();
 	}
-
-	// Buffering palette for 1 frame, fix mk2 palette glitch in intro fadeouts
-	memcpy(DrvPaletteB2, DrvPaletteB, 0x8000 * sizeof(UINT32));
 
 	return 0;
 }
@@ -1366,8 +1361,8 @@ INT32 TUnitScan(INT32 nAction, INT32 *pnMin)
 		SCAN_VAR(JdreddpProtTable);
 
 		SCAN_VAR(nExtraCycles);
-		SCAN_VAR(ServMode);
-		SCAN_VAR(lastServMode);
+
+		service.Scan();
 	}
 
 	if (nAction & ACB_NVRAM) {

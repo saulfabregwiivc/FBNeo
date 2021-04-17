@@ -21,6 +21,7 @@ bool bLeftAltkeyMapped = false;
 // These are mappable global macros for mapping Pause/FFWD etc to controls in the input mapping dialogue. -dink
 UINT8 macroSystemPause = 0;
 UINT8 macroSystemFFWD = 0;
+UINT8 macroSystemFrame = 0;
 UINT8 macroSystemSaveState = 0;
 UINT8 macroSystemLoadState = 0;
 UINT8 macroSystemUNDOState = 0;
@@ -291,6 +292,16 @@ static void GameInpInitMacros()
 			pgi->Macro.nSysMacro = 1;
 			sprintf(pgi->Macro.szName, "System FFWD");
 			pgi->Macro.pVal[0] = &macroSystemFFWD;
+			pgi->Macro.nVal[0] = 1;
+			nMacroCount++;
+			pgi++;
+
+			pgi->nInput = GIT_MACRO_AUTO;
+			pgi->nType = BIT_DIGITAL;
+			pgi->Macro.nMode = 0;
+			pgi->Macro.nSysMacro = 1;
+			sprintf(pgi->Macro.szName, "System Frame");
+			pgi->Macro.pVal[0] = &macroSystemFrame;
 			pgi->Macro.nVal[0] = 1;
 			nMacroCount++;
 			pgi++;
@@ -936,7 +947,6 @@ static void GameInpInitMacros()
 				pgi->Macro.pVal[j] = bii.pVal;
 				pgi->Macro.nVal[j] = 1;
 			}
-
 			nMacroCount++;
 			pgi++;
 
@@ -947,11 +957,10 @@ static void GameInpInitMacros()
 
 				sprintf(pgi->Macro.szName, "P%i Buttons XYZ", nPlayer + 1);
 				for (INT32 j = 0; j < 3; j++) {
-					BurnDrvGetInputInfo(&bii, nPgmButtons[nPlayer][j]);
+					BurnDrvGetInputInfo(&bii, nPgmButtons[nPlayer][j+3]);
 					pgi->Macro.pVal[j] = bii.pVal;
 					pgi->Macro.nVal[j] = 1;
 				}
-
 				nMacroCount++;
 				pgi++;
 			}
@@ -1917,6 +1926,7 @@ tIniStruct gamehw_cfg[] = {
 	{_T("Sega Master System hardware"),	_T("config/presets/sms.ini"),		{ HARDWARE_SEGA_MASTER_SYSTEM, 0 } },
 	{_T("Sega Game Gear hardware"),		_T("config/presets/gg.ini"),		{ HARDWARE_SEGA_GAME_GEAR, 0 } },
 	{_T("Sinclair Spectrum hardware"),	_T("config/presets/spectrum.ini"),	{ HARDWARE_SPECTRUM, 0 } },
+	{_T("Fairchild Channel F hardware"),_T("config/presets/channelf.ini"),	{ HARDWARE_CHANNELF, 0 } },
 	{_T("\0"), _T("\0"), { 0 } } // END of list
 };
 

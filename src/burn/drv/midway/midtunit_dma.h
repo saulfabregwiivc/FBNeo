@@ -60,6 +60,7 @@ struct dma_state_s
 static dma_state_s *dma_state;
 
 static UINT8 *     dma_gfxrom;
+static INT32 midtunit_cpurate = 0;
 
 /*** constant definitions ***/
 #define PIXEL_SKIP      0
@@ -319,7 +320,6 @@ DECLARE_BLITTER_SET(dma_draw_noskip_noscale,   dma_state->bpp, EXTRACTGEN,   SKI
 static void TUnitDmaCallback()
 {
 	TMS34010GenerateIRQ(DMA_IRQ);
-	TMS34010RunEnd();
 	nDMA[DMA_COMMAND] &= ~0x8000;
 }
 
@@ -344,6 +344,10 @@ static void TUnitDmaWrite(UINT32 address, UINT16 value)
     int command, bpp, regnum;
     UINT32 gfxoffset;
     int pixels = 0;
+
+	if (midtunit_cpurate == 0) {
+		bprintf(0, _T("set midtunit_cpurate!!\n"));
+	}
 
     nDMA[reg] = value;
 
@@ -438,5 +442,5 @@ static void TUnitDmaWrite(UINT32 address, UINT16 value)
             pixels = 0;
     }
 skipdma:
-	TMS34010TimerSet(((double)((double)50000000/8/1000000000) * (41*pixels)));
+	TMS34010TimerSet(((double)((double)midtunit_cpurate/1000000000) * (41*pixels)));
 }
