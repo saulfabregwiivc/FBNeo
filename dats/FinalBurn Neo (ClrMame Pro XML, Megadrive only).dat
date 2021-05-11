@@ -4,9 +4,9 @@
 <datafile>
 	<header>
 		<name>FinalBurn Neo - Megadrive Games</name>
-		<description>FinalBurn Neo v1.0.0.01 Megadrive Games</description>
+		<description>FinalBurn Neo v1.0.0.03 Megadrive Games</description>
 		<category>Standard DatFile</category>
-		<version>1.0.0.01</version>
+		<version>1.0.0.03</version>
 		<author>FinalBurn Neo</author>
 		<homepage>https://neo-source.com/</homepage>
 		<url>https://neo-source.com/</url>
@@ -1037,8 +1037,8 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
-	<game name="avatar" cloneof="jimpower" romof="jimpower">
-		<description>Avatar (Rus)</description>
+	<game name="avatar" cloneof="jimpowerpiko" romof="jimpowerpiko">
+		<description>Avatar (Rus) [Hack]</description>
 		<year>199?</year>
 		<manufacturer>&lt;unknown&gt;</manufacturer>
 		<rom name="avatar.bin" size="1114112" crc="d33e0ada"/>
@@ -1237,8 +1237,16 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="barbarianrk">
+		<description>Barbarian Remake (HB) [Homebrew, Remake from Amiga-Atari ST game]</description>
+		<year>2019</year>
+		<manufacturer>Z-Team</manufacturer>
+		<rom name="Barbarian remake (2019)(Z-Team).bin" size="2621440" crc="a887d287"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="barbarianami">
-		<description>Barbarian - Amiga (HB) [Homebrew, raw conversion - no improvements]</description>
+		<description>Barbarian the Ultimate Warrior - Amiga (HB) [Homebrew, raw conversion - no improvements]</description>
 		<year>2017</year>
 		<manufacturer>F.L</manufacturer>
 		<rom name="barbarianAMIGA.bin" size="1031574" crc="4fc515f5"/>
@@ -1246,7 +1254,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="barbariancpc" cloneof="barbarianami" romof="barbarianami">
-		<description>Barbarian - Amstrad CPC (HB) [Homebrew, raw conversion - no improvements]</description>
+		<description>Barbarian the Ultimate Warrior - Amstrad CPC (HB) [Homebrew, raw conversion - no improvements]</description>
 		<year>2014</year>
 		<manufacturer>F.L</manufacturer>
 		<rom name="barbarianCPC.bin" size="2296122" crc="d63f8446"/>
@@ -1254,7 +1262,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="barbarianst" cloneof="barbarianami" romof="barbarianami">
-		<description>Barbarian - Atari ST (HB) [Homebrew, raw conversion - no improvements]</description>
+		<description>Barbarian the Ultimate Warrior - Atari ST (HB) [Homebrew, raw conversion - no improvements]</description>
 		<year>2014</year>
 		<manufacturer>F.L</manufacturer>
 		<rom name="barbarianATARIST.bin" size="2487416" crc="fec97705"/>
@@ -1262,7 +1270,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="barbarianc64" cloneof="barbarianami" romof="barbarianami">
-		<description>Barbarian - C64 (HB) [Homebrew, raw conversion - no improvements]</description>
+		<description>Barbarian the Ultimate Warrior - C64 (HB) [Homebrew, raw conversion - no improvements]</description>
 		<year>2014</year>
 		<manufacturer>F.L</manufacturer>
 		<rom name="barbarianC64.bin" size="3028428" crc="d37f9af0"/>
@@ -1270,7 +1278,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="barbarianzxs" cloneof="barbarianami" romof="barbarianami">
-		<description>Barbarian - ZX Spectrum (HB) [Homebrew, raw conversion - no improvements]</description>
+		<description>Barbarian the Ultimate Warrior - ZX Spectrum (HB) [Homebrew, raw conversion - no improvements]</description>
 		<year>2015</year>
 		<manufacturer>F.L</manufacturer>
 		<rom name="barbarianSPECTRUM.bin" size="1432448" crc="5360129d"/>
@@ -1960,7 +1968,7 @@
 	<game name="bobc206">
 		<description>Bomb on Basic City (HB, v2.06) [Homebrew]</description>
 		<year>2016</year>
-		<manufacturer>Vetea</manufacturer>
+		<manufacturer>Studio Vetea</manufacturer>
 		<rom name="BasicCity206.bin" size="1138854" crc="8f4ac700"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
@@ -5022,7 +5030,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="dyndukes" cloneof="dynduke" romof="dynduke">
-		<description>Dynamite Duke (Hack, Spanish)</description>
+		<description>Dynamite Duke (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Seibu Kahatsu</manufacturer>
 		<rom name="dynamite duke (hack, spanish).bin" size="524288" crc="df440f0e"/>
@@ -5054,7 +5062,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="dheade" cloneof="dhead" romof="dhead">
-		<description>Dynamite Headdy (Hack, English)</description>
+		<description>Dynamite Headdy (Hack, English) [Hack]</description>
 		<year>2007</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="dynamite headdy (english translation).bin" size="2097152" crc="003e54e5"/>
@@ -5062,7 +5070,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="dheads" cloneof="dhead" romof="dhead">
-		<description>Dynamite Headdy (Hack, Spanish)</description>
+		<description>Dynamite Headdy (Hack, Spanish) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="dynamite headdy (hack, spanish).bin" size="2097152" crc="003fc283"/>
@@ -6871,7 +6879,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="godss" cloneof="gods" romof="gods">
-		<description>Gods (Hack, Spanish)</description>
+		<description>Gods (Hack, Spanish) [Hack]</description>
 		<year>2019</year>
 		<manufacturer>Mindscape</manufacturer>
 		<rom name="gods (hack, spanish).bin" size="1048576" crc="184498c6"/>
@@ -6911,7 +6919,7 @@
 		<driver status="preliminary"/>
 	</game>
 	<game name="goldnaxes" cloneof="goldnaxe" romof="goldnaxe">
-		<description>Golden Axe (Hack, Spanish)</description>
+		<description>Golden Axe (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="golden axe (hack, spanish).bin" size="524288" crc="84828ee6"/>
@@ -6951,7 +6959,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="goldnax2ec" cloneof="goldnax2" romof="goldnax2">
-		<description>Golden Axe II (Hack, Enhanced Colors)</description>
+		<description>Golden Axe II (Hack, Enhanced Colors) [Hack]</description>
 		<year>2014</year>
 		<manufacturer>Sega - Pyron</manufacturer>
 		<rom name="golden axe ii (enhanced colors).md" size="524288" crc="696caae2"/>
@@ -6959,7 +6967,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="goldnax2s" cloneof="goldnax2" romof="goldnax2">
-		<description>Golden Axe II (Hack, Spanish)</description>
+		<description>Golden Axe II (Hack, Spanish) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="golden axe ii (hack, spanish).bin" size="524288" crc="df84e888"/>
@@ -6991,7 +6999,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="goldnax3s" cloneof="goldnax3" romof="goldnax3">
-		<description>Golden Axe III (Hack, Spanish)</description>
+		<description>Golden Axe III (Hack, Spanish) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="golden axe iii (hack, spanish).bin" size="1048576" crc="45eaec5b"/>
@@ -7007,7 +7015,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="goldnax3nc" cloneof="goldnax3" romof="goldnax3">
-		<description>Golden Axe III - New Character (Ver. 9) (Hack)</description>
+		<description>Golden Axe III - New Character (Ver. 9) (Hack) [Hack]</description>
 		<year>2020-06-08</year>
 		<manufacturer>Ti</manufacturer>
 		<rom name="GoldenAxeIII_New Character_Hack.bin" size="2097152" crc="29a27509"/>
@@ -7015,7 +7023,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="goofys" cloneof="goofy" romof="goofy">
-		<description>Goofy's Hysterical History Tour (Hack, Spanish)</description>
+		<description>Goofy's Hysterical History Tour (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Absolute Entertainment</manufacturer>
 		<rom name="goofy's hysterical history tour (hack, spanish).bin" size="1048576" crc="9dac66ef"/>
@@ -7047,7 +7055,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="granadas" cloneof="granada" romof="granada">
-		<description>Granada (Hack, Spanish)</description>
+		<description>Granada (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Renovation</manufacturer>
 		<rom name="granada (hack, spanish).bin" size="524288" crc="491b0a71"/>
@@ -7267,6 +7275,14 @@
 		<year>1991</year>
 		<manufacturer>NCS</manufacturer>
 		<rom name="gynoug (jpn).bin" size="524288" crc="1b69241f"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="handyharvy">
+		<description>Handy Harvy (HB) [Homebrew]</description>
+		<year>2018</year>
+		<manufacturer>2nd Dimension</manufacturer>
+		<rom name="Handy Harvy (2018)(2nd Dimension).bin" size="932864" crc="ceb61752"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -7798,6 +7814,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="ikplusdx">
+		<description>International Karate plus Deluxe (HB) [Homebrew, Improved version of Amiga-Atari ST game]</description>
+		<year>2019</year>
+		<manufacturer>Z-Team</manufacturer>
+		<rom name="IK+ deluxe (2019)(Z-Team).bin" size="2883584" crc="bf949018"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="intrugby">
 		<description>International Rugby (Euro)</description>
 		<year>1993</year>
@@ -8134,11 +8158,19 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
-	<game name="jimpower">
+	<game name="jimpower" cloneof="jimpowerpiko" romof="jimpowerpiko">
 		<description>Jim Power - The Arcade Game (USA, Prototype) [imperfect graphics]</description>
 		<year>199?</year>
 		<manufacturer>Loriciel</manufacturer>
 		<rom name="jim power - the arcade game (usa) (prototype) (bad dump).bin" size="1048576" crc="1cf3238b"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="jimpowerpiko">
+		<description>Jim Power - The Lost Dimension in 3D (HB) [Homebrew, Original title by Loricel]</description>
+		<year>2014</year>
+		<manufacturer>Piko Interactive</manufacturer>
+		<rom name="Jim Power - The Lost Dimension in 3D (2014)(Piko Int.).md" size="1048576" crc="f9cd7079"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -8702,6 +8734,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="kromasphere">
+		<description>Kromasphere (HB) [Homebrew, Copyright 2017 CMC]</description>
+		<year>2019</year>
+		<manufacturer>2nd Dimension</manufacturer>
+		<rom name="Kromasphere (2019)(2nd Dimension).bin" size="944886" crc="9dab89e3"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="krusty1" cloneof="krusty" romof="krusty">
 		<description>Krusty's Super Fun House (Euro, USA)</description>
 		<year>1992</year>
@@ -9043,6 +9083,14 @@
 		<year>1994</year>
 		<manufacturer>Konami</manufacturer>
 		<rom name="lethal enforcers ii - gun fighters (usa).bin" size="2097152" crc="e5fdd28b"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="lwedding">
+		<description>Lethal Wedding (HB, build 0446) [Homebrew, beta version, unreleased game]</description>
+		<year>2020</year>
+		<manufacturer>Mega Cat Studios</manufacturer>
+		<rom name="Lethal Wedding (build 0446)(2020)(Mega Cat Studios).bin" size="3014656" crc="6d372fe4"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -9670,6 +9718,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="m3dnoah">
+		<description>Mega 3D Noah's Ark (HB) [Homebrew, Original game by Wisdom Tree]</description>
+		<year>2017</year>
+		<manufacturer>Piko Interactive</manufacturer>
+		<rom name="Mega 3D Noah's Ark (2017)(Piko Interactive).md" size="2097152" crc="409165c2"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="meganser">
 		<description>Mega Anser (Jpn)</description>
 		<year>199?</year>
@@ -9934,6 +9990,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="megaxmas">
+		<description>MegaXmas (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Nekojita</manufacturer>
+		<rom name="MegaXmas (2020)(Nekojita).bin" size="393216" crc="50348291"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="menacer">
 		<description>Menacer 6-Game Cartridge (Euro, USA)</description>
 		<year>1992</year>
@@ -10143,7 +10207,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="micromacs" cloneof="micromac" romof="micromac">
-		<description>Micro Machines (Hack, Spanish)</description>
+		<description>Micro Machines (Hack, Spanish) [Hack]</description>
 		<year>2019</year>
 		<manufacturer>Codemasters</manufacturer>
 		<rom name="micro machines (hack, spanish).bin" size="524288" crc="3ba6932d"/>
@@ -10151,7 +10215,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="microm96s" cloneof="microm96" romof="microm96">
-		<description>Micro Machines - Turbo Tournament '96 (Hack, Spanish)</description>
+		<description>Micro Machines - Turbo Tournament '96 (Hack, Spanish) [Hack]</description>
 		<year>2014</year>
 		<manufacturer>Codemasters</manufacturer>
 		<rom name="micro machines - turbo tournament '96 (hack, spanish).bin" size="1048576" crc="7ceb363d"/>
@@ -10199,7 +10263,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="midress" cloneof="midres" romof="midres">
-		<description>Midnight Resistance (Hack, Spanish)</description>
+		<description>Midnight Resistance (Hack, Spanish) [Hack]</description>
 		<year>2019</year>
 		<manufacturer>Data East</manufacturer>
 		<rom name="midnight resistance (hack, spanish).bin" size="1048576" crc="fb38b80c"/>
@@ -10271,7 +10335,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="mmprs" cloneof="mmpr" romof="mmpr">
-		<description>Mighty Morphin Power Rangers (Hack, Spanish)</description>
+		<description>Mighty Morphin Power Rangers (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Banpresto</manufacturer>
 		<rom name="mighty morphin power rangers (hack, spanish).bin" size="2097152" crc="5a34dc26"/>
@@ -10351,7 +10415,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="mmprtms" cloneof="mmprtm" romof="mmprtm">
-		<description>Mighty Morphin Power Rangers - The Movie (Hack, Spanish)</description>
+		<description>Mighty Morphin Power Rangers - The Movie (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Banpresto</manufacturer>
 		<rom name="mighty morphin power rangers - the movie (hack, spanish).bin" size="2097152" crc="cb3852b1"/>
@@ -10679,7 +10743,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="mspacmans" cloneof="mspacman" romof="mspacman">
-		<description>Ms. Pac-Man (Hack, Spanish)</description>
+		<description>Ms. Pac-Man (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Tengen</manufacturer>
 		<rom name="ms. pac-man (hack, spanish).bin" size="131072" crc="f9148289"/>
@@ -10687,7 +10751,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="mspacmanpir" cloneof="mspacman" romof="mspacman">
-		<description>Ms. Pac-Man (Pirate, Ripped from Golden 10 in 1)</description>
+		<description>Ms. Pac-Man (Pirate, Ripped from Golden 10 in 1) [Hack]</description>
 		<year>199?</year>
 		<manufacturer>&lt;unlicensed&gt;</manufacturer>
 		<rom name="ms. pac-man (usa) (pirate).bin" size="131072" crc="39b51b26"/>
@@ -10859,6 +10923,14 @@
 		<year>199?</year>
 		<manufacturer>&lt;unknown&gt;</manufacturer>
 		<rom name="naruto (unl).bin" size="4194304" crc="b29b3503"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="navabarone">
+		<description>NavaBarone (HB) [Homebrew]</description>
+		<year>2017</year>
+		<manufacturer>neko800 and kunukunu777</manufacturer>
+		<rom name="NavaBarone (2017)(neko800, kunukunu777).bin" size="524288" crc="a4dc99ac"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -12305,10 +12377,18 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="papi2">
+		<description>Papi Commando - Second Blood (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Studio Vetea</manufacturer>
+		<rom name="Papi Commando - Second Blood (2020)(Studio Vetea).bin" size="2898250" crc="be7716af"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="papi">
 		<description>Papi Commando MD (HB) [Homebrew]</description>
 		<year>2015</year>
-		<manufacturer>Vetea</manufacturer>
+		<manufacturer>Studio Vetea</manufacturer>
 		<rom name="PapiCommandoMD.bin" size="3466596" crc="ec16d540"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
@@ -12316,7 +12396,7 @@
 	<game name="papirmx" cloneof="papi" romof="papi">
 		<description>Papi Commando Remix MD (HB) [Homebrew]</description>
 		<year>2018</year>
-		<manufacturer>Vetea</manufacturer>
+		<manufacturer>Studio Vetea</manufacturer>
 		<rom name="papi commando remix md (2018)(studio vetea).bin" size="3698576" crc="d15c6391"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
@@ -14275,6 +14355,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="romeow">
+		<description>Romeow and Julicat (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Mega Cat Studios</manufacturer>
+		<rom name="Romeow and Julicat (2020)(Mega Cat Studio).bin" size="2097152" crc="46f895d5"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="dinho98" cloneof="issdx" romof="issdx">
 		<description>Ronaldinho 98 (Pirate)</description>
 		<year>199?</year>
@@ -14304,6 +14392,14 @@
 		<year>1991</year>
 		<manufacturer>Taito</manufacturer>
 		<rom name="runark (jpn, kor).bin" size="524288" crc="0894d8fb"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="runes">
+		<description>Runes (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Cannibal Cat</manufacturer>
+		<rom name="Runes (2020)(Cannibal Cat).bin" size="524288" crc="848256d0"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -17145,6 +17241,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="subvsaliens">
+		<description>Submarine Canyon Bomber vs Marine Aliens (HB) [Homebrew]</description>
+		<year>2017</year>
+		<manufacturer>Hideki Konishi</manufacturer>
+		<rom name="Submarine Canyon Bomber vs Marine Aliens (2017)(Hideki Konishi).bin" size="393216" crc="85b3a408"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="subterr">
 		<description>SubTerrania (Euro)</description>
 		<year>1994</year>
@@ -17206,6 +17310,14 @@
 		<year>1993</year>
 		<manufacturer>Accolade</manufacturer>
 		<rom name="summer challenge (euro, usa).bin" size="2097152" crc="d7d53dc1"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="sumoslam">
+		<description>Sumo Slam (HB) [Homebrew]</description>
+		<year>2013</year>
+		<manufacturer>Segaman Production</manufacturer>
+		<rom name="Sumo Slam (2013)(Segaman Prod.).bin" size="131072" crc="b3501317"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -19579,7 +19691,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="thorc" cloneof="thor" romof="thor">
-		<description>The Story of Thor - Hikari o Tsugumono (T-Chi)</description>
+		<description>The Story of Thor - Hikari o Tsugumono (T-Chi) [Hack]</description>
 		<year>2004</year>
 		<manufacturer>YUZO</manufacturer>
 		<rom name="story of thor, the - hikari o tsugumono (T-Chi).bin" size="3145728" crc="3ca3fcd7"/>

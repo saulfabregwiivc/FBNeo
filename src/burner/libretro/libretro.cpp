@@ -16,6 +16,7 @@
 #include "retro_cdemu.h"
 #include "retro_input.h"
 #include "retro_memory.h"
+#include "ugui_tools.h"
 
 #include <file/file_path.h>
 
@@ -52,7 +53,9 @@ int kNetGame = 0;
 INT32 nReplayStatus = 0;
 INT32 nIpsMaxFileLen = 0;
 unsigned nGameType = 0;
-static INT32 nGameWidth, nGameHeight, nGameMaximumGeometry;
+static INT32 nGameWidth = 640;
+static INT32 nGameHeight = 480;
+static INT32 nGameMaximumGeometry;
 static INT32 nNextGeometryCall = RETRO_ENVIRONMENT_SET_GEOMETRY;
 static INT32 bDisableSerialize = 0;
 
@@ -70,7 +73,6 @@ struct located_archive
 static std::vector<located_archive> g_find_list_path;
 
 std::vector<cheat_core_option> cheat_core_options;
-
 
 INT32 nAudSegLen = 0;
 
@@ -118,6 +120,9 @@ static bool bMemCardFC1Format;
 
 static bool driver_inited;
 
+// UGUI
+static bool gui_show = false;
+
 // FBNEO stubs
 unsigned ArcadeJoystick;
 
@@ -142,7 +147,7 @@ const int nConfigMinVersion = 0x020921;
 
 static uint8_t *write_state_ptr;
 static const uint8_t *read_state_ptr;
-static unsigned state_sizes[2];
+static unsigned state_size;
 
 int HandleMessage(enum retro_log_level level, TCHAR* szFormat, ...)
 {
@@ -533,7 +538,7 @@ static int create_variables_from_cheats()
 		// Ignore "empty" cheats, they seem common in cheat bundles (as separators and/or hints ?)
 		int count = 0;
 		for (int i = 0; i < CHEAT_MAX_OPTIONS; i++) {
-			if(pCurrentCheat->pOption[i] == NULL || pCurrentCheat->pOption[i]->szOptionName == NULL) break;
+			if(pCurrentCheat->pOption[i] == NULL || pCurrentCheat->pOption[i]->szOptionName[0] == '\0') break;
 			count++;
 		}
 		if (count > 0 && count < RETRO_NUM_CORE_OPTION_VALUES_MAX)
@@ -1179,6 +1184,13 @@ void retro_run()
 	bDisableSerialize = 0;
 	bool bSkipFrame = false;
 
+	if (gui_show && nGameWidth > 0 && nGameHeight > 0)
+	{
+		gui_draw();
+		video_cb(gui_get_framebuffer(), nGameWidth, nGameHeight, nGameWidth * sizeof(unsigned));
+		return;
+	}
+
 	InputMake();
 
 	// Check whether current frame should be skipped
@@ -1299,7 +1311,7 @@ static int burn_dummy_state_cb(BurnArea *pba)
 #ifdef FBNEO_DEBUG
 	HandleMessage(RETRO_LOG_INFO, "state debug: name %s, len %d\n", pba->szName, pba->nLen);
 #endif
-	state_sizes[kNetGame] += pba->nLen;
+	state_size += pba->nLen;
 	return 0;
 }
 
@@ -1307,48 +1319,68 @@ size_t retro_serialize_size()
 {
 	if (bDisableSerialize == 1)
 		return 0;
+
+	// This is the size for retro_serialize, so it wants ACB_FULLSCAN | ACB_READ
+	// retro_unserialize doesn't call this function
+	INT32 nAction = ACB_FULLSCAN | ACB_READ;
+
+	// Tweaking from context
 	int result = -1;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &result);
 	kNetGame = result & 4 ? 1 : 0;
-	// hiscores are causing desync in netplay
-	if (kNetGame == 1)
+	if (kNetGame == 1) {
+		// Hiscores are causing desync in netplay
 		EnableHiscores = false;
-	if (state_sizes[kNetGame])
-		return state_sizes[kNetGame];
+		// Some data isn't required for netplay
+		nAction |= ACB_NET_OPT;
+	}
 
+	// Don't try to cache state size, it's causing more issues than it solves (ngp)
+	state_size = 0;
 	BurnAcb = burn_dummy_state_cb;
+
 	// The following value is required in savestates for some games (xmen6p, ...)
 	// On standalone, this value is stored in savestate files headers
 	SCAN_VAR(nCurrentFrame);
-	BurnAreaScan(ACB_FULLSCAN, 0);
-	return state_sizes[kNetGame];
+
+	BurnAreaScan(nAction, 0);
+	return state_size;
 }
 
 bool retro_serialize(void *data, size_t size)
 {
 	if (bDisableSerialize == 1)
 		return false;
+
+#if 0
+	// Used to convert a standalone savestate we are loading into something usable by the libretro port
+	char convert_save_path[MAX_PATH];
+	snprintf_nowarn (convert_save_path, sizeof(convert_save_path), "%s%cfbneo%c%s.save", g_save_dir, PATH_DEFAULT_SLASH_C(), PATH_DEFAULT_SLASH_C(), BurnDrvGetTextA(DRV_NAME));
+	BurnStateLoad(convert_save_path, 1, NULL);
+#endif
+
+	// We want ACB_FULLSCAN | ACB_READ for saving states
+	INT32 nAction = ACB_FULLSCAN | ACB_READ;
+
+	// Tweaking from context
 	int result = -1;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &result);
 	kNetGame = result & 4 ? 1 : 0;
-	// hiscores are causing desync in netplay
-	if (kNetGame == 1)
+	if (kNetGame == 1) {
+		// Hiscores are causing desync in netplay
 		EnableHiscores = false;
-	if (!state_sizes[kNetGame])
-	{
-		BurnAcb = burn_dummy_state_cb;
-		SCAN_VAR(nCurrentFrame);
-		BurnAreaScan(ACB_FULLSCAN, 0);
+		// Some data isn't required for netplay
+		nAction |= ACB_NET_OPT;
 	}
-	if (size != state_sizes[kNetGame])
-		return false;
 
 	BurnAcb = burn_write_state_cb;
 	write_state_ptr = (uint8_t*)data;
+
 	// The following value is required in savestates for some games (xmen6p, ...)
 	// On standalone, this value is stored in savestate files headers
 	SCAN_VAR(nCurrentFrame);
-	BurnAreaScan(ACB_FULLSCAN | ACB_READ, 0);
+
+	BurnAreaScan(nAction, 0);
 	return true;
 }
 
@@ -1356,45 +1388,56 @@ bool retro_unserialize(const void *data, size_t size)
 {
 	if (bDisableSerialize == 1)
 		return false;
+
+	// We want ACB_FULLSCAN | ACB_WRITE for loading states
+	INT32 nAction = ACB_FULLSCAN | ACB_WRITE;
+
+	// Tweaking from context
 	int result = -1;
 	environ_cb(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE, &result);
 	kNetGame = result & 4 ? 1 : 0;
-	// hiscores are causing desync in netplay
-	if (kNetGame == 1)
+	if (kNetGame == 1) {
+		// Hiscores are causing desync in netplay
 		EnableHiscores = false;
-	if (!state_sizes[kNetGame])
-	{
-		BurnAcb = burn_dummy_state_cb;
-		SCAN_VAR(nCurrentFrame);
-		BurnAreaScan(ACB_FULLSCAN, 0);
+		// Some data isn't required for netplay
+		nAction |= ACB_NET_OPT;
 	}
-	if (size != state_sizes[kNetGame])
-		return false;
 
 	BurnAcb = burn_read_state_cb;
 	read_state_ptr = (const uint8_t*)data;
+
 	// The following value is required in savestates for some games (xmen6p, ...)
 	// On standalone, this value is stored in savestate files headers
 	SCAN_VAR(nCurrentFrame);
-	BurnAreaScan(ACB_FULLSCAN | ACB_WRITE, 0);
+	BurnAreaScan(nAction, 0);
+
+	// Some driver require to recalc palette after loading savestates
 	BurnRecalcPal();
+
 #if 0
-	// Used to convert the libretro savestate we are loading into a savestate compatible with standalone
+	// Used to convert a libretro savestate we are loading into something usable by standalone
 	char convert_save_path[MAX_PATH];
 	snprintf_nowarn (convert_save_path, sizeof(convert_save_path), "%s%cfbneo%c%s.save", g_save_dir, PATH_DEFAULT_SLASH_C(), PATH_DEFAULT_SLASH_C(), BurnDrvGetTextA(DRV_NAME));
 	BurnStateSave(convert_save_path, 1);
 #endif
+
 	return true;
 }
 
 void retro_cheat_reset() {}
-void retro_cheat_set(unsigned, bool, const char*) {}
+void retro_cheat_set(unsigned, bool, const char *) {}
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
 	int game_aspect_x, game_aspect_y;
 	bVidImageNeedRealloc = true;
-	BurnDrvGetAspect(&game_aspect_x, &game_aspect_y);
+	if (driver_inited)
+		BurnDrvGetAspect(&game_aspect_x, &game_aspect_y);
+	else
+	{
+		game_aspect_x = 4;
+		game_aspect_y = 3;
+	}
 
 	INT32 oldMax = nGameMaximumGeometry;
 	nGameMaximumGeometry = nGameWidth > nGameHeight ? nGameWidth : nGameHeight;
@@ -1695,6 +1738,16 @@ static unsigned int BurnDrvGetIndexByName(const char* name)
 	return ret;
 }
 
+static void SetUguiError(const char* error)
+{
+	gui_set_message(error);
+	gui_show = true;
+	enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+	environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt);
+	gui_init(nGameWidth, nGameHeight, sizeof(unsigned));
+	gui_set_window_title("FBNeo Error");
+}
+
 static bool retro_load_game_common()
 {
 	const char *dir = NULL;
@@ -1742,22 +1795,33 @@ static bool retro_load_game_common()
 	// Initialize HDD path
 	snprintf_nowarn (szAppHDDPath, sizeof(szAppHDDPath), "%s%c", g_rom_dir, PATH_DEFAULT_SLASH_C());
 
-	// Intialize state_sizes (for serialization)
-	state_sizes[0] = 0;
-	state_sizes[1] = 0;
+	// Intialize state_size (for serialization)
+	state_size = 0;
+
+	gui_show = false;
 
 	nBurnDrvActive = BurnDrvGetIndexByName(g_driver_name);
 	if (nBurnDrvActive < nBurnDrvCount) {
+
 		// If the game is marked as not working, let's stop here
 		if (!(BurnDrvIsWorking())) {
-			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] This romset is known but marked as not working, aborting\n");
-			return false;
+			SetUguiError("This romset is known but marked as not working\nOne of its clones might work so maybe give it a try");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] This romset is known but marked as not working\n");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] One of its clones might work so maybe give it a try\n");
+			goto end;
 		}
 
 		// If the game is a bios, let's stop here
 		if ((BurnDrvGetFlags() & BDF_BOARDROM)) {
-			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Bioses aren't meant to be launched this way, aborting\n");
-			return false;
+			SetUguiError("Bioses aren't meant to be launched this way");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Bioses aren't meant to be launched this way\n");
+			goto end;
+		}
+
+		if ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_SNK_NEOCD && CDEmuImage[0] == '\0') {
+			SetUguiError("You need a disc image to launch neogeo CD\n");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] You need a disc image to launch neogeo CD\n");
+			goto end;
 		}
 
 		is_neogeo_game = ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_SNK_NEOGEO);
@@ -1792,8 +1856,10 @@ static bool retro_load_game_common()
 #endif
 
 		if (!open_archive()) {
-			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Missing files for this romset, please check it against the dat file, aborting.\n");
-			return false;
+			SetUguiError("This romset is known but yours doesn't match this emulator and its version\nRead https://docs.libretro.com/library/fbneo/#building-romsets-for-fbneo");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] This romset is known but yours doesn't match this emulator and its version\n");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Read https://docs.libretro.com/library/fbneo/#building-romsets-for-fbneo\n");
+			goto end;
 		}
 		HandleMessage(RETRO_LOG_INFO, "[FBNeo] No missing files, proceeding\n");
 
@@ -1819,8 +1885,10 @@ static bool retro_load_game_common()
 			HandleMessage(RETRO_LOG_INFO, "[FBNeo] Initialized driver for %s\n", g_driver_name);
 		else
 		{
-			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Failed initializing driver for %s\n", g_driver_name);
-			return false;
+			SetUguiError("Failed initializing driver\nThis is unexpected, you should probably report it.");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Failed initializing driver.\n");
+			HandleMessage(RETRO_LOG_ERROR, "[FBNeo] This is unexpected, you should probably report it.\n");
+			goto end;
 		}
 
 		// MemCard has to be inserted after emulation is started
@@ -1840,7 +1908,13 @@ static bool retro_load_game_common()
 		BurnAcb = StateGetMainRamAcb;
 		BurnAreaScan(ACB_FULLSCAN, &nMin);
 		if (bMainRamFound) {
-			HandleMessage(RETRO_LOG_INFO, "[Cheevos] System RAM set to %p, size is %zu\n", MainRamData, MainRamSize);
+			HandleMessage(RETRO_LOG_INFO, "[Cheevos] System RAM set to %p, size is %zu\n", pMainRamData, nMainRamSize);
+		}
+		if (bMemoryMapFound) {
+			struct retro_memory_map sMemoryMap = {};
+			sMemoryMap.descriptors = sMemoryDescriptors;
+			sMemoryMap.num_descriptors = nMemoryCount;
+			environ_cb(RETRO_ENVIRONMENT_SET_MEMORY_MAPS, &sMemoryMap);
 		}
 
 		// Loading minimal savestate (handle some machine settings)
@@ -1872,14 +1946,17 @@ static bool retro_load_game_common()
 		// Initialization done
 		HandleMessage(RETRO_LOG_INFO, "[FBNeo] Driver %s was successfully started : game's full name is %s\n", g_driver_name, BurnDrvGetTextA(DRV_FULLNAME));
 		driver_inited = true;
-
-		return true;
 	}
 	else
 	{
-		HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Romset %s is unknown, aborting\n", g_driver_name);
-		return false;
+		SetUguiError("Romset is unknown\nRead https://docs.libretro.com/library/fbneo/#building-romsets-for-fbneo");
+		HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Romset is unknown\n");
+		HandleMessage(RETRO_LOG_ERROR, "[FBNeo] Read https://docs.libretro.com/library/fbneo/#building-romsets-for-fbneo\n");
+		goto end;
 	}
+
+end:
+	return true;
 }
 
 bool retro_load_game(const struct retro_game_info *info)
@@ -2055,6 +2132,14 @@ void retro_unload_game(void)
 	}
 	InputDeInit();
 	driver_inited = false;
+
+	// Reset RetroAchievements stuff
+	pMainRamData = NULL;
+	nMainRamSize = 0;
+	bMainRamFound = false;
+	nMemoryCount = 0;
+	memset(sMemoryDescriptors, 0, sizeof(sMemoryDescriptors));
+	bMemoryMapFound = false;
 }
 
 unsigned retro_get_region() { return RETRO_REGION_NTSC; }
@@ -2460,3 +2545,9 @@ char* DecorateGameName(UINT32 nBurnDrv)
 	nBurnDrvActive = nOldBurnDrv;
 	return szDecoratedName;
 }
+
+#ifdef LIGHT
+// stub those functions
+void nes_add_cheat(char *code) {}
+void nes_remove_cheat(char *code) {}
+#endif

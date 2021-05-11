@@ -696,6 +696,8 @@ INT32 pgmInit()
 		{
 			SekMapMemory(PGM68KBIOS,			0x000000, 0x07ffff, MAP_ROM);				// 68000 BIOS
 			SekMapMemory(PGM68KROM,				0x100000, (nPGM68KROMLen-1)+0x100000, MAP_ROM);		// 68000 ROM
+			if (strcmp(BurnDrvGetTextA(DRV_NAME), "kov2pfwll") == 0)
+				SekMapMemory((PGM68KROM + 0x300000), 0x600000, 0x6FFFFF, MAP_ROM); // Many hacks from GOTVG, such as zerofx, kovshpd and kovplus2012 serials, use this as protection.
 		}
 
         for (INT32 i = 0; i < 0x100000; i+=0x20000) {		// Main Ram + Mirrors...
@@ -895,6 +897,7 @@ INT32 pgmFrame()
 		// region hacks
 		if (strncmp(BurnDrvGetTextA(DRV_NAME), "dmnfrnt", 7) == 0) {
 			PGMARMShareRAM[0x158] = PgmInput[7];
+			PGMARMShareRAM2[0x158] = PgmInput[7];
 
 			// dmnfrntpcb - requires this - set internal rom version
 			PGMARMShareRAM[0x164] = '1'; // S101KR (101 Korea) - $69be8 in ROM

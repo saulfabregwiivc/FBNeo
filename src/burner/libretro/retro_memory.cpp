@@ -1,9 +1,12 @@
 // Cheevos support
 #include "retro_memory.h"
 
-void* MainRamData = NULL;
-size_t MainRamSize = 0;
+void* pMainRamData = NULL;
+size_t nMainRamSize = 0;
 bool bMainRamFound = false;
+int nMemoryCount = 0;
+struct retro_memory_descriptor sMemoryDescriptors[10] = {};
+bool bMemoryMapFound = false;
 
 int StateGetMainRamAcb(BurnArea *pba)
 {
@@ -18,31 +21,31 @@ int StateGetMainRamAcb(BurnArea *pba)
 		case HARDWARE_CAPCOM_CPSCHANGER:
 		case HARDWARE_CAPCOM_CPS2:
 			if (strcmp(pba->szName, "CpsRamFF") == 0) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
 		case HARDWARE_CAPCOM_CPS3:
 			if (strcmp(pba->szName, "Main RAM") == 0) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
 		case HARDWARE_SNK_NEOGEO:
 		case HARDWARE_IGS_PGM:
 			if (strcmp(pba->szName, "68K RAM") == 0) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
 		case HARDWARE_PSIKYO:
 			// Psikyo (psikyosh and psikyo4 uses "All RAM")
 			if ((strcmp(pba->szName, "All RAM") == 0) || (strcmp(pba->szName, "68K RAM") == 0)) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
@@ -50,16 +53,76 @@ int StateGetMainRamAcb(BurnArea *pba)
 		case HARDWARE_CAVE_68K_ONLY:
 			// Cave (gaia driver uses "68K RAM")
 			if ((strcmp(pba->szName, "RAM") == 0) || (strcmp(pba->szName, "68K RAM") == 0)) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
+				bMainRamFound = true;
+			}
+			return 0;
+		case HARDWARE_SEGA_MEGADRIVE:
+			if ((strcmp(pba->szName, "RAM") == 0)) {
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SYSTEM_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00FF0000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
+			}
+			if ((strcmp(pba->szName, "NV RAM") == 0)) {
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SAVE_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00000000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
+			}
+			return 0;
+		case HARDWARE_SEGA_MASTER_SYSTEM:
+		case HARDWARE_SEGA_GAME_GEAR:
+			if ((strcmp(pba->szName, "sms") == 0)) {
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
+				bMainRamFound = true;
+			}
+			return 0;
+		case HARDWARE_NES:
+		case HARDWARE_FDS:
+			if ((strcmp(pba->szName, "CPU Ram") == 0)) {
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SYSTEM_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00000000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
+			}
+			if ((strcmp(pba->szName, "Work Ram") == 0)) {
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SYSTEM_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00006000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
+			}
+			return 0;
+		case HARDWARE_SNK_NGPC:
+			if ((strcmp(pba->szName, "Main Ram") == 0)) {
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
 		default:
 			// For all other systems (?), main ram seems to be identified by either "All Ram" or "All RAM"
 			if ((strcmp(pba->szName, "All Ram") == 0) || (strcmp(pba->szName, "All RAM") == 0)) {
-				MainRamData = pba->Data;
-				MainRamSize = pba->nLen;
+				pMainRamData = pba->Data;
+				nMainRamSize = pba->nLen;
 				bMainRamFound = true;
 			}
 			return 0;
@@ -68,10 +131,10 @@ int StateGetMainRamAcb(BurnArea *pba)
 
 void *retro_get_memory_data(unsigned id)
 {
-	return id == RETRO_MEMORY_SYSTEM_RAM ? MainRamData : NULL;
+	return id == RETRO_MEMORY_SYSTEM_RAM ? pMainRamData : NULL;
 }
 
 size_t retro_get_memory_size(unsigned id)
 {
-	return id == RETRO_MEMORY_SYSTEM_RAM ? MainRamSize : 0;
+	return id == RETRO_MEMORY_SYSTEM_RAM ? nMainRamSize : 0;
 }

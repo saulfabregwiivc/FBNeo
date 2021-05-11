@@ -1,5 +1,7 @@
 #include "burner.h"
 
+#define HW_NES ( ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_NES) || ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_FDS) )
+
 static bool SkipComma(TCHAR** s)
 {
 	while (**s && **s != _T(',')) {
@@ -226,29 +228,46 @@ static INT32 ConfigParseFile(TCHAR* pszFilename)
 					INT32 nCPU = 0, nAddress = 0, nValue = 0;
 
 					if (SkipComma(&s)) {
-						nCPU = _tcstol(s, &t, 0);		// CPU number
-						if (t == s) {
-							CheatError(pszFilename, nLine, pCurrentCheat, _T("CPU number omitted"), szLine);
-							bOK = false;
-							break;
-						}
-						s = t;
+						if (HW_NES) {
+							t = s;
+							INT32 newlen = 0;
+#if defined(BUILD_WIN32)
+							for (INT32 z = 0; z < lstrlen(t); z++) {
+#else
+							for (INT32 z = 0; z < strlen(t); z++) {
+#endif
+								char c = toupper((char)*s);
+								if (c >= 'A' && c <= 'Z' && newlen < 10)
+									pCurrentCheat->pOption[n]->AddressInfo[nCurrentAddress].szGenieCode[newlen++] = c;
+								s++;
+								if (*s == _T(',')) break;
+							}
+							nAddress = 0xffff; // nAddress not used, but needs to be nonzero (NES/Game Genie)
+						} else {
+							nCPU = _tcstol(s, &t, 0);		// CPU number
+							if (t == s) {
+								CheatError(pszFilename, nLine, pCurrentCheat, _T("CPU number omitted"), szLine);
+								bOK = false;
+								break;
+							}
+							s = t;
 
-						SkipComma(&s);
-						nAddress = _tcstol(s, &t, 0);	// Address
-						if (t == s) {
-							bOK = false;
-							CheatError(pszFilename, nLine, pCurrentCheat, _T("address omitted"), szLine);
-							break;
-						}
-						s = t;
+							SkipComma(&s);
+							nAddress = _tcstol(s, &t, 0);	// Address
+							if (t == s) {
+								bOK = false;
+								CheatError(pszFilename, nLine, pCurrentCheat, _T("address omitted"), szLine);
+								break;
+							}
+							s = t;
 
-						SkipComma(&s);
-						nValue = _tcstol(s, &t, 0);		// Value
-						if (t == s) {
-							bOK = false;
-							CheatError(pszFilename, nLine, pCurrentCheat, _T("value omitted"), szLine);
-							break;
+							SkipComma(&s);
+							nValue = _tcstol(s, &t, 0);		// Value
+							if (t == s) {
+								bOK = false;
+								CheatError(pszFilename, nLine, pCurrentCheat, _T("value omitted"), szLine);
+								break;
+							}
 						}
 					} else {
 						if (nCurrentAddress) {			// Only the first option is allowed no address
@@ -622,10 +641,11 @@ static INT32 ConfigParseMAMEFile()
 				if (flags & 0x100) { // add options
 					INT32 nTotal = nValue + 1;
 					INT32 nPlus1 = (flags & 0x200) ? 1 : 0; // displayed value +1?
+					INT32 nStartValue = (flags & 0x400) ? 1 : 0; // starting value
 
 					//bprintf(0, _T("adding .. %X. options\n"), nTotal);
 					if (nTotal > 0xff) continue; // bad entry (roughrac has this)
-					for (nValue = 0; nValue < nTotal; nValue++) {
+					for (nValue = nStartValue; nValue < nTotal; nValue++) {
 #if defined(UNICODE)
 						swprintf(tmp2, L"# %d.", nValue + nPlus1);
 #else
