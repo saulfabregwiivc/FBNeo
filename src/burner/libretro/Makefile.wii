@@ -6,8 +6,7 @@ ifeq ($(target),cps1)
     
     FBNEO_DEFINES += -DCPS1_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR)
 
     BURN_BLACKLIST += $(CAPCOM_DIR)/d_cps2.cpp \
         $(CAPCOM_DIR)/cps2_crpt.cpp \
@@ -26,7 +25,7 @@ ifeq ($(target),cps1)
         $(M68K_CPU_DIR) \
         $(FBNEO_CPU_DIR)/z80
 
-    FBNEO_INTERFACE_DIRS := 
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
     SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
         $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
@@ -51,8 +50,7 @@ else ifeq ($(target),cps2)
     
     FBNEO_DEFINES += -DCPS2_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(CAPCOM_DIR)
 
     BURN_BLACKLIST += $(CAPCOM_DIR)/d_cps1.cpp \
         $(CAPCOM_DIR)/fcrash_snd.cpp \
@@ -73,7 +71,7 @@ else ifeq ($(target),cps2)
         $(M68K_CPU_DIR) \
         $(FBNEO_CPU_DIR)/z80
 
-    FBNEO_INTERFACE_DIRS := 
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
     SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
         $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
@@ -92,8 +90,7 @@ else ifeq ($(target),cps3)
     
     FBNEO_DEFINES += -DCPS3_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(CPS3_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(CPS3_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
         $(FBNEO_BURN_DIR)/burn_led.cpp \
@@ -109,7 +106,7 @@ else ifeq ($(target),cps3)
 
     FBNEO_CPU_DIRS := $(SH2_CPU_DIR)
 
-    FBNEO_INTERFACE_DIRS := 
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
     SOURCES_CXX := $(FBNEO_BURN_DIR)/devices/eeprom.cpp
 
@@ -121,8 +118,7 @@ else ifeq ($(target),neogeo)
     
     FBNEO_DEFINES += -DNEOGEO_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(NEOGEO_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(NEOGEO_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
         $(FBNEO_BURN_DIR)/burn_led.cpp \
@@ -158,8 +154,7 @@ else ifeq ($(target),cave)
     
     FBNEO_DEFINES += -DCAVE_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(CAVE_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(CAVE_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
         $(FBNEO_BURN_DIR)/burn_led.cpp \
@@ -200,8 +195,7 @@ else ifeq ($(target),atari)
     
     FBNEO_DEFINES += -DATARI_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(ATARI_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(ATARI_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
         $(FBNEO_BURN_DIR)/burn_shift.cpp \
@@ -243,8 +237,7 @@ else ifeq ($(target),coleco)
     
     FBNEO_DEFINES += -DCOLECO_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/coleco \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/coleco
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
         $(FBNEO_BURN_DIR)/burn_pal.cpp \
@@ -273,8 +266,7 @@ else ifeq ($(target),dataeast)
     
     FBNEO_DEFINES += -DDATAEAST_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(DATAEAST_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(DATAEAST_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
         $(FBNEO_BURN_DIR)/burn_pal.cpp \
@@ -333,8 +325,7 @@ else ifeq ($(target),galaxian)
     
     FBNEO_DEFINES += -DGALAXIAN_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(GALAXIAN_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(GALAXIAN_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
         $(FBNEO_BURN_DIR)/burn_pal.cpp \
@@ -368,8 +359,7 @@ else ifeq ($(target),irem)
     
     FBNEO_DEFINES += -DIREM_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/irem \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/irem
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
         $(FBNEO_BURN_DIR)/burn_pal.cpp \
@@ -384,7 +374,7 @@ else ifeq ($(target),irem)
         $(FBNEO_CPU_DIR)/i8039 \
         $(FBNEO_CPU_DIR)/m6800 \
 
-    FBNEO_INTERFACE_DIRS :=$(FBNEO_INTERFACE_DIR)/audio
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
     SOURCES_CXX := $(FBNEO_CPU_DIR)/nec_intf.cpp \
         $(FBNEO_CPU_DIR)/z80_intf.cpp \
@@ -410,8 +400,7 @@ else ifeq ($(target),konami)
     
     FBNEO_DEFINES += -DKONAMI_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/konami \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(FBNEO_BURN_DRIVERS_DIR)/konami
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_pal.cpp \
         $(FBNEO_BURN_DIR)/vector.cpp
@@ -469,8 +458,7 @@ else ifeq ($(target),megadrive)
     
     FBNEO_DEFINES += -DMEGADRIVE_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(MD_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(MD_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_bitmap.cpp \
         $(FBNEO_BURN_DIR)/burn_led.cpp \
@@ -504,11 +492,9 @@ else ifeq ($(target),midway)
     
     FBNEO_DEFINES += -DMIDWAY_ONLY
     
-    FBNEO_BURN_DRIVERS_DIRS := $(MIDWAY_DIR) \
-        $(FBNEO_BURN_DRIVERS_DIR)
+    FBNEO_BURN_DRIVERS_DIRS := $(MIDWAY_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
-        $(FBNEO_BURN_DIR)/burn_pal.cpp \
         $(FBNEO_BURN_DIR)/burn_shift.cpp \
         $(FBNEO_BURN_DIR)/vector.cpp
     
@@ -516,6 +502,7 @@ else ifeq ($(target),midway)
         $(FBNEO_BURN_DRIVERS_DIRS)
 
     FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR)/m6809 \
+        $(FBNEO_CPU_DIR)/z80 \
         $(TMS34010_CPU_DIR) \
         $(ADSP2100_CPU_DIR) \
         $(MIPS3_CPU_DIR)
@@ -523,12 +510,15 @@ else ifeq ($(target),midway)
     FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
 
     SOURCES_CXX := $(FBNEO_BURN_DIR)/snd/burn_ym2151.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp \
         $(FBNEO_BURN_DIR)/snd/dac.cpp \
         $(FBNEO_CPU_DIR)/m6809_intf.cpp \
         $(FBNEO_CPU_DIR)/tms34_intf.cpp \
         $(FBNEO_CPU_DIR)/adsp2100_intf.cpp \
         $(FBNEO_CPU_DIR)/mips3_intf.cpp \
-        $(FBNEO_BURN_DIR)/snd/msm6295.cpp
+        $(FBNEO_BURN_DIR)/snd/msm6295.cpp \
+        $(FBNEO_BURN_DIR)/devices/6821pia.cpp \
+        $(FBNEO_BURN_DIR)/snd/hc55516.cpp
 
     SOURCES_C := $(FBNEO_BURN_DIR)/snd/ym2151.c
 
@@ -591,5 +581,34 @@ else ifeq ($(target),nes)
 
     SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
         $(FBNEO_BURN_DIR)/snd/ym2413.c
+
+else ifeq ($(target),pce)
+
+    ##############################################
+    # PCE-Engine Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DPCE_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(PCE_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/timer.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+    
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := $(H6280_CPU_DIR)
+        
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
+
+    SOURCES_CXX := $(FBNEO_CPU_DIR)/h6280_intf.cpp \
+        $(FBNEO_BURN_DIR)/devices/vdc.cpp \
+        $(FBNEO_BURN_DIR)/snd/c6280.cpp
+
+    SOURCES_C := 
 
 endif

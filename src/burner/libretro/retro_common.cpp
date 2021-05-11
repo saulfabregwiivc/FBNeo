@@ -31,6 +31,8 @@
 #define CORE_OPTION_NAME "fbneo_msx"
 #elif defined(NES_ONLY)
 #define CORE_OPTION_NAME "fbneo_nes"
+#elif defined(PCE_ONLY)
+#define CORE_OPTION_NAME "fbneo_pce"
 #else
 #define CORE_OPTION_NAME "fbneo"
 #endif

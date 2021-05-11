@@ -30,6 +30,8 @@
   #define APP_TITLE "FinalBurn Neo MSX [DEBUG]"
  #elif defined(NES_ONLY)
   #define APP_TITLE "FinalBurn Neo NES [DEBUG]"
+ #elif defined(PCE_ONLY)
+  #define APP_TITLE "FinalBurn Neo PC-Engine [DEBUG]"
  #else
   #define APP_TITLE "FinalBurn Neo [DEBUG]"
  #endif
@@ -64,6 +66,8 @@
   #define APP_TITLE "FinalBurn Neo MSX"
  #elif defined(NES_ONLY)
   #define APP_TITLE "FinalBurn Neo NES"
+ #elif defined(PCE_ONLY)
+  #define APP_TITLE "FinalBurn Neo PC-Engine"
  #else
   #define APP_TITLE "FinalBurn Neo"
  #endif
