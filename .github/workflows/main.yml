@@ -77,16 +77,28 @@ jobs:
           echo "DEVKITPPC=${HOME}/devkitpro/devkitPPC" >> $GITHUB_ENV
           echo "DEVKITPRO=${HOME}/devkitpro" >> $GITHUB_ENV
           echo "${HOME}/devkitpro/devkitPPC/bin" >> $GITHUB_PATH
-      - name: Compile core
+      - name: Compile cores
         run: |
           cd ${GITHUB_WORKSPACE}/src/burner/libretro
-          target=neogeo;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=cps1;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=cps2;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=cps3;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=cave;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=coleco;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
-          target=dataeast;make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7
+          build_fbneo() { make target=$target platform=wii generate-files-clean;make target=$target platform=wii clean;make target=$target platform=wii generate-files;make target=$target platform=wii -j7; }
+          target=neogeo;build_fbneo
+          target=cps1;build_fbneo
+          target=cps2;build_fbneo
+          target=cps3;build_fbneo
+          target=cave;build_fbneo
+          target=coleco;build_fbneo
+          target=dataeast;build_fbneo
+          target=galaxian;build_fbneo
+          target=irem;build_fbneo
+          target=konami;build_fbneo
+          target=megadrive;build_fbneo
+          target=msx;build_fbneo
+          target=nes;build_fbneo
+          target=pce;build_fbneo
+          target=pgm;build_fbneo
+          target=pre90s;build_fbneo
+          target=psikyo;build_fbneo
+          target=pst90s;build_fbneo
       - name: Compile binaries
         run: |
           cd ~/
