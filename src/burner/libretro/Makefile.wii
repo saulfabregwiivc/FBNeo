@@ -140,7 +140,8 @@ else ifeq ($(target),neogeo)
         $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
         $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
         $(FBNEO_CPU_DIR)/m68000_intf.cpp \
-        $(FBNEO_CPU_DIR)/z80_intf.cpp
+        $(FBNEO_CPU_DIR)/z80_intf.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2203.cpp \
 
     SOURCES_C := $(FBNEO_BURN_DIR)/snd/ay8910.c \
         $(FBNEO_BURN_DIR)/snd/fm.c \
@@ -610,5 +611,341 @@ else ifeq ($(target),pce)
         $(FBNEO_BURN_DIR)/snd/c6280.cpp
 
     SOURCES_C := 
+
+else ifeq ($(target),pgm)
+
+    ##############################################
+    # PolyGameMaster Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DPGM_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(PGM_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+    
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := $(ARM7_CPU_DIR) \
+        $(M68K_DIR) \
+        $(M68K_CPU_DIR) \
+        $(FBNEO_CPU_DIR)/z80
+        
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
+
+    SOURCES_CXX := $(FBNEO_CPU_DIR)/arm7_intf.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp \
+        $(FBNEO_BURN_DIR)/devices/v3021.cpp \
+        $(FBNEO_BURN_DIR)/snd/ics2115.cpp
+
+    SOURCES_C := 
+
+else ifeq ($(target),pre90s)
+
+    FBNEO_DEFINES += -DPRE90S_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(PRE90S_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DRIVERS_DIRS)/d_exterm.cpp
+        
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := \
+        $(FBNEO_CPU_DIR)/i8039 \
+        $(FBNEO_CPU_DIR)/i8051 \
+        $(FBNEO_CPU_DIR)/m6800 \
+        $(FBNEO_CPU_DIR)/m6805 \
+        $(FBNEO_CPU_DIR)/m6809 \
+        $(FBNEO_CPU_DIR)/s2650 \
+        $(FBNEO_CPU_DIR)/z80 \
+        $(H6280_CPU_DIR) \
+        $(HD6309_CPU_DIR) \
+        $(M6502_CPU_DIR) \
+        $(M68K_CPU_DIR) \
+        $(NEC_CPU_DIR) \
+        $(TMS34010_CPU_DIR) \
+
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
+
+    SOURCES_CXX := \
+        $(CAPCOM_DIR)/kabuki.cpp \
+        $(DATAEAST_DIR)/deco16ic.cpp \
+        $(DATAEAST_DIR)/decobac06.cpp \
+        $(FBNEO_BURN_DIR)/devices/6821pia.cpp \
+        $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
+        $(FBNEO_BURN_DIR)/devices/8257dma.cpp
+        $(FBNEO_BURN_DIR)/devices/avgdvg.cpp \
+        $(FBNEO_BURN_DIR)/devices/earom.cpp \
+        $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+        $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
+        $(FBNEO_BURN_DIR)/devices/mathbox.cpp \
+        $(FBNEO_BURN_DIR)/devices/mermaid.cpp \
+        $(FBNEO_BURN_DIR)/devices/midcsd.cpp \
+        $(FBNEO_BURN_DIR)/devices/midsat.cpp \
+        $(FBNEO_BURN_DIR)/devices/midsg.cpp \
+        $(FBNEO_BURN_DIR)/devices/midssio.cpp \
+        $(FBNEO_BURN_DIR)/devices/midtcs.cpp \
+        $(FBNEO_BURN_DIR)/devices/namco_c45.cpp \
+        $(FBNEO_BURN_DIR)/devices/namcoio.cpp \
+        $(FBNEO_BURN_DIR)/devices/nb1414m4.cpp \
+        $(FBNEO_BURN_DIR)/devices/nb1414m4_8bit.cpp \
+        $(FBNEO_BURN_DIR)/devices/pandora.cpp \
+        $(FBNEO_BURN_DIR)/devices/resnet.cpp \
+        $(FBNEO_BURN_DIR)/devices/seibusnd.cpp \
+        $(FBNEO_BURN_DIR)/devices/slapstic.cpp \
+        $(FBNEO_BURN_DIR)/devices/t5182.cpp \
+        $(FBNEO_BURN_DIR)/devices/tms34061.cpp \
+        $(FBNEO_BURN_DIR)/devices/tms9928A.cpp \
+        $(FBNEO_BURN_DIR)/devices/watchdog.cpp \
+        $(FBNEO_BURN_DIR)/devices/x2212.cpp \
+        $(FBNEO_BURN_DIR)/drv/irem/irem_sound.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k051316.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k051960.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k052109.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053245.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053247.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053250.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053936.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k054338.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k055555.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k056832.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/konamiic.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/timeplt_snd.cpp \
+        $(FBNEO_BURN_DIR)/drv/sega/mc8123.cpp \
+        $(FBNEO_BURN_DIR)/snd/asteroids.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_y8950.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2151.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2203.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2413.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2608.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym3526.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym3812.cpp \
+        $(FBNEO_BURN_DIR)/snd/bzone.cpp \
+        $(FBNEO_BURN_DIR)/snd/dac.cpp \
+        $(FBNEO_BURN_DIR)/snd/flower.cpp \
+        $(FBNEO_BURN_DIR)/snd/flt_rc.cpp \
+        $(FBNEO_BURN_DIR)/snd/hc55516.cpp \
+        $(FBNEO_BURN_DIR)/snd/llander.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm5205.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm6295.cpp \
+        $(FBNEO_BURN_DIR)/snd/namco_snd.cpp \
+        $(FBNEO_BURN_DIR)/snd/nes_apu.cpp \
+        $(FBNEO_BURN_DIR)/snd/phoenixsound.cpp \
+        $(FBNEO_BURN_DIR)/snd/pleiadssound.cpp \
+        $(FBNEO_BURN_DIR)/snd/pokey.cpp \
+        $(FBNEO_BURN_DIR)/snd/redbaron.cpp \
+        $(FBNEO_BURN_DIR)/snd/s14001a.cpp \
+        $(FBNEO_BURN_DIR)/snd/samples.cpp \
+        $(FBNEO_BURN_DIR)/snd/sn76477.cpp \
+        $(FBNEO_BURN_DIR)/snd/sn76496.cpp \
+        $(FBNEO_BURN_DIR)/snd/snk6502_sound.cpp \
+        $(FBNEO_BURN_DIR)/snd/sp0250.cpp \
+        $(FBNEO_BURN_DIR)/snd/sp0256.cpp \
+        $(FBNEO_BURN_DIR)/snd/tms36xx.cpp \
+        $(FBNEO_BURN_DIR)/snd/tms5110.cpp \
+        $(FBNEO_BURN_DIR)/snd/tms5220.cpp \
+        $(FBNEO_BURN_DIR)/snd/upd7759.cpp \
+        $(FBNEO_BURN_DIR)/snd/vlm5030.cpp \
+        $(FBNEO_BURN_DIR)/snd/wiping.cpp \
+        $(FBNEO_CPU_DIR)/h6280_intf.cpp \
+        $(FBNEO_CPU_DIR)/hd6309_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6502_intf.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6800_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6805_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6809_intf.cpp \
+        $(FBNEO_CPU_DIR)/nec_intf.cpp \
+        $(FBNEO_CPU_DIR)/s2650_intf.cpp \
+        $(FBNEO_CPU_DIR)/tms34010_intf.cpp \
+        $(FBNEO_CPU_DIR)/tms34_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp \
+        $(TAITO_DIR)/taito_m68705.cpp \
+
+    SOURCES_C := \
+        $(FBNEO_BURN_DIR)/snd/ay8910.c \
+        $(FBNEO_BURN_DIR)/snd/fm.c \
+        $(FBNEO_BURN_DIR)/snd/fmopl.c \
+        $(FBNEO_BURN_DIR)/snd/ym2151.c \
+        $(FBNEO_BURN_DIR)/snd/ym2413.c \
+        $(FBNEO_BURN_DIR)/snd/ymdeltat.c \
+
+else ifeq ($(target),psikyo)
+
+    ##############################################
+    # Psykio Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DPSIKYO_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(PSIKYO_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/burn_pal.cpp \
+        $(FBNEO_BURN_DIR)/burn_shift.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+    
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+        FBNEO_CPU_DIRS := $(FBNEO_CPU_DIR)/z80 \
+        $(M68K_CPU_DIR) \
+        $(SH2_CPU_DIR)
+
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
+
+    SOURCES_CXX := $(FBNEO_CPU_DIR)/z80_intf.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ymf278b.cpp \
+        $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+
+    SOURCES_C := $(FBNEO_BURN_DIR)/snd/ymf278b.c \
+        $(FBNEO_BURN_DIR)/snd/ay8910.c \
+        $(FBNEO_BURN_DIR)/snd/fm.c \
+        $(FBNEO_BURN_DIR)/snd/ymdeltat.c \
+
+else ifeq ($(target),pst90s)
+
+    ##############################################
+    # Pst90s Only
+    ##############################################
+    
+    FBNEO_DEFINES += -DPST90S_ONLY
+    
+    FBNEO_BURN_DRIVERS_DIRS := $(PST90S_DIR)
+
+    BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
+        $(FBNEO_BURN_DIR)/vector.cpp
+    
+    FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
+        $(FBNEO_BURN_DRIVERS_DIRS)
+
+    FBNEO_CPU_DIRS := \
+        $(E132XS_CPU_DIR) \
+        $(FBNEO_CPU_DIR)/i8051 \
+        $(FBNEO_CPU_DIR)/m6805 \
+        $(FBNEO_CPU_DIR)/m6809 \
+        $(FBNEO_CPU_DIR)/tlcs90 \
+        $(FBNEO_CPU_DIR)/tlcs900 \
+        $(FBNEO_CPU_DIR)/tms32010 \
+        $(FBNEO_CPU_DIR)/upd7810 \
+        $(FBNEO_CPU_DIR)/z180 \
+        $(FBNEO_CPU_DIR)/z80 \
+        $(I386_CPU_DIR) \
+        $(M377_CPU_DIR) \
+        $(M6502_CPU_DIR) \
+        $(M68K_CPU_DIR) \
+        $(NEC_CPU_DIR) \
+        $(PIC16C5X_CPU_DIR) \
+        $(SH2_CPU_DIR) \
+        $(TMS34010_CPU_DIR) \
+        $(V60_CPU_DIR) \
+        
+    FBNEO_INTERFACE_DIRS := $(FBNEO_INTERFACE_DIR)/audio
+
+    SOURCES_CXX := \
+        $(DATAEAST_DIR)/deco16ic.cpp \
+        $(DATAEAST_DIR)/deco146.cpp \
+        $(E132XS_CPU_DIR)/e132xs.cpp \
+        $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
+        $(FBNEO_BURN_DIR)/devices/bsmt2000.cpp \
+        $(FBNEO_BURN_DIR)/devices/c169.cpp \
+        $(FBNEO_BURN_DIR)/devices/ds2404.cpp \
+        $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
+        $(FBNEO_BURN_DIR)/devices/gaelco_crypt.cpp \
+        $(FBNEO_BURN_DIR)/devices/i4x00.cpp \
+        $(FBNEO_BURN_DIR)/devices/intelfsh.cpp \
+        $(FBNEO_BURN_DIR)/devices/joyprocess.cpp \
+        $(FBNEO_BURN_DIR)/devices/k1ge.cpp \
+        $(FBNEO_BURN_DIR)/devices/kaneko_tmap.cpp \
+        $(FBNEO_BURN_DIR)/devices/namco_c45.cpp \
+        $(FBNEO_BURN_DIR)/devices/nmk004.cpp \
+        $(FBNEO_BURN_DIR)/devices/nmk112.cpp \
+        $(FBNEO_BURN_DIR)/devices/pandora.cpp \
+        $(FBNEO_BURN_DIR)/devices/qs1000.cpp \
+        $(FBNEO_BURN_DIR)/devices/seibucop.cpp \
+        $(FBNEO_BURN_DIR)/devices/seibusnd.cpp \
+        $(FBNEO_BURN_DIR)/devices/sknsspr.cpp \
+        $(FBNEO_BURN_DIR)/devices/st0020.cpp \
+        $(FBNEO_BURN_DIR)/devices/timekpr.cpp \
+        $(FBNEO_BURN_DIR)/devices/tlc34076.cpp \
+        $(FBNEO_BURN_DIR)/devices/watchdog.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k051316.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k051733.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k051960.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k052109.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053245.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053247.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053250.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053251.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k053936.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k054000.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k054338.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k055555.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/k056832.cpp \
+        $(FBNEO_BURN_DIR)/drv/konami/konamiic.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2151.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2203.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2413.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2608.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2610.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym2612.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym3526.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ym3812.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ymf262.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ymf271.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ymf278b.cpp \
+        $(FBNEO_BURN_DIR)/snd/burn_ymf278b.cpp \
+        $(FBNEO_BURN_DIR)/snd/c140.cpp \
+        $(FBNEO_BURN_DIR)/snd/c352.cpp \
+        $(FBNEO_BURN_DIR)/snd/dac.cpp \
+        $(FBNEO_BURN_DIR)/snd/es5506.cpp \
+        $(FBNEO_BURN_DIR)/snd/es8712.cpp \
+        $(FBNEO_BURN_DIR)/snd/gaelco.cpp \
+        $(FBNEO_BURN_DIR)/snd/i5000.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm5205.cpp \
+        $(FBNEO_BURN_DIR)/snd/msm6295.cpp \
+        $(FBNEO_BURN_DIR)/snd/namco_snd.cpp \
+        $(FBNEO_BURN_DIR)/snd/saa1099.cpp \
+        $(FBNEO_BURN_DIR)/snd/t6w28.cpp \
+        $(FBNEO_BURN_DIR)/snd/x1010.cpp \
+        $(FBNEO_BURN_DIR)/snd/ymz280b.cpp \
+        $(FBNEO_CPU_DIR)/m6502_intf.cpp \
+        $(FBNEO_CPU_DIR)/m68000_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6805_intf.cpp \
+        $(FBNEO_CPU_DIR)/m6809_intf.cpp \
+        $(FBNEO_CPU_DIR)/nec_intf.cpp \
+        $(FBNEO_CPU_DIR)/pic16c5x_intf.cpp \
+        $(FBNEO_CPU_DIR)/tlcs900/tlcs900.cpp \
+        $(FBNEO_CPU_DIR)/tlcs90_intf.cpp \
+        $(FBNEO_CPU_DIR)/tms32010/tms32010.cpp \
+        $(FBNEO_CPU_DIR)/tms34_intf.cpp \
+        $(FBNEO_CPU_DIR)/upd7810/upd7810.cpp \
+        $(FBNEO_CPU_DIR)/z180_intf.cpp \
+        $(FBNEO_CPU_DIR)/z80_intf.cpp \
+        $(I386_CPU_DIR)/i386.cpp \
+        $(M377_CPU_DIR)/m37710.cpp \
+        $(UPD7725_CPU_DIR)/upd7725.cpp \
+        $(V60_CPU_DIR)/v60.cpp \
+        
+    SOURCES_C := \
+        $(FBNEO_BURN_DIR)/snd/ay8910.c \
+        $(FBNEO_BURN_DIR)/snd/fm.c \
+        $(FBNEO_BURN_DIR)/snd/fmopl.c \
+        $(FBNEO_BURN_DIR)/snd/ym2151.c \
+        $(FBNEO_BURN_DIR)/snd/ym2413.c \
+        $(FBNEO_BURN_DIR)/snd/ym2612.c \
+        $(FBNEO_BURN_DIR)/snd/ymdeltat.c \
+        $(FBNEO_BURN_DIR)/snd/ymf262.c \
+        $(FBNEO_BURN_DIR)/snd/ymf271.c \
+        $(FBNEO_BURN_DIR)/snd/ymf278b.c \
+
 
 endif

@@ -444,7 +444,7 @@ else
 endif
 
 ifeq ($(platform), wii)
-	ifneq (,$(filter $(target), neogeo cps3 konami))
+	ifneq (,$(filter $(target), neogeo cps3 konami pgm psikyo))
 		INCLUDE_DIRS += $(FBNEO_BURNER_DIR)/wii
 		FBNEO_SRC_DIRS += $(FBNEO_BURNER_DIR)/wii
 		SOURCES_S += $(FBNEO_BURNER_DIR)/wii/dsihandler.S

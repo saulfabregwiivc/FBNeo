@@ -32,6 +32,14 @@
   #define APP_TITLE "FinalBurn Neo NES [DEBUG]"
  #elif defined(PCE_ONLY)
   #define APP_TITLE "FinalBurn Neo PC-Engine [DEBUG]"
+ #elif defined(PGM_ONLY)
+  #define APP_TITLE "FinalBurn Neo PolyGameMaster [DEBUG]"
+ #elif defined(PRE90S_ONLY)
+  #define APP_TITLE "FinalBurn Neo Pre90 [DEBUG]"
+ #elif defined(PSIKYO_ONLY)
+  #define APP_TITLE "FinalBurn Neo Psikyo [DEBUG]"
+ #elif defined(PST90S_ONLY)
+  #define APP_TITLE "FinalBurn Neo Pst90s [DEBUG]"
  #else
   #define APP_TITLE "FinalBurn Neo [DEBUG]"
  #endif
@@ -68,6 +76,14 @@
   #define APP_TITLE "FinalBurn Neo NES"
  #elif defined(PCE_ONLY)
   #define APP_TITLE "FinalBurn Neo PC-Engine"
+ #elif defined(PGM_ONLY)
+  #define APP_TITLE "FinalBurn Neo PolyGameMaster"
+ #elif defined(PRE90S_ONLY)
+  #define APP_TITLE "FinalBurn Neo Pre90s"
+ #elif defined(PSIKYO_ONLY)
+  #define APP_TITLE "FinalBurn Neo Psikyo"
+ #elif defined(PST90S_ONLY)
+  #define APP_TITLE "FinalBurn Neo Pst90s"
  #else
   #define APP_TITLE "FinalBurn Neo"
  #endif

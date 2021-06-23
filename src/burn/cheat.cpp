@@ -6,8 +6,10 @@
 #define CHEAT_MAXCPU	8 // enough?
 
 #define HW_NES ( ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_NES) || ((BurnDrvGetHardwareCode() & HARDWARE_PUBLIC_MASK) == HARDWARE_FDS) )
+#if defined(NES_ONLY)
 extern void nes_add_cheat(char *code); // from drv/nes/d_nes.cpp
 extern void nes_remove_cheat(char *code);
+#endif
 
 bool bCheatsAllowed;
 CheatInfo* pCheatInfo = NULL;
@@ -118,7 +120,9 @@ static void NESCheatDisable(CheatInfo* pCurrentCheat, INT32 nCheat)
 		if (HW_NES) {
 			// Disable Game Genie code
 			bprintf(0, _T("NES-Cheat #%d, option #%d: "), nCheat, pCurrentCheat->nCurrent);
+#if defined(NES_ONLY)
 			nes_remove_cheat(pAddressInfo->szGenieCode);
+#endif
 		}
 		pAddressInfo++;
 	}
@@ -211,7 +215,9 @@ INT32 CheatEnable(INT32 nCheat, INT32 nOption) // -1 / 0 - disable
 
 					if (HW_NES) {
 						bprintf(0, _T("NES-Cheat #%d, option #%d: "), nCheat, nOption);
+#if defined(NES_ONLY)
 						nes_add_cheat(pAddressInfo->szGenieCode);
+#endif
 					} else {
 						// Copy the original values
 						pAddressInfo->nOriginalValue = cheat_subptr->read(pAddressInfo->nAddress);

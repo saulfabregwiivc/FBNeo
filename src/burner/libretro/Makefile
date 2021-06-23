@@ -71,38 +71,8 @@ ifneq (, $(findstring clang,$(CXX)))
 endif
 
 # TARGET
-ifeq ($(target),cps1)
-   TARGET_NAME := fbneo_cps1
-else ifeq ($(target),cps2)
-   TARGET_NAME := fbneo_cps2
-else ifeq ($(target),cps3)
-   TARGET_NAME := fbneo_cps3
-else ifeq ($(target),neogeo)
-   TARGET_NAME := fbneo_neogeo
-else ifeq ($(target),cave)
-   TARGET_NAME := fbneo_cave
-else ifeq ($(target),atari)
-   TARGET_NAME := fbneo_atari
-else ifeq ($(target),coleco)
-   TARGET_NAME := fbneo_coleco
-else ifeq ($(target),dataeast)
-   TARGET_NAME := fbneo_dataeast
-else ifeq ($(target),galaxian)
-   TARGET_NAME := fbneo_galaxian
-else ifeq ($(target),irem)
-   TARGET_NAME := fbneo_irem
-else ifeq ($(target),konami)
-   TARGET_NAME := fbneo_konami
-else ifeq ($(target),megadrive)
-   TARGET_NAME := fbneo_megadrive
-else ifeq ($(target),midway)
-   TARGET_NAME := fbneo_midway
-else ifeq ($(target),msx)
-   TARGET_NAME := fbneo_msx
-else ifeq ($(target),nes)
-   TARGET_NAME := fbneo_nes
-else ifeq ($(target),pce)
-   TARGET_NAME := fbneo_pce
+ifeq ($(target),$(filter $(target),cps1 cps2 cps3 neogeo cave atari coleco dataeast galaxian irem konami megadrive midway msx nes pce pgm pre90s psikyo pst90s))
+   TARGET_NAME := fbneo_$(target)
 else
    TARGET_NAME := fbneo
 endif
@@ -661,9 +631,9 @@ generate-files:
 	@echo "Generating $(FBNEO_GENERATED_DIR)/driverlist.h..."
 	@echo ""
     ifeq ($(target),cps1)
-		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -p -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(CAPCOM_DIR)/d_cps1.cpp
+		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -p -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(FBNEO_BURN_DRIVERS_DIRS)/d_cps1.cpp
     else ifeq ($(target),cps2)
-		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -p -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(CAPCOM_DIR)/d_cps2.cpp
+		$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -p -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(FBNEO_BURN_DRIVERS_DIRS)/d_cps2.cpp
     else
         ifeq ($(LIGHT), 0)
 			$(PERL) $(FBNEO_SCRIPTS_DIR)/gamelist.pl -o $(FBNEO_GENERATED_DIR)/driverlist.h -p -l $(MAIN_FBNEO_DIR)/../gamelist.txt $(FBNEO_BURN_DRIVERS_DIRS)

@@ -3,6 +3,10 @@
 #include "v3021.h"
 #include "ics2115.h"
 #include "timer.h"
+#ifdef WII_VM
+#include <unistd.h>
+#include "wii_vm.h"
+#endif
 
 UINT8 PgmJoy1[8] = {0,0,0,0,0,0,0,0};
 UINT8 PgmJoy2[8] = {0,0,0,0,0,0,0,0};
@@ -597,8 +601,19 @@ static void expand_colourdata()
 		while (nPGMSPRMaskMaskLen < needed)
 			nPGMSPRMaskMaskLen <<= 1;
 		nPGMSPRMaskMaskLen-=1;
-
+#ifdef WII_VM
+		if(nPGMSPRColMaskLen > 8*MB)
+		{
+			PGMSPRColROM      = (UINT8*)VM_Init(nPGMSPRColMaskLen, ROMCACHE_SIZE);
+			printf("\n\nLoading sprite roms...\n");
+		}
+		else
+		{
+			PGMSPRColROM = (UINT8*)BurnMalloc(nPGMSPRColMaskLen);
+		}
+#else
 		PGMSPRColROM = (UINT8*)BurnMalloc(nPGMSPRColMaskLen);
+#endif
 		nPGMSPRColMaskLen -= 1;
 	}
 
@@ -646,6 +661,9 @@ static void expand_colourdata()
 		PGMSPRColROM[cnt*3+2] = (colpack >> 10) & 0x1f;
 	}
 
+#ifdef WII_VM
+	printf("done.\n");
+#endif
 	BurnFree (tmp);
 }
 
@@ -802,6 +820,11 @@ INT32 pgmExit()
 	BurnFree (PGMTileROMExp);
 	BurnFree (PGMSPRColROM);
 	BurnFree (PGMSPRMaskROM);
+#ifdef WII_VM
+	PGMSPRColROM = NULL;
+	VM_InvalidateAll();
+	VM_Deinit();
+#endif
 
 	nPGM68KROMLen = 0;
 	nPGMTileROMLen = 0;

@@ -5,6 +5,10 @@
 
 #include "tiles_generic.h" // nScreenWidth & nScreenHeight
 #include "psikyosh_render.h" // contains loads of macros
+#ifdef WII_VM
+#include "wii_vm.h"
+UINT8 *vmtiles;
+#endif
 
 UINT8 *pPsikyoshTiles;
 UINT32  *pPsikyoshSpriteBuffer;
@@ -54,7 +58,25 @@ static void draw_blendy_tile(INT32 gfx, INT32 code, INT32 color, INT32 sx, INT32
 
 		if (DrvTransTab[code >> 3] & (1 << (code & 7))) return;
 
+#ifdef WII_VM
+		UINT8 *src = NULL;
+
+		// When the tile is part of the first 48MB (0x60000 tiles) use RAM else use VM.
+		if(BurnUseCache)
+		{
+			if (code < 0x60000)
+				src = pPsikyoshTiles + (code << 7);
+			else
+				src = &vmtiles[ (code - 0x60000) << 7];
+		}
+		else
+		{
+			src = pPsikyoshTiles + (code << 7);
+		}
+#else
 		UINT8 *src = pPsikyoshTiles + (code << 7);
+	
+#endif
 	
 		INT32 inc = 8;
 		if (fy) {
@@ -146,7 +168,24 @@ static void draw_blendy_tile(INT32 gfx, INT32 code, INT32 color, INT32 sx, INT32
 
 		if (DrvTransTab[(code >> 3) + 0x10000] & (1 << (code & 7))) return;
 
+#ifdef WII_VM
+		UINT8 *src = NULL;
+ 
+		// When the tile is part of the first 48MB (0x30000 tiles) use RAM else use VM.
+		if(BurnUseCache)
+		{
+			if ( code  <  0x30000 )
+				src = pPsikyoshTiles + (code << 8);
+			else
+				src = &vmtiles[ (code - 0x30000) << 8];
+		}
+		else
+		{
+			src = pPsikyoshTiles + (code << 8);
+		}
+#else
 		UINT8 *src = pPsikyoshTiles + (code << 8);
+#endif
 
 		INT32 inc = 16;
 		if (fy) {
@@ -244,7 +283,25 @@ static void draw_prezoom(INT32 gfx, INT32 code, INT32 high, INT32 wide)
 		if (tileno < 0 || tileno > nGraphicsSize1) tileno = 0;
 		if (nDrvZoomPrev == tileno) return;
 		nDrvZoomPrev = tileno;
+
+#ifdef WII_VM
+		UINT32 *gfxptr = NULL;
+
+		// When the tile is part of the first 48MB (0x30000 tiles) use RAM else use VM.
+		if(BurnUseCache)
+		{
+			if(tileno < 0x30000 )
+				gfxptr = (UINT32*)(pPsikyoshTiles + (tileno << 8));
+			else
+				gfxptr = (UINT32*)(&vmtiles[(tileno - 0x30000) << 8]);
+		}
+		else
+		{
+			gfxptr = (UINT32*)(pPsikyoshTiles + (tileno << 8));
+		}
+#else
 		UINT32 *gfxptr = (UINT32*)(pPsikyoshTiles + (tileno << 8));
+#endif
 
 		for (INT32 ytile = 0; ytile < high; ytile++)
 		{
@@ -268,7 +325,25 @@ static void draw_prezoom(INT32 gfx, INT32 code, INT32 high, INT32 wide)
 		if (tileno < 0 || tileno > nGraphicsSize0) tileno = 0;
 		if (nDrvZoomPrev == tileno) return;
 		nDrvZoomPrev = tileno;
+
+#ifdef GEKKO
+		UINT8 *gfxptr = NULL;
+
+		// When the tile is part of the first 48MB (0x60000 tiles) use RAM else use VM.
+		if(BurnUseCache)
+		{
+			if ( tileno  <  0x60000 )
+				gfxptr = pPsikyoshTiles + (tileno << 7);
+			else
+				gfxptr = &vmtiles[ (tileno - 0x60000) << 7];
+		}
+		else
+		{
+			gfxptr = pPsikyoshTiles + (tileno << 7);
+		}
+#else
 		UINT8 *gfxptr = pPsikyoshTiles + (tileno << 7);
+#endif
 		for (INT32 ytile = 0; ytile < high; ytile++)
 		{
 			for (INT32 xtile = 0; xtile < wide; xtile++)
@@ -680,6 +755,61 @@ static void calculate_transtab()
 
 	memset (DrvTransTab, 0xff, 0x18000);
 
+#ifdef WII_VM
+	INT32 memsize;
+
+	if(BurnUseCache)
+	{
+		memsize = 48*MB + 1;
+	}
+	else
+	{
+		memsize = nGraphicsSize;
+	}
+
+	// first calculate all 4bpp tiles in RAM
+	for (INT32 i = 0; i < memsize; i+= 0x80) {
+		for (INT32 j = 0; j < 0x80; j++) {
+			if (pPsikyoshTiles[i + j]) {
+				DrvTransTab[(i>>10) + 0x00000] &= ~(1 << ((i >> 7) & 7));
+				break;
+			}
+		}
+	}
+
+	// next, calculate all 8bpp tiles in RAM
+	for (INT32 i = 0; i < memsize; i+= 0x100) {
+		for (INT32 j = 0; j < 0x100; j++) {
+			if (pPsikyoshTiles[i + j]) {
+				DrvTransTab[(i>>11) + 0x10000] &= ~(1 << ((i >> 8) & 7));
+				break;
+			}
+		}
+	}
+
+	if(BurnUseCache)
+	{
+		// first calculate all 4bpp tiles in VM
+		for (INT32 i = memsize + 1; i < nGraphicsSize; i+= 0x80) {
+			for (INT32 j = 0; j < 0x80; j++) {
+				if (vmtiles[ (i - memsize) + j]) {
+					DrvTransTab[(i>>10) + 0x00000] &= ~(1 << ((i >> 7) & 7));
+					break;
+				}
+			}
+		}
+		// next, calculate all 8bpp tiles in VM
+		for (INT32 i = memsize + 1; i < nGraphicsSize; i+= 0x100) {
+			for (INT32 j = 0; j < 0x100; j++) {
+				if (vmtiles[ (i - memsize) + j]) {
+					DrvTransTab[(i>>11) + 0x10000] &= ~(1 << ((i >> 8) & 7));
+					break;
+				}
+			}
+		}
+	}
+#else
+
 	// first calculate all 4bpp tiles
 	for (INT32 i = 0; i < nGraphicsSize; i+= 0x80) {
 		for (INT32 j = 0; j < 0x80; j++) {
@@ -699,6 +829,7 @@ static void calculate_transtab()
 			}
 		}
 	}
+#endif
 }
 
 void PsikyoshVideoInit(INT32 gfx_max, INT32 gfx_min)

@@ -33,6 +33,14 @@
 #define CORE_OPTION_NAME "fbneo_nes"
 #elif defined(PCE_ONLY)
 #define CORE_OPTION_NAME "fbneo_pce"
+#elif defined(PGM_ONLY)
+#define CORE_OPTION_NAME "fbneo_pgm"
+#elif defined(PRE90S_ONLY)
+#define CORE_OPTION_NAME "fbneo_pre90s"
+#elif defined(PSIKYO_ONLY)
+#define CORE_OPTION_NAME "fbneo_psikyo"
+#elif defined(PST90S_ONLY)
+#define CORE_OPTION_NAME "fbneo_pst90s"
 #else
 #define CORE_OPTION_NAME "fbneo"
 #endif
