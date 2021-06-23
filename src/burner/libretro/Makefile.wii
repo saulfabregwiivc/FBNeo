@@ -679,7 +679,7 @@ else ifeq ($(target),pre90s)
         $(DATAEAST_DIR)/decobac06.cpp \
         $(FBNEO_BURN_DIR)/devices/6821pia.cpp \
         $(FBNEO_BURN_DIR)/devices/8255ppi.cpp \
-        $(FBNEO_BURN_DIR)/devices/8257dma.cpp
+        $(FBNEO_BURN_DIR)/devices/8257dma.cpp \
         $(FBNEO_BURN_DIR)/devices/avgdvg.cpp \
         $(FBNEO_BURN_DIR)/devices/earom.cpp \
         $(FBNEO_BURN_DIR)/devices/eeprom.cpp \
