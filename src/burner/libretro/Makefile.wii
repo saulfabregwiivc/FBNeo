@@ -701,7 +701,7 @@ else ifeq ($(target),pre90s)
         $(FBNEO_BURN_DIR)/devices/slapstic.cpp \
         $(FBNEO_BURN_DIR)/devices/t5182.cpp \
         $(FBNEO_BURN_DIR)/devices/tms34061.cpp \
-        $(FBNEO_BURN_DIR)/devices/tms9928A.cpp \
+        $(FBNEO_BURN_DIR)/devices/tms9928a.cpp \
         $(FBNEO_BURN_DIR)/devices/watchdog.cpp \
         $(FBNEO_BURN_DIR)/devices/x2212.cpp \
         $(FBNEO_BURN_DIR)/drv/irem/irem_sound.cpp \
