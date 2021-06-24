@@ -822,7 +822,9 @@ else ifeq ($(target),pst90s)
     FBNEO_BURN_DRIVERS_DIRS := $(PST90S_DIR)
 
     BURN_BLACKLIST += $(FBNEO_BURN_DIR)/burn_led.cpp \
-        $(FBNEO_BURN_DIR)/vector.cpp
+        $(FBNEO_BURN_DIR)/vector.cpp \
+		$(PST90S_DIR)/d_btoads.cpp \
+		$(PST90S_DIR)/d_artmagic.cpp \
     
     FBNEO_BURN_DIRS := $(FBNEO_BURN_DIR) \
         $(FBNEO_BURN_DRIVERS_DIRS)
