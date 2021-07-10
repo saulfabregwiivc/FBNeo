@@ -65,9 +65,11 @@ struct RomBiosInfo mvs_bioses[] = {
 	{NULL, 0, 0, NULL, 0 }
 };
 
+// Not following original order here, let's be more consistent with MVS order,
+// and most people prefer Asia (english language) anyway
 struct RomBiosInfo aes_bioses[] = {
-	{"neo-po.bin",        0x16d0c132, 0x0f, "AES Japan"                      ,  1 },
-	{"neo-epo.bin",       0xd27a71f1, 0x10, "AES Asia"                       ,  2 },
+	{"neo-epo.bin",       0xd27a71f1, 0x10, "AES Asia"                       ,  1 },
+	{"neo-po.bin",        0x16d0c132, 0x0f, "AES Japan"                      ,  2 },
 	{"neodebug.bin",      0x698ebb7d, 0x11, "Development Kit"                ,  3 },
 	{NULL, 0, 0, NULL, 0 }
 };
@@ -154,10 +156,10 @@ static const struct retro_core_option_definition var_fbneo_vertical_mode = {
 	},
 	"disabled"
 };
-static const struct retro_core_option_definition var_fbneo_frameskip = {
-	CORE_OPTION_NAME "-frameskip",
-	"Frameskip",
-	"Skip rendering of X frames out of X+1",
+static const struct retro_core_option_definition var_fbneo_fixed_frameskip = {
+	CORE_OPTION_NAME "-fixed-frameskip",
+	"Fixed Frameskip",
+	"When 'Frameskip' is set to 'Fixed', or if the frontend doesn't support the alternative 'Frameskip' mode, skip rendering at a fixed rate of X frames out of X+1",
 	{
 		{ "0", "No skipping" },
 		{ "1", "Skip rendering of 1 frames out of 2" },
@@ -169,20 +171,21 @@ static const struct retro_core_option_definition var_fbneo_frameskip = {
 	},
 	"0"
 };
-static const struct retro_core_option_definition var_fbneo_frameskip_v2 = {
-	CORE_OPTION_NAME "-frameskip-v2",
+static const struct retro_core_option_definition var_fbneo_frameskip_type = {
+	CORE_OPTION_NAME "-frameskip-type",
 	"Frameskip",
-	"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' utilises the 'Frameskip Threshold (%)' setting.",
+	"Skip frames to avoid audio buffer under-run (crackling). Improves performance at the expense of visual smoothness. 'Auto' skips frames when advised by the frontend. 'Manual' uses the 'Frameskip Threshold (%)' setting. 'Fixed' uses the 'Fixed Frameskip' setting.",
 	{
 		{ "disabled", NULL },
+		{ "Fixed", NULL },
 		{ "Auto", NULL },
 		{ "Manual", NULL },
 		{ NULL, NULL },
 	},
 	"disabled"
 };
-static const struct retro_core_option_definition var_fbneo_frameskip_v2_threshold = {
-	CORE_OPTION_NAME "-frameskip-v2-threshold",
+static const struct retro_core_option_definition var_fbneo_frameskip_manual_threshold = {
+	CORE_OPTION_NAME "-frameskip-manual-threshold",
 	"Frameskip Threshold (%)",
 	"When 'Frameskip' is set to 'Manual', specifies the audio buffer occupancy threshold (percentage) below which frames will be skipped. Higher values reduce the risk of crackling by causing frames to be dropped more frequently.",
 	{
@@ -294,7 +297,7 @@ static const struct retro_core_option_definition var_fbneo_fm_interpolation = {
 	"4-point 3rd order"
 };
 static const struct retro_core_option_definition var_fbneo_lowpass_filter = {
-	"fbneo-lowpass-filter",
+	CORE_OPTION_NAME "-lowpass-filter",
 	"LowPass Filter",
 	"Enable LowPass Filter",
 	{
@@ -342,7 +345,7 @@ static const struct retro_core_option_definition var_fbneo_cyclone = {
 static const struct retro_core_option_definition var_fbneo_neogeo_mode = {
 	CORE_OPTION_NAME "-neogeo-mode",
 	"Neo-Geo mode",
-	"Load appropriate bios depending on your choice, under the condition such a bios is compatible with the running game, changing this will restart your game",
+	"Load appropriate bios depending on your choice, under the condition such a bios is compatible with the running game",
 	{
 		{ "DIPSWITCH", "Use bios specified in BIOS dipswitch below" },
 		{ "MVS", "Use MVS bios" },
@@ -642,13 +645,13 @@ void set_environment()
 	vars_systems.push_back(&var_fbneo_vertical_mode);
 	if (bLibretroSupportsAudioBuffStatus)
 	{
-		vars_systems.push_back(&var_fbneo_frameskip_v2);
-		vars_systems.push_back(&var_fbneo_frameskip_v2_threshold);
+		vars_systems.push_back(&var_fbneo_frameskip_type);
+		vars_systems.push_back(&var_fbneo_frameskip_manual_threshold);
 	}
-	else
-		vars_systems.push_back(&var_fbneo_frameskip);
+	vars_systems.push_back(&var_fbneo_fixed_frameskip);
 	vars_systems.push_back(&var_fbneo_cpu_speed_adjust);
-	vars_systems.push_back(&var_fbneo_hiscores);
+	if (BurnDrvGetFlags() & BDF_HISCORE_SUPPORTED)
+		vars_systems.push_back(&var_fbneo_hiscores);
 	vars_systems.push_back(&var_fbneo_allow_patched_romsets);
 	if (nGameType != RETRO_GAME_TYPE_NEOCD)
 		vars_systems.push_back(&var_fbneo_samplerate);
@@ -884,59 +887,9 @@ error:
 
 static int percent_parser(const char *value)
 {
-	INT32 nVal = 100;
-	if (strcmp(value, "100%") == 0)
+	INT32 nVal = atoi(value);
+	if (nVal == 0)
 		nVal = 100;
-	else if (strcmp(value, "110%") == 0)
-		nVal = 110;
-	else if (strcmp(value, "120%") == 0)
-		nVal = 120;
-	else if (strcmp(value, "130%") == 0)
-		nVal = 130;
-	else if (strcmp(value, "140%") == 0)
-		nVal = 140;
-	else if (strcmp(value, "150%") == 0)
-		nVal = 150;
-	else if (strcmp(value, "160%") == 0)
-		nVal = 160;
-	else if (strcmp(value, "170%") == 0)
-		nVal = 170;
-	else if (strcmp(value, "180%") == 0)
-		nVal = 180;
-	else if (strcmp(value, "190%") == 0)
-		nVal = 190;
-	else if (strcmp(value, "200%") == 0)
-		nVal = 200;
-	else if (strcmp(value, "95%") == 0)
-		nVal = 95;
-	else if (strcmp(value, "90%") == 0)
-		nVal = 90;
-	else if (strcmp(value, "85%") == 0)
-		nVal = 85;
-	else if (strcmp(value, "80%") == 0)
-		nVal = 80;
-	else if (strcmp(value, "75%") == 0)
-		nVal = 75;
-	else if (strcmp(value, "70%") == 0)
-		nVal = 70;
-	else if (strcmp(value, "65%") == 0)
-		nVal = 65;
-	else if (strcmp(value, "60%") == 0)
-		nVal = 60;
-	else if (strcmp(value, "55%") == 0)
-		nVal = 55;
-	else if (strcmp(value, "50%") == 0)
-		nVal = 50;
-	else if (strcmp(value, "45%") == 0)
-		nVal = 45;
-	else if (strcmp(value, "40%") == 0)
-		nVal = 40;
-	else if (strcmp(value, "35%") == 0)
-		nVal = 35;
-	else if (strcmp(value, "30%") == 0)
-		nVal = 30;
-	else if (strcmp(value, "25%") == 0)
-		nVal = 25;
 
 	return (int)((double)nVal * 256.0 / 100.0 + 0.5);
 }
@@ -973,39 +926,39 @@ void check_variables(void)
 
 	if (bLibretroSupportsAudioBuffStatus)
 	{
-		var.key = var_fbneo_frameskip_v2.key;
+		var.key = var_fbneo_frameskip_type.key;
 		if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
 		{
 			if (strcmp(var.value, "disabled") == 0)
 				nFrameskipType = 0;
-			else if (strcmp(var.value, "Auto") == 0)
+			else if (strcmp(var.value, "Fixed") == 0)
 				nFrameskipType = 1;
-			else if (strcmp(var.value, "Manual") == 0)
+			else if (strcmp(var.value, "Auto") == 0)
 				nFrameskipType = 2;
+			else if (strcmp(var.value, "Manual") == 0)
+				nFrameskipType = 3;
 		}
 
-		var.key             = var_fbneo_frameskip_v2_threshold.key;
+		var.key = var_fbneo_frameskip_manual_threshold.key;
 		if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
 			nFrameskipThreshold = strtol(var.value, NULL, 10);
 	}
-	else
+
+	var.key = var_fbneo_fixed_frameskip.key;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
 	{
-		var.key = var_fbneo_frameskip.key;
-		if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
-		{
-			if (strcmp(var.value, "0") == 0)
-				nFrameskip = 1;
-			else if (strcmp(var.value, "1") == 0)
-				nFrameskip = 2;
-			else if (strcmp(var.value, "2") == 0)
-				nFrameskip = 3;
-			else if (strcmp(var.value, "3") == 0)
-				nFrameskip = 4;
-			else if (strcmp(var.value, "4") == 0)
-				nFrameskip = 5;
-			else if (strcmp(var.value, "5") == 0)
-				nFrameskip = 6;
-		}
+		if (strcmp(var.value, "0") == 0)
+			nFrameskip = 1;
+		else if (strcmp(var.value, "1") == 0)
+			nFrameskip = 2;
+		else if (strcmp(var.value, "2") == 0)
+			nFrameskip = 3;
+		else if (strcmp(var.value, "3") == 0)
+			nFrameskip = 4;
+		else if (strcmp(var.value, "4") == 0)
+			nFrameskip = 5;
+		else if (strcmp(var.value, "5") == 0)
+			nFrameskip = 6;
 	}
 
 	if (pgi_diag)
@@ -1097,13 +1050,20 @@ void check_variables(void)
 		}
 	}
 
-	var.key = var_fbneo_hiscores.key;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+	if (BurnDrvGetFlags() & BDF_HISCORE_SUPPORTED)
 	{
-		if (strcmp(var.value, "enabled") == 0)
-			EnableHiscores = true;
-		else
-			EnableHiscores = false;
+		var.key = var_fbneo_hiscores.key;
+		if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+		{
+			if (strcmp(var.value, "enabled") == 0)
+				EnableHiscores = true;
+			else
+				EnableHiscores = false;
+		}
+	}
+	else
+	{
+		EnableHiscores = false;
 	}
 
 	var.key = var_fbneo_allow_patched_romsets.key;
@@ -1124,10 +1084,6 @@ void check_variables(void)
 				g_audio_samplerate = 48000;
 			else if (strcmp(var.value, "44100") == 0)
 				g_audio_samplerate = 44100;
-			else if (strcmp(var.value, "22050") == 0)
-				g_audio_samplerate = 22050;
-			else if (strcmp(var.value, "11025") == 0)
-				g_audio_samplerate = 11025;
 			else
 				g_audio_samplerate = 48000;
 		}
