@@ -332,9 +332,7 @@ static INT32 System16DoReset()
 			ZetClose();
 		} else {
 			if (BurnDrvGetHardwareCode() & HARDWARE_SEGA_YM2413) {
-				ZetOpen(0);
 				BurnYM2413Reset();
-				ZetClose();
 			} else {
 				ZetOpen(0);
 				BurnYM2151Reset();
@@ -2063,7 +2061,11 @@ INT32 System16Init()
 			UPD7759Init(0, UPD7759_STANDARD_CLOCK, NULL);
 			UPD7759SetDrqCallback(0, System16UPD7759DrqCallback);
 			UPD7759SetSyncCallback(0, ZetTotalCycles, 5000000);
-			UPD7759SetRoute(0, 1.00, BURN_SND_ROUTE_BOTH);
+			if (strstr(BurnDrvGetTextA(DRV_NAME), "tturf")) {
+				UPD7759SetRoute(0, 0.45, BURN_SND_ROUTE_BOTH);
+			} else {
+				UPD7759SetRoute(0, 1.00, BURN_SND_ROUTE_BOTH);
+			}
 			UPD7759SetFilter(0, 2000);
 			BurnTimerAttachZet(5000000);
 		}

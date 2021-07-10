@@ -1,14 +1,15 @@
 // Cheevos support
+#include "retro_common.h"
 #include "retro_memory.h"
 
-void* pMainRamData = NULL;
-size_t nMainRamSize = 0;
-bool bMainRamFound = false;
-int nMemoryCount = 0;
-struct retro_memory_descriptor sMemoryDescriptors[10] = {};
-bool bMemoryMapFound = false;
+static void* pMainRamData = NULL;
+static size_t nMainRamSize = 0;
+static bool bMainRamFound = false;
+static int nMemoryCount = 0;
+static struct retro_memory_descriptor sMemoryDescriptors[10] = {};
+static bool bMemoryMapFound = false;
 
-int StateGetMainRamAcb(BurnArea *pba)
+static int StateGetMainRamAcb(BurnArea *pba)
 {
 	if(!pba->szName)
 		return 0;
@@ -111,11 +112,27 @@ int StateGetMainRamAcb(BurnArea *pba)
 				nMemoryCount++;
 			}
 			return 0;
+		case HARDWARE_SNK_NGP:
 		case HARDWARE_SNK_NGPC:
 			if ((strcmp(pba->szName, "Main Ram") == 0)) {
-				pMainRamData = pba->Data;
-				nMainRamSize = pba->nLen;
-				bMainRamFound = true;
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SYSTEM_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00004000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
+			}
+			if ((strcmp(pba->szName, "Shared Ram") == 0)) {
+				sMemoryDescriptors[nMemoryCount].flags     = RETRO_MEMDESC_SYSTEM_RAM;
+				sMemoryDescriptors[nMemoryCount].ptr       = pba->Data;
+				sMemoryDescriptors[nMemoryCount].start     = 0x00007000;
+				sMemoryDescriptors[nMemoryCount].len       = pba->nLen;
+				sMemoryDescriptors[nMemoryCount].select    = 0;
+				sMemoryDescriptors[nMemoryCount].addrspace = pba->szName;
+				bMemoryMapFound = true;
+				nMemoryCount++;
 			}
 			return 0;
 		default:
@@ -127,6 +144,32 @@ int StateGetMainRamAcb(BurnArea *pba)
 			}
 			return 0;
 	}
+}
+
+void CheevosInit()
+{
+	INT32 nMin = 0;
+	BurnAcb = StateGetMainRamAcb;
+	BurnAreaScan(ACB_FULLSCAN, &nMin);
+	if (bMainRamFound) {
+		HandleMessage(RETRO_LOG_INFO, "[Cheevos] System RAM set to %p, size is %zu\n", pMainRamData, nMainRamSize);
+	}
+	if (bMemoryMapFound) {
+		struct retro_memory_map sMemoryMap = {};
+		sMemoryMap.descriptors = sMemoryDescriptors;
+		sMemoryMap.num_descriptors = nMemoryCount;
+		environ_cb(RETRO_ENVIRONMENT_SET_MEMORY_MAPS, &sMemoryMap);
+	}
+}
+
+void CheevosExit()
+{
+	pMainRamData = NULL;
+	nMainRamSize = 0;
+	bMainRamFound = false;
+	nMemoryCount = 0;
+	memset(sMemoryDescriptors, 0, sizeof(sMemoryDescriptors));
+	bMemoryMapFound = false;
 }
 
 void *retro_get_memory_data(unsigned id)

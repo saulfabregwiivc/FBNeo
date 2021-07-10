@@ -221,6 +221,7 @@ else ifneq (,$(filter $(platform), ps3 psl1ght))
 	ENDIANNESS_DEFINES =  -DWORDS_BIGENDIAN
 	EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
+	INCLUDE_7Z_SUPPORT = 0
 
 	ifneq ($(platdef),)
         PLATFORM_DEFINES += -D$(platdef)
@@ -261,7 +262,6 @@ else ifeq ($(platform), vita)
 	CXXFLAGS += -mfloat-abi=hard -fsingle-precision-constant -fpermissive -fno-rtti -fno-exceptions
 	EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
-	INCLUDE_7Z_SUPPORT = 0
 	USE_CYCLONE = 1
 
 # CTR (3DS)
@@ -276,7 +276,6 @@ else ifeq ($(platform), ctr)
 	CXXFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard -fpermissive -fno-rtti -fno-exceptions
 	EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
-	INCLUDE_7Z_SUPPORT = 0
 	USE_CYCLONE = 1
 	LIGHT = 1
 
@@ -313,8 +312,33 @@ else ifeq ($(platform), libnx)
 	CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 	CFLAGS += -std=gnu11
 	STATIC_LINKING = 1
+	# 2021-05-18 : disabling 7z again for libnx, it seems the lib version linked to RA is old
 	INCLUDE_7Z_SUPPORT = 0
 	ENDIANNESS_DEFINES := -DLSB_FIRST
+
+# Funkey S
+else ifeq ($(platform), funkey)
+	TARGET := $(TARGET_NAME)_libretro.so
+	fpic := -fPIC
+	SHARED := -shared -Wl,-no-undefined -Wl,--version-script=$(VERSION_SCRIPT)
+	PLATFORM_FLAGS = -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+	USE_EXPERIMENTAL_FLAGS = 1
+	HAVE_NEON = 1
+	USE_CYCLONE = 1
+	LIGHT = 1
+	ARCH = arm
+	ENDIANNESS_DEFINES := -DLSB_FIRST
+	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
+		PLATFORM_FLAGS += -march=armv7-a
+	else
+		PLATFORM_FLAGS += -march=armv7ve
+		# If gcc is 5.0 or later
+		ifeq ($(shell echo `$(CC) -dumpversion` ">= 5" | bc -l), 1)
+			LDFLAGS += -static-libgcc -static-libstdc++
+		endif
+	endif
+	CFLAGS += $(PLATFORM_FLAGS)
+	CXXFLAGS += $(PLATFORM_FLAGS)
 
 # Classic Platforms ####################
 # Platform affix = classic_<ISA>_<µARCH>
@@ -372,7 +396,6 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 	PLATFORM_DEFINES := -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -UPPC
 	EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
-	INCLUDE_7Z_SUPPORT = 0
 
 	# Nintendo WiiU
 	ifneq (,$(findstring wiiu,$(platform)))

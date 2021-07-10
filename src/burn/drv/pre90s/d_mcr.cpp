@@ -2418,7 +2418,7 @@ struct BurnDriver BurnDrvTwotiger = {
 	"twotiger", NULL, "midssio", "twotiger", "1984",
 	"Two Tigers (dedicated)\0", NULL, "Bally Midway", "Miscellaneous",
 	NULL, NULL, NULL, NULL,
-	BDF_GAME_WORKING | BDF_CLONE, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
+	BDF_GAME_WORKING, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
 	NULL, twotigerRomInfo, twotigerRomName, NULL, NULL, TwotigerSampleInfo, TwotigerSampleName, TwotigerInputInfo, TwotigerDIPInfo,
 	TwotigerInit, DrvExit, DrvFrame, DrvDraw, DrvScan, &DrvRecalc, 0x40,
 	512, 480, 4, 3
@@ -3104,8 +3104,7 @@ static void demoderb_op4_write(UINT8, UINT8 data)
 
 static UINT8 demoderb_ip1_read(UINT8)
 {
-    UINT8 ipt = DrvInputs[1] & 0x03;
-    ipt |= (((input_playernum) ? ~BurnTrackballRead(1, 0) : ~BurnTrackballRead(0, 0)) << 2) & 0x3f;
+    UINT8 ipt = (DrvInputs[1] & 0x03) | (~BurnTrackballRead(input_playernum, 0) << 2);
 
     BurnTrackballUpdate(input_playernum);
 
@@ -3114,8 +3113,7 @@ static UINT8 demoderb_ip1_read(UINT8)
 
 static UINT8 demoderb_ip2_read(UINT8)
 {
-    UINT8 ipt = DrvInputs[2] & 0x03;
-    ipt |= (((input_playernum) ? ~BurnTrackballRead(1, 1) : ~BurnTrackballRead(0, 1)) << 2) & 0x3f;
+    UINT8 ipt = (DrvInputs[2] & 0x03) | (~BurnTrackballRead(input_playernum, 1) << 2);
 
     BurnTrackballUpdate(input_playernum);
 

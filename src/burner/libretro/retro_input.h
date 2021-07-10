@@ -1,12 +1,6 @@
 #ifndef __RETRO_INPUT__
 #define __RETRO_INPUT__
 
-#include "burner.h"
-#include "burn_gun.h"
-
-// Stuff we don't need anymore but want to keep in the code
-//#define RETRO_INPUT_DEPRECATED
-
 struct KeyBind
 {
 	unsigned id;
@@ -19,11 +13,11 @@ struct KeyBind
 struct AxiBind
 {
 	unsigned id;
-#ifdef RETRO_INPUT_DEPRECATED
-	unsigned id_pos;
-	unsigned id_neg;
-#endif
 	int index;
+	AxiBind()
+	{
+		index = -1;
+	}
 };
 
 #define MAX_PLAYERS 6
@@ -51,9 +45,7 @@ void SetDiagInpHoldFrameDelay(unsigned val);
 void RefreshLightgunCrosshair();
 void InputMake(void);
 void InputInit();
-void InputDeInit();
+void InputExit();
 void SetControllerInfo();
-
-extern bool bLibretroSupportsBitmasks;
 
 #endif

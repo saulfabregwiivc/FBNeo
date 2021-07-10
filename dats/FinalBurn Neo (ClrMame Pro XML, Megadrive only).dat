@@ -198,7 +198,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="action52s" cloneof="action52" romof="action52">
-		<description>Action 52 (Hack, Spanish)</description>
+		<description>Action 52 (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Active Enterprises</manufacturer>
 		<rom name="Action 52 (hack, spanish).bin" size="2097152" crc="26e09366"/>
@@ -238,7 +238,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="addfamvs" cloneof="addfamv" romof="addfamv">
-		<description>Addams Family Values (Hack, Spanish)</description>
+		<description>Addams Family Values (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Ocean</manufacturer>
 		<rom name="addams family values (hack, spanish).bin" size="2101280" crc="07cf6ffd"/>
@@ -294,7 +294,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aeros" cloneof="aero" romof="aero">
-		<description>Aero The Acro-Bat (Hack, Spanish)</description>
+		<description>Aero The Acro-Bat (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>SunSoft</manufacturer>
 		<rom name="aero the acro-bat (hack, spanish).bin" size="1048576" crc="fcaf58d3"/>
@@ -318,7 +318,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aero2s" cloneof="aero2" romof="aero2">
-		<description>Aero The Acro-Bat 2 (Hack, Spanish)</description>
+		<description>Aero The Acro-Bat 2 (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>SunSoft</manufacturer>
 		<rom name="aero the acro-bat 2 (hack, spanish).bin" size="2097152" crc="096c0978"/>
@@ -358,7 +358,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aburner2s" cloneof="aburner2" romof="aburner2">
-		<description>After Burner II (Hack, Spanish)</description>
+		<description>After Burner II (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="after burner II (hack, spanish).bin" size="524288" crc="2e08b330"/>
@@ -438,7 +438,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aladdin2">
-		<description>Aladdin II</description>
+		<description>Aladdin II [Hack]</description>
 		<year>199?</year>
 		<manufacturer>&lt;unlicensed&gt;</manufacturer>
 		<rom name="aladdin ii (unl).bin" size="2097152" crc="be5f9397"/>
@@ -2989,6 +2989,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="citadel">
+		<description>Citadel of Chaos, The (HB, rev2.0) [Homebrew]</description>
+		<year>2021</year>
+		<manufacturer>Studio Vetea</manufacturer>
+		<rom name="Citadel of Chaos (2021)(Studio Vetea).bin" size="3807254" crc="48bf71e9"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="classicc">
 		<description>Classic Collection (Euro)</description>
 		<year>1994</year>
@@ -3506,6 +3514,14 @@
 		<year>1994</year>
 		<manufacturer>Konami</manufacturer>
 		<rom name="contra - hard corps (usa, kor).bin" size="2097152" crc="c579f45e"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="contrainv" cloneof="contra" romof="contra">
+		<description>Contra - Hard Corps Invasion (Hack v3.3) [Hack]</description>
+		<year>2020</year>
+		<manufacturer>IT.GAMER</manufacturer>
+		<rom name="contra - hard corps invasion (hack v3.3).bin" size="4194304" crc="e1735c02"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -4470,7 +4486,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aladdins" cloneof="aladdin" romof="aladdin">
-		<description>Disney's Aladdin (Hack, Spanish)</description>
+		<description>Disney's Aladdin (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="aladdin (hack, spanish).bin" size="2097152" crc="a6cf0b89"/>
@@ -4502,7 +4518,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="aladdinfc" cloneof="aladdin" romof="aladdin">
-		<description>Disney's Aladdin - Final Cut (USA)</description>
+		<description>Disney's Aladdin - Final Cut (USA) [Hack]</description>
 		<year>2019</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="Aladdin - Final Cut (USA).bin" size="2384052" crc="dd66b3fa"/>
@@ -5185,7 +5201,7 @@
 		<description>Earthworm Jim (Prototype, 19940728)</description>
 		<year>1994</year>
 		<manufacturer>Virgin Interactive</manufacturer>
-		<rom name="earthworm jim (prototype- jul 28,1994).bin" size="3145728" crc="1c07b337"/>
+		<rom name="earthworm jim (prototype- jul 28,1994).bin" size="3145728" crc="24aa391b"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -8359,7 +8375,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="jparks" cloneof="jpark" romof="jpark">
-		<description>Jurassic Park (Hack, Spanish)</description>
+		<description>Jurassic Park (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="jurassic park (hack, spanish).bin" size="2097152" crc="53d3dd70"/>
@@ -8399,7 +8415,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="jparkres" cloneof="jparkre" romof="jparkre">
-		<description>Jurassic Park - Rampage Edition (Hack, Spanish)</description>
+		<description>Jurassic Park - Rampage Edition (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="jurassic park - rampage edition (hack, spanish).bin" size="2097152" crc="954efbf2"/>
@@ -8479,7 +8495,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="jleagues" cloneof="jleague" romof="jleague">
-		<description>Justice League Task Force (Hack, Spanish)</description>
+		<description>Justice League Task Force (Hack, Spanish) [Hack]</description>
 		<year>2019</year>
 		<manufacturer>Acclaim</manufacturer>
 		<rom name="justice league task force (hack, spanish).bin" size="3145728" crc="09844391"/>
@@ -9239,7 +9255,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="lotr" cloneof="strmlord" romof="strmlord">
-		<description>Lord of the Rings (Rus, Hack of Stormlord)</description>
+		<description>Lord of the Rings (Rus, Hack of Stormlord) [Hack]</description>
 		<year>199?</year>
 		<manufacturer>&lt;unknown&gt;</manufacturer>
 		<rom name="lord of the rings (unl).bin" size="524288" crc="e2a2342a"/>
@@ -9846,6 +9862,14 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
+	<game name="mmworld">
+		<description>Mega Marble World (HB, v1.9) [Homebrew]</description>
+		<year>2018</year>
+		<manufacturer>Mega Cat Studios</manufacturer>
+		<rom name="Mega Marble World v1.9 (2018)(Mega Cat Studios).bin" size="2621440" crc="438c7511"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
 	<game name="mindtris">
 		<description>Mega Mindtris (HB, v1.2) [Homebrew]</description>
 		<year>2018</year>
@@ -9854,11 +9878,11 @@
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
-	<game name="megaqbert11">
-		<description>Mega Q-Bert (HB, v1.1) [Homebrew]</description>
+	<game name="megaqbert12">
+		<description>Mega Q-Bert (HB, v1.2) [Homebrew]</description>
 		<year>2016</year>
 		<manufacturer>Jaklub</manufacturer>
-		<rom name="Mega Qbert.bin" size="524288" crc="692a9227"/>
+		<rom name="Mega Qbert.bin" size="524288" crc="8e48002d"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>
@@ -13595,7 +13619,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="radicasf">
-		<description>Radica: Street Fighter Pack (Euro)</description>
+		<description>Radica: Street Fighter Pack (Euro) [Hack]</description>
 		<year>2004</year>
 		<manufacturer>Radica Games ~ Capcom</manufacturer>
 		<rom name="radicasf.bin" size="4194304" crc="868afb44"/>
@@ -16754,7 +16778,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="strmlords" cloneof="strmlord" romof="strmlord">
-		<description>Stormlord (Hack, Spanish)</description>
+		<description>Stormlord (Hack, Spanish) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Razorsoft</manufacturer>
 		<rom name="stormlord (hack, spanish).bin" size="524288" crc="7cb3255c"/>
@@ -16794,7 +16818,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sf2hce" cloneof="sf2" romof="sf2">
-		<description>Street Fighter II' - Hyper Champion Edition (Hack)</description>
+		<description>Street Fighter II' - Hyper Champion Edition (Hack) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Capcom</manufacturer>
 		<rom name="street fighter ii' - hyper champion edition (hack).bin" size="3145728" crc="be0805cf"/>
@@ -16818,7 +16842,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sf2ics" cloneof="sf2" romof="sf2">
-		<description>Street Fighter II' - Special Champion Edition (Hack, Color and Sound)</description>
+		<description>Street Fighter II' - Special Champion Edition (Hack, Color and Sound) [Hack]</description>
 		<year>2014</year>
 		<manufacturer>Pyron &amp; Stephane.D</manufacturer>
 		<rom name="Street Fighter II' - SCE Improvement.bin" size="3145728" crc="293d2cb1"/>
@@ -16826,7 +16850,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sf2s" cloneof="sf2" romof="sf2">
-		<description>Street Fighter II' - Special Champion Edition (Hack, Spanish)</description>
+		<description>Street Fighter II' - Special Champion Edition (Hack, Spanish) [Hack]</description>
 		<year>2013</year>
 		<manufacturer>Capcom</manufacturer>
 		<rom name="street fighter ii' - special champion edition (hack, spanish).bin" size="3145728" crc="8ae5c323"/>
@@ -16850,7 +16874,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sf2pir" cloneof="sf2" romof="sf2">
-		<description>Street Fighter II' Turbo (Pirate)</description>
+		<description>Street Fighter II' Turbo (Pirate) [Hack]</description>
 		<year>1993?</year>
 		<manufacturer>&lt;unlicensed&gt;</manufacturer>
 		<rom name="street fighter ii' turbo (pirate).bin" size="2097152" crc="a85491ae"/>
@@ -16954,7 +16978,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sor2sfv1" cloneof="sor2" romof="sor2">
-		<description>Streets of Rage 2 - Street Fighter Version 1 (Dhalsim/Ryu/Guile/Ken, Hack)</description>
+		<description>Streets of Rage 2 - Street Fighter Version 1 (Dhalsim/Ryu/Guile/Ken, Hack) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>2017 Kratus</manufacturer>
 		<rom name="SoR2_StreetFighter_v1.bin" size="3395462" crc="e03f0c6b"/>
@@ -16962,7 +16986,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sor2sfv2" cloneof="sor2" romof="sor2">
-		<description>Streets of Rage 2 - Street Fighter Version 2 (Cammy/DeeJay/ChunLi/FeiLong, Hack)</description>
+		<description>Streets of Rage 2 - Street Fighter Version 2 (Cammy/DeeJay/ChunLi/FeiLong, Hack) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>2017 Kratus</manufacturer>
 		<rom name="SoR2_StreetFighter_v2.bin" size="3560088" crc="828786e2"/>
@@ -16970,7 +16994,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sor2sfv3" cloneof="sor2" romof="sor2">
-		<description>Streets of Rage 2 - Street Fighter Version 3 (Blanka/Honda/Zangief/T.Hawk, Hack)</description>
+		<description>Streets of Rage 2 - Street Fighter Version 3 (Blanka/Honda/Zangief/T.Hawk, Hack) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>2017 Kratus</manufacturer>
 		<rom name="SoR2_StreetFighter_v3.bin" size="3532794" crc="d2ecf98f"/>
@@ -16978,7 +17002,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="sor2sfv4" cloneof="sor2" romof="sor2">
-		<description>Streets of Rage 2 - Street Fighter Version 4 (Balrog/Bison/Sagat/Vega, Hack)</description>
+		<description>Streets of Rage 2 - Street Fighter Version 4 (Balrog/Bison/Sagat/Vega, Hack) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>2017 Kratus</manufacturer>
 		<rom name="SoR2_StreetFighter_v4.bin" size="3757608" crc="59aa116d"/>
@@ -17762,7 +17786,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="ssf2ics" cloneof="ssf2" romof="ssf2">
-		<description>Super Street Fighter II (Hack, Color and Sound)</description>
+		<description>Super Street Fighter II (Hack, Color and Sound) [Hack]</description>
 		<year>2014</year>
 		<manufacturer>2014 Pyron (color), Stephane D (sound)</manufacturer>
 		<rom name="Super Street Fighter II Improvement.bin" size="5242880" crc="021b7403"/>
@@ -17778,7 +17802,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="ssf2fh" cloneof="ssf2" romof="ssf2">
-		<description>Super Street Fighter II - The New Challengers (Hack, Final)</description>
+		<description>Super Street Fighter II - The New Challengers (Hack, Final) [Hack]</description>
 		<year>2020</year>
 		<manufacturer>Capcom</manufacturer>
 		<rom name="super street fighter ii - the new challengers (hack, final).bin" size="5242880" crc="8e6772aa"/>
@@ -17786,7 +17810,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="ssf2s" cloneof="ssf2" romof="ssf2">
-		<description>Super Street Fighter II - The New Challengers (Hack, Spanish)</description>
+		<description>Super Street Fighter II - The New Challengers (Hack, Spanish) [Hack]</description>
 		<year>2017</year>
 		<manufacturer>Capcom</manufacturer>
 		<rom name="super street fighter ii - the new challengers (hack, spanish).bin" size="5242880" crc="e8eda797"/>
@@ -18562,7 +18586,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="addfams" cloneof="addfam" romof="addfam">
-		<description>The Addams Family (Hack, Spanish)</description>
+		<description>The Addams Family (Hack, Spanish) [Hack]</description>
 		<year>2018</year>
 		<manufacturer>Flying Edge</manufacturer>
 		<rom name="the addams family (hack, spanish).bin" size="1048576" crc="3b1aa679"/>
@@ -20311,6 +20335,14 @@
 		<year>1992</year>
 		<manufacturer>Sega</manufacturer>
 		<rom name="mpr-14929.bin" size="1048576" crc="ffe7b3c7"/>
+		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
+		<driver status="good"/>
+	</game>
+	<game name="tourmaline">
+		<description>Tourmaline (HB) [Homebrew]</description>
+		<year>2021</year>
+		<manufacturer>RetroSouls</manufacturer>
+		<rom name="Tourmaline (2021)(RetroSouls).bin" size="786432" crc="437aeb56"/>
 		<video orientation="horizontal" width="320" height="224" aspectx="4" aspecty="3"/>
 		<driver status="good"/>
 	</game>

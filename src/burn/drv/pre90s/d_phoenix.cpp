@@ -25,7 +25,6 @@
 
 #endif
 
-#include "tms36xx.h"
 #include "phoenixsound.h"
 #include "pleiadssound.h"
 
@@ -62,88 +61,88 @@ static UINT8 DrvDips[3];
 static UINT8 DrvReset;
 
 static struct BurnInputInfo PhoenixInputList[] = {
-	{"P1 Coin",		BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
+	{"P1 Coin",			BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
 	{"P1 Start",		BIT_DIGITAL,	DrvJoy1 + 1,	"p1 start"	},
-	{"P1 Left",		BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
+	{"P1 Left",			BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
 	{"P1 Right",		BIT_DIGITAL,	DrvJoy2 + 1,	"p1 right"	},
 	{"P1 Button 1",		BIT_DIGITAL,	DrvJoy2 + 0,	"p1 fire 1"	},
 	{"P1 Button 2",		BIT_DIGITAL,	DrvJoy2 + 3,	"p1 fire 2"	},
 
 	{"P2 Start",		BIT_DIGITAL,	DrvJoy1 + 2,	"p2 start"	},
-	{"P2 Left",		BIT_DIGITAL,	DrvJoy3 + 2,	"p2 left"	},
+	{"P2 Left",			BIT_DIGITAL,	DrvJoy3 + 2,	"p2 left"	},
 	{"P2 Right",		BIT_DIGITAL,	DrvJoy3 + 1,	"p2 right"	},
 	{"P2 Button 1",		BIT_DIGITAL,	DrvJoy3 + 0,	"p2 fire 1"	},
 	{"P2 Button 2",		BIT_DIGITAL,	DrvJoy3 + 3,	"p2 fire 2"	},
 
-	{"Reset",		BIT_DIGITAL,	&DrvReset,	"reset"		},
-	{"Dip A",		BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
-	{"Dip B",		BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
-	{"Dip C",		BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
+	{"Reset",			BIT_DIGITAL,	&DrvReset,		"reset"		},
+	{"Dip A",			BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
+	{"Dip B",			BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
+	{"Dip C",			BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
 };
 
 STDINPUTINFO(Phoenix)
 
 static struct BurnInputInfo Phoenix3InputList[] = {
-	{"P1 Coin",		BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
+	{"P1 Coin",			BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
 	{"P1 Start",		BIT_DIGITAL,	DrvJoy1 + 1,	"p1 start"	},
-	{"P1 Left",		BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
+	{"P1 Left",			BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
 	{"P1 Right",		BIT_DIGITAL,	DrvJoy2 + 1,	"p1 right"	},
 	{"P1 Button 1",		BIT_DIGITAL,	DrvJoy2 + 0,	"p1 fire 1"	},
 	{"P1 Button 2",		BIT_DIGITAL,	DrvJoy2 + 3,	"p1 fire 2"	},
 
-	{"P2 Coin",		BIT_DIGITAL,	DrvJoy1 + 3,	"p2 coin"	},
+	{"P2 Coin",			BIT_DIGITAL,	DrvJoy1 + 3,	"p2 coin"	},
 	{"P2 Start",		BIT_DIGITAL,	DrvJoy1 + 2,	"p2 start"	},
-	{"P2 Left",		BIT_DIGITAL,	DrvJoy3 + 2,	"p2 left"	},
+	{"P2 Left",			BIT_DIGITAL,	DrvJoy3 + 2,	"p2 left"	},
 	{"P2 Right",		BIT_DIGITAL,	DrvJoy3 + 1,	"p2 right"	},
 	{"P2 Button 1",		BIT_DIGITAL,	DrvJoy3 + 0,	"p2 fire 1"	},
 	{"P2 Button 2",		BIT_DIGITAL,	DrvJoy3 + 3,	"p2 fire 2"	},
 
-	{"Reset",		BIT_DIGITAL,	&DrvReset,	"reset"		},
-	{"Dip A",		BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
-	{"Dip B",		BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
-	{"Dip C",		BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
+	{"Reset",			BIT_DIGITAL,	&DrvReset,		"reset"		},
+	{"Dip A",			BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
+	{"Dip B",			BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
+	{"Dip C",			BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
 };
 
 STDINPUTINFO(Phoenix3)
 
 static struct BurnInputInfo CondorInputList[] = {
-	{"P1 Coin",		BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
+	{"P1 Coin",			BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
 	{"P1 Start",		BIT_DIGITAL,	DrvJoy1 + 1,	"p1 start"	},
-	{"P1 Left",		BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
+	{"P1 Left",			BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
 	{"P1 Right",		BIT_DIGITAL,	DrvJoy2 + 1,	"p1 right"	},
 	{"P1 Button 1",		BIT_DIGITAL,	DrvJoy2 + 0,	"p1 fire 1"	},
 	{"P1 Button 2",		BIT_DIGITAL,	DrvJoy2 + 3,	"p1 fire 2"	},
 
-	{"P2 Coin",		BIT_DIGITAL,	DrvJoy1 + 3,	"p2 coin"	},
+	{"P2 Coin",			BIT_DIGITAL,	DrvJoy1 + 3,	"p2 coin"	},
 	{"P2 Start",		BIT_DIGITAL,	DrvJoy1 + 2,	"p2 start"	},
-	{"P2 Left",		BIT_DIGITAL,	DrvJoy2 + 6,	"p2 left"	},
+	{"P2 Left",			BIT_DIGITAL,	DrvJoy2 + 6,	"p2 left"	},
 	{"P2 Right",		BIT_DIGITAL,	DrvJoy2 + 5,	"p2 right"	},
 	{"P2 Button 1",		BIT_DIGITAL,	DrvJoy2 + 4,	"p2 fire 1"	},
 	{"P2 Button 2",		BIT_DIGITAL,	DrvJoy2 + 7,	"p2 fire 2"	},
 
-	{"Reset",		BIT_DIGITAL,	&DrvReset,	"reset"		},
-	{"Dip A",		BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
-	{"Dip B",		BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
-	{"Dip C",		BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
+	{"Reset",			BIT_DIGITAL,	&DrvReset,		"reset"		},
+	{"Dip A",			BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
+	{"Dip B",			BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
+	{"Dip C",			BIT_DIPSWITCH,	DrvDips + 2,	"dip"		},
 };
 
 STDINPUTINFO(Condor)
 
 static struct BurnInputInfo PleiadsInputList[] = {
-	{"P1 Coin",		BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
+	{"P1 Coin",			BIT_DIGITAL,	DrvJoy1 + 0,	"p1 coin"	},
 	{"P1 Start",		BIT_DIGITAL,	DrvJoy1 + 1,	"p1 start"	},
-	{"P1 Left",		BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
+	{"P1 Left",			BIT_DIGITAL,	DrvJoy2 + 2,	"p1 left"	},
 	{"P1 Right",		BIT_DIGITAL,	DrvJoy2 + 1,	"p1 right"	},
 	{"P1 Button",		BIT_DIGITAL,	DrvJoy2 + 0,	"p1 fire 1"	},
 
 	{"P2 Start",		BIT_DIGITAL,	DrvJoy1 + 2,	"p2 start"	},
-	{"P2 Left",		BIT_DIGITAL,	DrvJoy2 + 6,	"p2 left"	},
+	{"P2 Left",			BIT_DIGITAL,	DrvJoy2 + 6,	"p2 left"	},
 	{"P2 Right",		BIT_DIGITAL,	DrvJoy2 + 5,	"p2 right"	},
 	{"P2 Button",		BIT_DIGITAL,	DrvJoy2 + 4,	"p2 fire 1"	},
 
-	{"Reset",		BIT_DIGITAL,	&DrvReset,	"reset"		},
-	{"Dip A",		BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
-	{"Dip B",		BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
+	{"Reset",			BIT_DIGITAL,	&DrvReset,		"reset"		},
+	{"Dip A",			BIT_DIPSWITCH,	DrvDips + 0,	"dip"		},
+	{"Dip B",			BIT_DIPSWITCH,	DrvDips + 1,	"dip"		},
 };
 
 STDINPUTINFO(Pleiads)
@@ -854,11 +853,14 @@ static INT32 DrvFrame()
 	i8080Close();
 
 	if (pBurnSoundOut) {
-		if (phoenixmode)
+		if (phoenixmode) {
 			phoenix_sound_update(pBurnSoundOut, nBurnSoundLen);
+		}
 
-		if (pleiads)
+		if (pleiads) {
 			pleiads_sound_update(pBurnSoundOut, nBurnSoundLen);
+		}
+		BurnSoundDCFilter();
 	}
 
 	return 0;
@@ -882,7 +884,13 @@ static INT32 DrvScan(INT32 nAction, INT32 *pnMin)
 
 		i8080Scan(nAction);
 
-		tms36xx_scan(nAction, pnMin);
+		if (phoenixmode) {
+			phoenix_sound_scan(nAction, pnMin);
+		}
+
+		if (pleiads) {
+			pleiads_sound_scan(nAction, pnMin);
+		}
 
 		SCAN_VAR(scrollx);
 		SCAN_VAR(ram_bank);
@@ -1185,7 +1193,7 @@ struct BurnDriver BurnDrvPhoenix3 = {
 };
 
 
-// Phoenix (Irecsa / G.G.I Corp, set 1)
+// Phoenix (Irecsa / G.G.I. Corporation)
 
 static struct BurnRomInfo phoenixcRomDesc[] = {
 	{ "phoenix.45",		0x0800, 0x5b8c55a8, 1 | BRF_PRG | BRF_ESS }, //  0 i8085 Code
@@ -1212,7 +1220,7 @@ STD_ROM_FN(phoenixc)
 
 struct BurnDriver BurnDrvPhoenixc = {
 	"phoenixc", "phoenix", NULL, NULL, "1981",
-	"Phoenix (Irecsa / G.G.I Corp, set 1)\0", NULL, "bootleg? (Irecsa / G.G.I Corp)", "Miscellaneous",
+	"Phoenix (Irecsa / G.G.I. Corporation)\0", NULL, "bootleg? (Irecsa / G.G.I. Corporation)", "Miscellaneous",
 	NULL, NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
 	NULL, phoenixcRomInfo, phoenixcRomName, NULL, NULL, NULL, NULL, PhoenixInputInfo, PhoenixtDIPInfo,
@@ -1221,7 +1229,7 @@ struct BurnDriver BurnDrvPhoenixc = {
 };
 
 
-// Phoenix (Irecsa / G.G.I Corp, set 2)
+// Phoenix (G.G.I. Corporation, set 1)
 // verified main and ROMs PCBs and 2 PROMs
 
 static struct BurnRomInfo phoenixc2RomDesc[] = {
@@ -1253,7 +1261,7 @@ STD_ROM_FN(phoenixc2)
 
 struct BurnDriver BurnDrvPhoenixc2 = {
 	"phoenixc2", "phoenix", NULL, NULL, "1981",
-	"Phoenix (Irecsa / G.G.I Corp, set 2)\0", NULL, "bootleg? (Irecsa / G.G.I Corp)", "Miscellaneous",
+	"Phoenix (G.G.I. Corporation, set 1)\0", NULL, "bootleg (G.G.I. Corporation)", "Miscellaneous",
 	NULL, NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
 	NULL, phoenixc2RomInfo, phoenixc2RomName, NULL, NULL, NULL, NULL, PhoenixInputInfo, PhoenixtDIPInfo,
@@ -1262,7 +1270,7 @@ struct BurnDriver BurnDrvPhoenixc2 = {
 };
 
 
-// Phoenix (Irecsa / G.G.I Corp, set 3)
+// Phoenix (G.G.I. Corporation, set 2)
 // verified main and ROMs PCBs and 2 PROMs
 
 static struct BurnRomInfo phoenixc3RomDesc[] = {
@@ -1290,7 +1298,7 @@ STD_ROM_FN(phoenixc3)
 
 struct BurnDriver BurnDrvPhoenixc3 = {
 	"phoenixc3", "phoenix", NULL, NULL, "1981",
-	"Phoenix (Irecsa / G.G.I Corp, set 3)\0", NULL, "bootleg? (Irecsa / G.G.I Corp)", "Miscellaneous",
+	"Phoenix (G.G.I. Corporation, set 2)\0", NULL, "bootleg (G.G.I. Corporation)", "Miscellaneous",
 	NULL, NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
 	NULL, phoenixc3RomInfo, phoenixc3RomName, NULL, NULL, NULL, NULL, PhoenixInputInfo, PhoenixtDIPInfo,
@@ -1299,7 +1307,7 @@ struct BurnDriver BurnDrvPhoenixc3 = {
 };
 
 
-// Phoenix (Irecsa / G.G.I Corp, set 4)
+// Phoenix (G.G.I. Corporation, set 3)
 // verified main and ROMs PCBs and 2 PROMs
 
 static struct BurnRomInfo phoenixc4RomDesc[] = {
@@ -1326,7 +1334,7 @@ STD_ROM_FN(phoenixc4)
 
 struct BurnDriver BurnDrvPhoenixc4 = {
 	"phoenixc4", "phoenix", NULL, NULL, "1981",
-	"Phoenix (Irecsa / G.G.I Corp, set 4)\0", NULL, "bootleg? (Irecsa / G.G.I Corp)", "Miscellaneous",
+	"Phoenix (G.G.I. Corporation, set 3)\0", NULL, "bootleg (G.G.I. Corporation)", "Miscellaneous",
 	NULL, NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED, 2, HARDWARE_MISC_PRE90S, GBF_SHOOT, 0,
 	NULL, phoenixc4RomInfo, phoenixc4RomName, NULL, NULL, NULL, NULL, PhoenixInputInfo, PhoenixtDIPInfo,

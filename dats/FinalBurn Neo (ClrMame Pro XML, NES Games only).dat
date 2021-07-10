@@ -644,6 +644,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="altercation">
+		<description>Altercation (HB, v0.1) [Homebrew]</description>
+		<year>2021</year>
+		<manufacturer>Scottlowe</manufacturer>
+		<rom name="Altercation v0.1 (2021)(Scottlowe).nes" size="40976" crc="27288df5"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="amagon">
 		<description>Amagon (USA)</description>
 		<year>1989</year>
@@ -1148,6 +1156,22 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="basesloaded3">
+		<description>Bases Loaded 3 (USA)</description>
+		<year>1991</year>
+		<manufacturer>Jaleco</manufacturer>
+		<rom name="Bases Loaded 3 (USA).nes" size="393232" crc="1bdd1704"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="basesloaded4">
+		<description>Bases Loaded 4 (USA)</description>
+		<year>1993</year>
+		<manufacturer>Jaleco</manufacturer>
+		<rom name="Bases Loaded 4 (USA).nes" size="393232" crc="0dee9ec1"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="basesloaii">
 		<description>Bases Loaded II - Second Season (USA)</description>
 		<year>1990</year>
@@ -1297,6 +1321,14 @@
 		<year>1985</year>
 		<manufacturer>Namco</manufacturer>
 		<rom name="BattleCity (Japan).nes" size="24592" crc="f599a07e"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="battler">
+		<description>Battler (HB) [Homebrew]</description>
+		<year>2015</year>
+		<manufacturer>Karu Gamo</manufacturer>
+		<rom name="Battler (2015)(Karu Gamo).nes" size="40976" crc="38f65b2d"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -1524,6 +1556,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="blackhol">
+		<description>Black Hole - Czarna Dziura (HB, v0.20) [Homebrew]</description>
+		<year>2021</year>
+		<manufacturer>Siudym</manufacturer>
+		<rom name="Black Hole - Czarna Dziura (HB, v0.20)(SIUDYM).nes" size="131088" crc="8fd3a9a7"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="bladebuster">
 		<description>Blade Buster (HB) [Homebrew]</description>
 		<year>2011</year>
@@ -1665,6 +1705,14 @@
 		<year>1989</year>
 		<manufacturer>Hudson Soft</manufacturer>
 		<rom name="Bomberman (USA).nes" size="24592" crc="b9804046"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="bomberboxart">
+		<description>Bomberman - BoxArt (HB, v1.02) [Hack, Homebrew]</description>
+		<year>2017</year>
+		<manufacturer>Corpse Grinder</manufacturer>
+		<rom name="Bomberman - BoxArt v1.02 (2017)(Corpse Grinder).nes" size="32784" crc="cb68a7fc"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -2673,6 +2721,14 @@
 		<year>2016</year>
 		<manufacturer>Cowlitz</manufacturer>
 		<rom name="Cowlitz Gamers Adventure (HB).nes" size="32784" crc="0ae2354b"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="crapjob">
+		<description>Crap Job (HB) [Homebrew]</description>
+		<year>2021</year>
+		<manufacturer>Oniric Factor</manufacturer>
+		<rom name="Crap Job (2021)(Oniric Factor).nes" size="524304" crc="cfa265ab"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -3992,7 +4048,7 @@
 		<description>E.T. - The Extra Terrestrial (HB) [Homebrew]</description>
 		<year>2014</year>
 		<manufacturer>Khan Games</manufacturer>
-		<rom name="E.T. - The Extra Terrestrial (HB).nes" size="131088" crc="ad871918"/>
+		<rom name="E.T. (2014)(Khan Games).nes" size="131088" crc="c1878830"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -4208,7 +4264,7 @@
 		<description>Eyra - The Crow Maiden (HB) [Homebrew]</description>
 		<year>2020</year>
 		<manufacturer>2nd Dimension</manufacturer>
-		<rom name="Eyra - The Crow Maiden (2020)(2nd Dimension).nes" size="40976" crc="e03ea9f9"/>
+		<rom name="Eyra the Crow Maiden (2020)(2nd Dimension).nes" size="40976" crc="1415153d"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -5412,6 +5468,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="gggg">
+		<description>Gold Guardian Gun Girl (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Good Tune</manufacturer>
+		<rom name="Gold Guardian Gun Girl (2020)(Good Tune).nes" size="40976" crc="a0e59e67"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="goldenaxeiii">
 		<description>Golden Axe III (Unl)</description>
 		<year>1989?</year>
@@ -5780,6 +5844,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="hackmatch">
+		<description>Hack Match (HB) [Homebrew, Original game by Juice (1990)]</description>
+		<year>2021</year>
+		<manufacturer>Zachtronics</manufacturer>
+		<rom name="Hack Match (2021)(Zachtronics).nes" size="40976" crc="94554d49"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="halloween86">
 		<description>Halloween'86 (HB) [Homebrew]</description>
 		<year>2016</year>
@@ -5794,6 +5866,14 @@
 		<manufacturer>Retrotainment Games</manufacturer>
 		<rom name="Halloween'86 (HB, alt).nes" size="524304" crc="d008091a"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="hammerinharry" cloneof="daikunogensan" romof="daikunogensan">
+		<description>Hammerin' Harry (Europe)</description>
+		<year>1992</year>
+		<manufacturer>Irem</manufacturer>
+		<rom name="Hammerin' Harry (Europe).nes" size="262160" crc="4d58c832"/>
+		<video orientation="horizontal" width="256" height="232" aspectx="256" aspecty="232"/>
 		<driver status="good"/>
 	</game>
 	<game name="happycamper">
@@ -6788,6 +6868,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="justice">
+		<description>Justice (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Unknown</manufacturer>
+		<rom name="Justice (2020)(Unknown).nes" size="196624" crc="5a8b8f13"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="justiceduel">
 		<description>Justice Duel (HB) [Homebrew]</description>
 		<year>2019</year>
@@ -7489,6 +7577,22 @@
 		<year>1990</year>
 		<manufacturer>Mindscape</manufacturer>
 		<rom name="Last Starfighter, The (USA).nes" size="65552" crc="26bceffd"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="lawestj" cloneof="laweste" romof="laweste">
+		<description>Law of the West (Japan)</description>
+		<year>1987</year>
+		<manufacturer>Pony Canyon</manufacturer>
+		<rom name="Law of the West Jpn (1987)(Pony Canyon).nes" size="131088" crc="9d1b5c98"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="laweste">
+		<description>Law of the West (T-Eng) [Hack]</description>
+		<year>1987-2020</year>
+		<manufacturer>Pony Canyon - GAFF Translations</manufacturer>
+		<rom name="Law of the West T-Eng (2020)(GAFF Translations).nes" size="262160" crc="34437445"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
@@ -9069,7 +9173,7 @@
 		<driver status="good"/>
 	</game>
 	<game name="mrsplash">
-		<description>Mr. Splash (HB) [Homebrew]</description>
+		<description>Mr. Splash (HB) [Homebrew, No one player mode]</description>
 		<year>2008</year>
 		<manufacturer>Project F</manufacturer>
 		<rom name="Mr. Splash (HB).nes" size="750052" crc="8b86978b"/>
@@ -13212,6 +13316,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="tetrisj" cloneof="tetris" romof="tetris">
+		<description>Tetris (BPS) (Japan)</description>
+		<year>1988</year>
+		<manufacturer>Bullet-Proof Software</manufacturer>
+		<rom name="Tetris (BPS) (Japan).nes" size="49168" crc="6cb86f4e"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="tetrisu" cloneof="tetris" romof="tetris">
 		<description>Tetris (Tengen) (USA)</description>
 		<year>1989</year>
@@ -14156,6 +14268,14 @@
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>
+	<game name="wowheels">
+		<description>War on Wheels (USA) (Proto)</description>
+		<year>1991-2006</year>
+		<manufacturer>Jaleco</manufacturer>
+		<rom name="War on Wheels (Proto)(2006)(Jaleco).nes" size="393232" crc="c957dcb0"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
 	<game name="warioswoods">
 		<description>Wario's Woods (USA)</description>
 		<year>1994</year>
@@ -14633,6 +14753,14 @@
 		<year>1987</year>
 		<manufacturer>FCI</manufacturer>
 		<rom name="Zanac (USA).nes" size="131088" crc="2165c0c2"/>
+		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
+		<driver status="good"/>
+	</game>
+	<game name="zdey">
+		<description>Zdey the Game (HB) [Homebrew]</description>
+		<year>2020</year>
+		<manufacturer>Art'Cade</manufacturer>
+		<rom name="Zdey the Game (2020)(Art'Cade).nes" size="524304" crc="fd4036e1"/>
 		<video orientation="horizontal" width="256" height="224" aspectx="256" aspecty="224"/>
 		<driver status="good"/>
 	</game>

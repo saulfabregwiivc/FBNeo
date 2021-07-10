@@ -315,24 +315,32 @@
     <ClInclude Include="..\..\src\dep\libs\lib7z\Aes.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Alloc.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Bcj2.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\Blake2.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Bra.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\BwtSort.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Compiler.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\CpuArch.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Delta.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\DllSecur.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\HuffEnc.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzFind.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzFindMt.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzHash.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Lzma2Dec.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\Lzma2DecMt.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Lzma2Enc.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Lzma86.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzmaDec.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzmaEnc.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\LzmaLib.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\MtCoder.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\MtDec.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Ppmd.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Ppmd7.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\Ppmd8.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Precomp.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\RotateDefs.h" />
+    <ClInclude Include="..\..\src\dep\libs\lib7z\Sha1.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Sha256.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Sort.h" />
     <ClInclude Include="..\..\src\dep\libs\lib7z\Threads.h" />
@@ -603,6 +611,7 @@
     <ClCompile Include="..\..\src\burn\snd\burn_ymf262.cpp" />
     <ClCompile Include="..\..\src\burn\snd\burn_ymf271.cpp" />
     <ClCompile Include="..\..\src\burn\snd\c352.cpp" />
+    <ClCompile Include="..\..\src\burn\snd\digitalk.cpp" />
     <ClCompile Include="..\..\src\burn\snd\i5000.cpp" />
     <ClCompile Include="..\..\src\burn\snd\multipcm.cpp" />
     <ClCompile Include="..\..\src\burn\snd\s14001a.cpp" />
@@ -624,6 +633,16 @@
     <ClCompile Include="..\..\src\cpu\tms34_intf.cpp" />
     <ClCompile Include="..\..\src\cpu\z80\z80ctc.cpp" />
     <ClCompile Include="..\..\src\cpu\z80\z80pio.cpp" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Blake2s.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\BwtSort.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\DllSecur.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\HuffEnc.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Lzma2DecMt.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\MtDec.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Ppmd8.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Ppmd8Dec.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Ppmd8Enc.c" />
+    <ClCompile Include="..\..\src\dep\libs\lib7z\Sha1.c" />
     <ClCompile Include="..\..\src\intf\cd\win32\cd_img.cpp" />
     <ClCompile Include="generated\m68kops.c" />
     <CustomBuild Include="..\..\src\burn\drv\capcom\ctv_make.cpp">
@@ -1754,8 +1773,9 @@ del build_details.exe
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\..\src\dep\mingw\include\directx9;..\..\src\dep\vc\include;..\..\src\dep\vc\include\xaudio2;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <TargetName>fbneo64d_vs</TargetName>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
@@ -1771,6 +1791,7 @@ del build_details.exe
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <TargetName>fbneo64</TargetName>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -1782,6 +1803,8 @@ del build_details.exe
       <EnablePREfast>true</EnablePREfast>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ObjectFileName>$(IntDir)1\1\%(RelativeDir)\</ObjectFileName>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1810,6 +1833,8 @@ del build_details.exe
       <LanguageStandard>Default</LanguageStandard>
       <EnablePREfast>true</EnablePREfast>
       <ObjectFileName>$(IntDir)1\1\%(RelativeDir)\</ObjectFileName>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1837,6 +1862,9 @@ del build_details.exe
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ObjectFileName>$(IntDir)1\1\%(RelativeDir)\</ObjectFileName>
       <EnablePREfast>false</EnablePREfast>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -1863,6 +1891,10 @@ del build_details.exe
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnablePREfast>false</EnablePREfast>
       <ObjectFileName>$(IntDir)1\1\%(RelativeDir)\</ObjectFileName>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
