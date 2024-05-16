@@ -1,4 +1,4 @@
-# FinalBurn Neo
+# FinalBurn Neo Wii Port (original by pcjco)
 Official Forum: https://neo-source.com
 
 Discord: https://discord.gg/8EGVd9v
