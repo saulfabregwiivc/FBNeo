@@ -92,8 +92,6 @@ ifneq (,$(findstring unix,$(platform)))
 		endif
 	else ifneq (,$(findstring rpi4_64,$(platform)))
 		PLATFORM_DEFINES := -march=armv8-a+crc+simd -mtune=cortex-a72
-	else ifneq (,$(findstring rpi5_64,$(platform)))
-		PLATFORM_DEFINES := -march=armv8.2-a+crc+simd -mtune=cortex-a76
 	endif
 
 	# Solaris
@@ -376,6 +374,11 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 	PLATFORM_DEFINES := -ffunction-sections -fdata-sections -D__wiiu__ -D__wut__ -UPPC
 	EXTERNAL_ZLIB = 1
 	STATIC_LINKING = 1
+	INCLUDE_7Z_SUPPORT = 0
+	SOURCES_C += $(LIBRETRO_COMM_DIR)/streams/file_stream.c
+	SOURCES_C += $(LIBRETRO_COMM_DIR)/streams/file_stream_transforms.c
+	SOURCES_C += $(LIBRETRO_COMM_DIR)/file/retro_dirent.c
+	
 
 	# Nintendo WiiU
 	ifneq (,$(findstring wiiu,$(platform)))
@@ -387,7 +390,14 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
 
 	# Nintendo Game Cube
 	else ifneq (,$(findstring ngc,$(platform)))
-		PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
+		include $(DEVKITPRO)/libogc2/gamecube_rules
+		PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DNO_NEOGEO
+		CFLAGS += -I$(LIBOGC_INC) -I$(DEVKITPRO)/libogc2/include -I$(DEVKITPRO)/libogc2/include/ogc/machine
+		NO_MD = 1
+		NO_CAPCOM = 1
+		NO_NEOGEO = 1
+		NO_PCE = 1
+		NO_SEGA = 1
 	endif
 
 # Emscripten
@@ -512,6 +522,7 @@ include $(INCLUDED_MAKEFILE)
 
 FBNEO_CXXOBJ := $(SOURCES_CXX:.cpp=.o)
 FBNEO_COBJ := $(SOURCES_C:.c=.o)
+
 FBNEO_SOBJ := $(SOURCES_S:.S=.o)
 
 OBJS := $(FBNEO_COBJ) $(FBNEO_CXXOBJ) $(FBNEO_SOBJ)
@@ -728,6 +739,11 @@ $(MAIN_FBNEO_DIR)/cpu/mips3_intf.o: $(MAIN_FBNEO_DIR)/cpu/mips3_intf.cpp
 
 %.o: %.S
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
+
+
+ifeq ($(platform), ngc)%.o: %.S	@echo "CS $<"	$(CC) -c -o $@ $< $(CFLAGS) $(INCDIRS)
+endif
+
 
 $(TARGET): $(OBJS)
 ifeq ($(STATIC_LINKING), 1)

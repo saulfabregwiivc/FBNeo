@@ -9,6 +9,8 @@
 #define UINT32_MAX	(UINT32)4294967295U
 #endif
 
+extern char *find_last_slash();
+
 static TCHAR szRomset[MAX_PATH] = _T("");
 static struct RomDataInfo RDI = { 0 };
 RomDataInfo* pRDI = &RDI;
@@ -621,10 +623,6 @@ INT32 apply_romdatas_from_variables()
 		if (0 == strcmp(var.value, "enabled")) nCount++;
 	}
 
-	// If nCount is 0, no romdata is enabled and we should return -1
-	if (nCount == 0)
-		return -1;
-
 	// Generates a random value when multiple selections are made.
 	if (nCount > 1)
 		nIndex = rand() % nCount;
@@ -670,12 +668,18 @@ INT32 apply_romdatas_from_variables()
 	return nIndex;
 }
 
+#include "vm.h"
+
 void RomDataInit()
 {
 	INT32 nLen = LoadRomdata();
+	
+	//AR_Init(NULL, 0);
+	//ARQ_Init();
 
 	if ((-1 != nLen) && (NULL == pDataRomDesc)) {
 		pDataRomDesc = (struct BurnRomInfo*)malloc((nLen + 1) * sizeof(BurnRomInfo));
+	//	pDataRomDesc = (struct BurnRomInfo*)VM_Init((nLen + 1) * sizeof(BurnRomInfo), 512 * 1024);
 		if (NULL != pDataRomDesc) {
 			LoadRomdata();
 

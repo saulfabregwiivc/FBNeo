@@ -27,12 +27,19 @@
 #define STAT_CRC     2
 #define STAT_SMALL   3
 #define STAT_LARGE   4
-#define STAT_SKIP    5
 
 #ifdef SUBSET
 #undef APP_TITLE
 #define APP_TITLE "FinalBurn Neo (" SUBSET " subset)"
 #endif
+
+char *find_last_slash(const char *str)
+{
+   const char *slash     = strrchr(str, '/');
+   const char *backslash = strrchr(str, '\\');
+   char       *last_slash = (!slash || (backslash > slash)) ? (char*)backslash : (char*)slash;
+   return last_slash;
+}
 
 int counter;           // General purpose variable used when debugging
 struct MovieExtInfo
@@ -308,7 +315,7 @@ static INT32 __cdecl libretro_bprintf(INT32 nStatus, TCHAR* szFormat, ...)
 	va_list vp;
 
 	// some format specifiers don't translate well into the retro logs, replace them
-	szFormat = string_replace_substring(szFormat, strlen(szFormat), "%S", strlen("%S"), "%s", strlen("%s"));
+	szFormat = NULL;// string_replace_substring(szFormat, strlen(szFormat), "%S", strlen("%S"), "%s", strlen("%s"));
 
 	// retro logs prefer ending with \n
 	// 2021-10-26: disabled it's causing overflow in a few cases, find a better way to do this...
@@ -513,7 +520,7 @@ void retro_get_system_info(struct retro_system_info *info)
 	info->library_version = strdup(library_version);
 	info->need_fullpath = true;
 	info->block_extract = true;
-	info->valid_extensions = "zip|7z|cue|ccd";
+	info->valid_extensions = "zip";
 
 	free(library_version);
 }
@@ -890,20 +897,19 @@ static int archive_load_rom(uint8_t *dest, int *wrote, int i)
 
 	int archive = pRomFind[i].nZip;
 
-	// We want to return an error code even if the rom is not needed, that's what standalone does
-	if (pRomFind[i].nState != STAT_OK)
-		return 1;
-
 	if (ZipOpen((char*)g_find_list_path[archive].path.c_str()) != 0)
 		return 1;
 
 	BurnRomInfo ri = {0};
 	BurnDrvGetRomInfo(&ri, i);
 
-	if (ZipLoadFile(dest, ri.nLen, wrote, pRomFind[i].nPos) != 0)
+	if (!(ri.nType & BRF_NODUMP))
 	{
-		ZipClose();
-		return 1;
+		if (ZipLoadFile(dest, ri.nLen, wrote, pRomFind[i].nPos) != 0)
+		{
+			ZipClose();
+			return 1;
+		}
 	}
 
 	ZipClose();
@@ -1120,18 +1126,16 @@ static bool open_archive()
 				// Try to map the ROMs FBNeo wants to ROMs we find inside our pretty archives ...
 				for (unsigned i = 0; i < nRomCount; i++)
 				{
-					// Don't bother with roms that have already been found or are never needed
-					if (pRomFind[i].nState == STAT_OK || pRomFind[i].nState == STAT_SKIP)
+					if (pRomFind[i].nState == STAT_OK)
 						continue;
 
 					struct BurnRomInfo ri;
 					memset(&ri, 0, sizeof(ri));
 					BurnDrvGetRomInfo(&ri, i);
 
-					// If a rom is never needed, let's flag it as skippable
 					if ((ri.nType & BRF_NODUMP) || (ri.nType == 0) || (ri.nLen == 0) || ((NULL == pDataRomDesc) && (0 == ri.nCrc)))
 					{
-						pRomFind[i].nState = STAT_SKIP;
+						pRomFind[i].nState = STAT_OK;
 						continue;
 					}
 
@@ -1195,8 +1199,7 @@ static bool open_archive()
 		bool ret = true;
 		for (unsigned i = 0; i < nRomCount; i++)
 		{
-			// Neither the available roms nor the unneeded ones should trigger an error here
-			if (pRomFind[i].nState != STAT_OK && pRomFind[i].nState != STAT_SKIP)
+			if (pRomFind[i].nState != STAT_OK)
 			{
 				struct BurnRomInfo ri;
 				memset(&ri, 0, sizeof(ri));
@@ -1403,12 +1406,12 @@ void retro_reset()
 	}
 
 	// romdata & ips patches run!
-	if ((nIndex >= 0) || (nPatches > 0))
+	if ((-1 != nIndex) || (nPatches > 0))
 	{
 		retro_incomplete_exit();
 
 		if (nPatches > 0) IpsPatchInit();
-		if (nIndex >= 0) RomDataInit();
+		if (-1 != nIndex) RomDataInit();
 
 		retro_load_game_common();
 	} 
@@ -2240,7 +2243,8 @@ static int retro_dat_romset_path(const struct retro_game_info* info)
 		if (NULL != pszTmp)
 		{
 			strcpy(pszTmp, pszExt);
-			nDat = strcmp(string_to_lower(pszTmp), ".dat");	// 0: *.dat
+			//nDat = strcmp(string_to_lower(pszTmp), ".dat");	// 0: *.dat
+			nDat = strcmp(pszTmp, ".dat");	// 0: *.dat
 			free(pszTmp);
 			pszTmp = NULL;
 		}

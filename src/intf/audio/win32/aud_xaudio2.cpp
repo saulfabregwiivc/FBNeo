@@ -214,6 +214,7 @@ static int XAudio2Exit()
 	XAudio2ExitVoices();
 
 	RELEASE(pXAudio2);
+	CoUninitialize();
 
 	if (nAudNextSound) {
 		free(nAudNextSound);
@@ -273,12 +274,13 @@ static int XAudio2Init()
 
 	// Initialize XAudio2
 
-	if (FAILED(nCOMInit)) {
+	if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {
 		return 1;
 	}
 
 	HRESULT hr;
 	if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR))) {
+		CoUninitialize();
 		return 1;
 	}
 

@@ -44,8 +44,6 @@
 
 #ifdef _WIN32
 #  include <stddef.h>
-#elif defined(__APPLE__) || defined(__MACH__)
-#include <unistd.h>
 #endif
 
 #if defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)

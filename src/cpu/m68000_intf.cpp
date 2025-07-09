@@ -1429,11 +1429,6 @@ INT32 SekShouldInterrupt()
 	return m68k_check_shouldinterrupt();
 }
 
-INT32 SekGetIRQLevel()
-{
-	return m68k_get_irq();
-}
-
 void SekBurnUntilInt()
 {
 	m68k_burn_until_irq(1);

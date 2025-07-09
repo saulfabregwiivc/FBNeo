@@ -174,8 +174,7 @@ const TCHAR* VidGetModuleName();
 InterfaceInfo* VidGetInfo();
 
 #ifdef BUILD_WIN32
-extern HWND hVidWnd;
-extern INT32 nCOMInit; // in burner/win32/main.cpp
+ extern HWND hVidWnd;
 #endif
 
 #if defined (_XBOX)
@@ -190,7 +189,6 @@ extern INT32 nVidHorWidth, nVidHorHeight;
 extern INT32 nVidVerWidth, nVidVerHeight;
 
 extern INT32 nVidFullscreen;
-extern INT32 bVidIntegerScale;
 extern INT32 bVidBilinear;
 extern INT32 bVidScanlines;
 extern INT32 bVidDX9WinFullscreen;

@@ -305,13 +305,11 @@ As far as we are concerned, you are supposed to dump your own games, so we can't
 
 ### Why am i getting a white screen ?
 
-If present, the line `Verify the following romsets : <romset> <parent> <bios>` gives you the list of split romsets required by the game you are trying to run. This is mainly for reference since you might not be striving to use romsets in split format. The next few lines give you the list of files it couldn't find within those romsets.
+The white screen tells you if the romset is supported at all and which files are wrong or missing. 
+Especially, if present, the line "Verify the following romsets : <romset> <parent> <bios>" tells you the list of romset/parent/bios needed by the romset you are trying to run.
 
-Otherwise, a `Romset is unknown` message means the romset couldn't be found by its filename in our database.
-
-Both problems result from not reading the [arcade documentation](https://docs.libretro.com/guides/arcade-getting-started/#step-3-use-the-correct-version-romsets-for-that-emulator). Exceptionally there might be false positives due to your files being unreadable for some reason (file corruption during transfer, file permission, damaged disk drive, ...). This is a rabbit hole and something you should only concern yourself after using clrmamepro to verify your romsets.
-
-Rarely you could get a "Failed initializing driver" message, this is something you should report [here](https://github.com/finalburnneo/FBNeo/issues)
+Exceptionally there might be a false positive due to your file being unreadable for some reason (file corruption during transfer, file permission, damaged disk drive, ...).
+This is a rabbit hole and something you should only concern yourself if you already used clrmamepro to verify your romsets.
 
 ### How can i run that romhack i found ?
 
@@ -377,12 +375,12 @@ There are several things to know :
 
 * You need to follow the instructions about [emulating consoles](#emulating-consoles-and-computers)
 * You need a copy of the `neocdz.zip` and `neogeo.zip` bioses
-* The supported format is single file MODE1/2352 cue/bin (the format where there is one .cue file with one single .bin file). Use "CDmage" to convert your dump if needed. **It must not be compressed**
+* The supported format is single file MODE1/2352 cue/bin (use "CDmage" to convert your iso if needed), **they must not be compressed**
 
-You can convert your unsupported dumps by following this tutorial :
+You can convert your unsupported cd images by following this tutorial :
 
 * Get [CDMage 1.02.1 (beta)](https://www.videohelp.com/software/CDMage) (freeware & no ads). **Don't get CDMage 1.01.5, it doesn't have the "Save As" function**
-* File > Open > select your dump (NB : always choose the .cue file if there is one)
+* File > Open > select your iso (NB : for multi-track, select the .cue file, not the .iso file)
 * File > Save As > write the name of your new file
 * Make sure you select MODE1/2352 in the second drop-down
 * Press OK, wait for the process to finish (a few seconds on my computer), and it’s done !
@@ -451,10 +449,6 @@ It is common for arcade machines to execute self-tests at boot, and in many case
 
 Sometimes the NVRAM/EEPROM saved on your disk gets corrupted for some reason, Konami games are especially known for getting this issue *somewhat frequently*.
 NVRAM/EEPROM are saved in the `SAVEFILES_DIRECTORY/fbneo` folder, and you can get around this issue by finding the files corresponding to your game and deleting them.
-
-### Should i use retroarch's analog-to-digital feature ?
-
-You should **NEVER** use that feature with this core, it already converts analog to digital and digital to analog internally. Exceptionally it might not do that conversion because each of those controls are already doing their own thing.
 
 ### Where is SYSTEM_DIRECTORY ?
 

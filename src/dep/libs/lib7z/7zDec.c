@@ -1,5 +1,5 @@
 /* 7zDec.c -- Decoding from 7z folder
-: Igor Pavlov : Public domain */
+2024-03-01 : Igor Pavlov : Public domain */
 
 #include "Precomp.h"
 
@@ -312,9 +312,8 @@ static BoolInt IS_MAIN_METHOD(UInt32 m)
     case k_PPMD:
   #endif
       return True;
-    default:
-      return False;
   }
+  return False;
 }
 
 static BoolInt IS_SUPPORTED_CODER(const CSzCoderInfo *c)

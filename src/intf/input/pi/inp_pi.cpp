@@ -257,7 +257,7 @@ static void scanKeyboard()
 		nExitEmulator = 1;
 	}
 	if (!screenshotDown && keyState[SDLK_F10]) {
-		MakeScreenShot(0);
+		MakeScreenShot();
 	}
 	screenshotDown = keyState[SDLK_F10];
 }

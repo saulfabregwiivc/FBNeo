@@ -139,13 +139,8 @@ struct Stream {
 			sample_l = BURN_SND_CLIP(sample_l * volume);
 			sample_r = BURN_SND_CLIP(sample_r * volume);
 
-			if (route & (BURN_SND_ROUTE_PANLEFT | BURN_SND_ROUTE_PANRIGHT)) {
-				sample_l = ((route & BURN_SND_ROUTE_PANLEFT) == BURN_SND_ROUTE_PANLEFT) ? sample_l : (sample_l / 3);
-				sample_r = ((route & BURN_SND_ROUTE_PANRIGHT) == BURN_SND_ROUTE_PANRIGHT) ? sample_r : (sample_r / 3);
-			} else {
-				sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
-				sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
-			}
+			sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
+			sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
 
 			if (bAddStream) {
 				out_buffer[0] = BURN_SND_CLIP(out_buffer[0] + sample_l);
@@ -231,13 +226,8 @@ struct Stream {
 			sample_l = BURN_SND_CLIP(sample_l * volume);
 			sample_r = BURN_SND_CLIP(sample_r * volume);
 
-			if (route & (BURN_SND_ROUTE_PANLEFT | BURN_SND_ROUTE_PANRIGHT)) {
-				sample_l = ((route & BURN_SND_ROUTE_PANLEFT) == BURN_SND_ROUTE_PANLEFT) ? sample_l : (sample_l / 3);
-				sample_r = ((route & BURN_SND_ROUTE_PANRIGHT) == BURN_SND_ROUTE_PANRIGHT) ? sample_r : (sample_r / 3);
-			} else {
-				sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
-				sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
-			}
+			sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
+			sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
 
 			if (bAddStream) {
 				out_buffer[0] = BURN_SND_CLIP(out_buffer[0] + sample_l);
@@ -274,13 +264,8 @@ struct Stream {
 			sample_l = BURN_SND_CLIP(sample_l * volume);
 			sample_r = BURN_SND_CLIP(sample_r * volume);
 
-			if (route & (BURN_SND_ROUTE_PANLEFT | BURN_SND_ROUTE_PANRIGHT)) {
-				sample_l = ((route & BURN_SND_ROUTE_PANLEFT) == BURN_SND_ROUTE_PANLEFT) ? sample_l : (sample_l / 3);
-				sample_r = ((route & BURN_SND_ROUTE_PANRIGHT) == BURN_SND_ROUTE_PANRIGHT) ? sample_r : (sample_r / 3);
-			} else {
-				sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
-				sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
-			}
+			sample_l = ((route & BURN_SND_ROUTE_LEFT) == BURN_SND_ROUTE_LEFT) ? sample_l : 0;
+			sample_r = ((route & BURN_SND_ROUTE_RIGHT) == BURN_SND_ROUTE_RIGHT) ? sample_r : 0;
 
 			if (bAddStream) {
 				out_buffer[0] = BURN_SND_CLIP(out_buffer[0] + sample_l);

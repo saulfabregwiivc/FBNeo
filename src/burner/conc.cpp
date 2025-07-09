@@ -73,23 +73,9 @@ static INT32 ConfigParseFile(TCHAR* pszFilename)
 
 	CheatInfo* pCurrentCheat = NULL;
 
-	TCHAR* pszReadMode = AdaptiveEncodingReads(pszFilename);
-	if (NULL == pszReadMode) pszReadMode = _T("rt");
-
-	FILE* h = _tfopen(pszFilename, pszReadMode);
+	FILE* h = _tfopen(pszFilename, _T("rt"));
 	if (h == NULL) {
-		if ((BurnDrvGetFlags() & BDF_CLONE) && BurnDrvGetText(DRV_PARENT)) {
-			TCHAR szAlternative[MAX_PATH] = { 0 };
-			_stprintf(szAlternative, _T("%s%s.ini"), szAppCheatsPath, BurnDrvGetText(DRV_PARENT));
-
-			pszReadMode = AdaptiveEncodingReads(szAlternative);
-			if (NULL == pszReadMode) pszReadMode = _T("rt");
-
-			if (NULL == (h = _tfopen(szAlternative, pszReadMode)))
-				return 1;
-		} else {
-			return 1;	// Parent driver
-		}
+		return 1;
 	}
 
 	while (1) {
@@ -343,23 +329,9 @@ static INT32 ConfigParseFile(TCHAR* pszFilename)
 //TODO: make cross platform
 static INT32 ConfigParseNebulaFile(TCHAR* pszFilename)
 {
-	TCHAR* pszReadMode = AdaptiveEncodingReads(pszFilename);
-	if (NULL == pszReadMode) pszReadMode = _T("rt");
-
-	FILE *fp = _tfopen(pszFilename, pszReadMode);
+	FILE *fp = _tfopen(pszFilename, _T("rt"));
 	if (fp == NULL) {
-		if ((BurnDrvGetFlags() & BDF_CLONE) && BurnDrvGetText(DRV_PARENT)) {
-			TCHAR szAlternative[MAX_PATH] = { 0 };
-			_stprintf(szAlternative, _T("%s%s.dat"), szAppCheatsPath, BurnDrvGetText(DRV_PARENT));
-
-			pszReadMode = AdaptiveEncodingReads(szAlternative);
-			if (NULL == pszReadMode) pszReadMode = _T("rt");
-
-			if (NULL == (fp = _tfopen(szAlternative, pszReadMode)))
-				return 1;
-		} else {
-			return 1;	// Parent driver
-		}
+		return 1;
 	}
 
 	INT32 nLen;
@@ -790,10 +762,7 @@ static INT32 ConfigParseMAMEFile()
 		_stprintf(szFileName, _T("%scheat.dat"), szAppCheatsPath);
 	}
 
-	TCHAR* pszReadMode = AdaptiveEncodingReads(szFileName);
-	if (NULL == pszReadMode) pszReadMode = _T("rt");
-
-	FILE *fz = _tfopen(szFileName, pszReadMode);
+	FILE *fz = _tfopen(szFileName, _T("rt"));
 
 	INT32 ret = 1;
 

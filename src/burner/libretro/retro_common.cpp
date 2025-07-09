@@ -251,11 +251,15 @@ static struct retro_core_option_v2_definition var_fbneo_samplerate = {
 	NULL,
 	"audio",
 	{
+		{ "8000", NULL },
+		{ "16000", NULL },
+		{ "22050", NULL },
+		{ "32000", NULL },
 		{ "44100", NULL },
 		{ "48000", NULL },
 		{ NULL,    NULL },
 	},
-	"48000"
+	"32000"
 };
 static struct retro_core_option_v2_definition var_fbneo_sample_interpolation = {
 	"fbneo-sample-interpolation",
@@ -311,27 +315,6 @@ static struct retro_core_option_v2_definition var_fbneo_analog_speed = {
 		PERCENT_VALUES
 	},
 	"100%"
-};
-// note : socd is made global for all users, standalone is handling different modes for each user but we really don't want this here... 
-//        libretro doesn't really support multiple keyboard users and this setting is mostly (only ?) useful for keyboard users...
-static struct retro_core_option_v2_definition var_fbneo_socd = {
-	"fbneo-socd",
-	"SOCD Setting",
-	NULL,
-	"Change ULDR priority, mostly useful for keyboard users",
-	NULL,
-	NULL,
-	{
-		{ "0",  "disabled" },
-		{ "1",  "Simultaneous Neutral" },
-		{ "2",  "Last Input Priority (4 Way)" },
-		{ "3",  "Last Input Priority (8 Way)" },
-		{ "4",  "First Input Priority" },
-		{ "5",  "Up Priority (Up-override Down)" },
-		{ "6",  "Down Priority (Left/Right Last Input Priority)" },
-		{ NULL, NULL },
-	},
-	"3"
 };
 static struct retro_core_option_v2_definition var_fbneo_lightgun_crosshair_emulation = {
 	"fbneo-lightgun-crosshair-emulation",
@@ -938,16 +921,6 @@ void set_environment()
 	var_fbneo_analog_speed.info                            = RETRO_ANALOG_CAT_INFO;
 	vars_systems.push_back(&var_fbneo_analog_speed);
 
-	var_fbneo_socd.desc                                    = RETRO_SOCD_DESC;
-	var_fbneo_socd.info                                    = RETRO_SOCD_INFO;
-	var_fbneo_socd.values[1].label                         = RETRO_SOCD_LABEL_1;
-	var_fbneo_socd.values[2].label                         = RETRO_SOCD_LABEL_2;
-	var_fbneo_socd.values[3].label                         = RETRO_SOCD_LABEL_3;
-	var_fbneo_socd.values[4].label                         = RETRO_SOCD_LABEL_4;
-	var_fbneo_socd.values[5].label                         = RETRO_SOCD_LABEL_5;
-	var_fbneo_socd.values[6].label                         = RETRO_SOCD_LABEL_6;
-	vars_systems.push_back(&var_fbneo_socd);
-
 	var_fbneo_lightgun_crosshair_emulation.desc            = RETRO_CROSSHAIR_CAT_DESC;
 	var_fbneo_lightgun_crosshair_emulation.info            = RETRO_CROSSHAIR_CAT_INFO;
 	var_fbneo_lightgun_crosshair_emulation.values[0].value = RETRO_CROSSHAIR_VALUE_0;
@@ -1499,11 +1472,6 @@ error:
 #endif
 }
 
-TCHAR* AdaptiveEncodingReads(const TCHAR* pszFileName)
-{
-	return NULL;
-}
-
 static int percent_parser(const char *value)
 {
 	INT32 nVal = atoi(value);
@@ -1919,13 +1887,6 @@ void check_variables(void)
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
 	{
 		nAnalogSpeed = percent_parser(var.value);
-	}
-
-	var.key = var_fbneo_socd.key;
-	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-	{
-		for (int i = 0; i < 6; i++)
-			nSocd[i] = atoi(var.value);
 	}
 
 	var.key = var_fbneo_lightgun_crosshair_emulation.key;

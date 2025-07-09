@@ -54,15 +54,13 @@ UINT8 BurnGunTargetData[18][18] = {
 #undef b
 #undef a
 
-static INT32 GunTargetHideTime; // default: 4 seconds
+#define GunTargetHideTime (60 * 4) /* 4 seconds @ 60 fps */
 static INT32 GunTargetTimer[MAX_GUNS]  = {0, 0, 0, 0};
 static INT32 GunTargetLastX[MAX_GUNS]  = {0, 0, 0, 0};
 static INT32 GunTargetLastY[MAX_GUNS]  = {0, 0, 0, 0};
 
 static void GunTargetUpdate(INT32 player)
 {
-	if (player >= MAX_GUNS) return;
-
 	if (GunTargetLastX[player] != BurnGunReturnX(player) || GunTargetLastY[player] != BurnGunReturnY(player)) {
 		GunTargetLastX[player] = BurnGunReturnX(player);
 		GunTargetLastY[player] = BurnGunReturnY(player);
@@ -586,11 +584,6 @@ void BurnTrackballSetVelocityCurve(INT32 bLogarithmic)
 	}
 }
 
-void BurnGunSetHideTime(INT32 nHideTimeInFrames)
-{
-	GunTargetHideTime = nHideTimeInFrames;
-}
-
 void BurnTrackballInit(INT32 nNumPlayers)
 {
 	Using_Trackball = 1;
@@ -631,8 +624,6 @@ void BurnGunInit(INT32 nNumPlayers, bool bDrawTargets)
 
 		BurnGunSetBox(i, 0, 0xff, 0, 0xff); // Gun stuff
 	}
-
-	GunTargetHideTime = (nBurnFPS / 100) * 4; // 4 seconds
 
 	// Trackball stuff (init)
 	memset(&TrackA, 0, sizeof(TrackA));
