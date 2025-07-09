@@ -1,0 +1,78 @@
+DRV		BurnDrvTmnt;
+DRV		BurnDrvTmnt22pu;
+DRV		BurnDrvTmnt2a;
+DRV		BurnDrvTmnt2o;
+DRV		BurnDrvTmnt2;
+DRV		BurnDrvTmnt24pu;
+DRV		BurnDrvPbobble;
+DRV		BurnDrvXmen2pa;
+DRV		BurnDrvXmen;
+DRV		BurnDrvPacgal20r0;
+DRV		BurnDrvPacgal20r1;
+DRV		BurnDrvPacgal20r2;
+DRV		BurnDrvPacgal20r3;
+DRV		BurnDrvPacgal20r4;
+DRV		BurnDrvPacgal20;
+DRV		BurnDrvPacman25o;
+DRV		BurnDrvSilentdj;
+DRV		BurnDrvSilentdu;
+DRV		BurnDrvSilentd;
+
+	&BurnDrvTmnt,				// Teenage Mutant Ninja Turtles (World 4 Players, version X)
+	&BurnDrvTmnt22pu,			// Teenage Mutant Ninja Turtles - Turtles in Time (2 Players ver UDA)
+	&BurnDrvTmnt2a,				// Teenage Mutant Ninja Turtles - Turtles in Time (4 Players ver ADA)
+	&BurnDrvTmnt2o,				// Teenage Mutant Ninja Turtles - Turtles in Time (4 Players ver OAA)
+	&BurnDrvTmnt2,				// Teenage Mutant Ninja Turtles - Turtles in Time (4 Players ver UAA)
+	&BurnDrvTmnt24pu,			// Teenage Mutant Ninja Turtles - Turtles in Time (4 Players ver UEA)
+	&BurnDrvPbobble,			// Puzzle Bobble (Japan, B-System)
+	&BurnDrvXmen2pa,			// X-Men (2 Players ver AAA)
+	&BurnDrvXmen,				// X-Men (4 Players ver EBA)
+	&BurnDrvPacgal20r0,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.00)
+	&BurnDrvPacgal20r1,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.01)
+	&BurnDrvPacgal20r2,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.02)
+	&BurnDrvPacgal20r3,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.03)
+	&BurnDrvPacgal20r4,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.04)
+	&BurnDrvPacgal20,			// Ms. Pac-Man/Galaga - 20th Anniversary Class of 1981 Reunion (V1.08)
+	&BurnDrvPacman25o,			// Pac-Man - 25th Anniversary Edition (Rev 2.00)
+	&BurnDrvSilentdj,			// Silent Dragon (Japan)
+	&BurnDrvSilentdu,			// Silent Dragon (US)
+	&BurnDrvSilentd,			// Silent Dragon (World)
+	
+	{ "tmnt", "konami/d_tmnt.cpp"},
+	{ "tmnt22pu", "konami/d_tmnt.cpp"},
+	{ "tmnt2a", "konami/d_tmnt.cpp"},
+	{ "tmnt2o", "konami/d_tmnt.cpp"},
+	{ "tmnt2", "konami/d_tmnt.cpp"},
+	{ "tmnt24pu", "konami/d_tmnt.cpp"},
+	{ "pbobble", "taito/d_taitob.cpp"},
+	{ "xmen2pa", "konami/d_xmen.cpp"},
+	{ "xmen", "konami/d_xmen.cpp"},
+	{ "20pacgalr0", "pst90s/d_20pacgal.cpp"},
+	{ "20pacgalr1", "pst90s/d_20pacgal.cpp"},
+	{ "20pacgalr2", "pst90s/d_20pacgal.cpp"},
+	{ "20pacgalr3", "pst90s/d_20pacgal.cpp"},
+	{ "20pacgalr4", "pst90s/d_20pacgal.cpp"},
+	{ "20pacgal", "pst90s/d_20pacgal.cpp"},
+	{ "25pacmano", "pst90s/d_20pacgal.cpp"},
+	{ "silentdj", "taito/d_taitob.cpp"},
+	{ "silentdu", "taito/d_taitob.cpp"},
+	{ "silentd", "taito/d_taitob.cpp"},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
